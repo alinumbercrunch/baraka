@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>森　柊 — Baraka</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Shippori+Mincho:wght@400;600&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="style.css">
+<style>
+.head{padding-block:48px 0}
+.head h1{font-family:var(--min); font-weight:600; letter-spacing:.05em;
+  font-size:clamp(44px,12vw,112px); line-height:1.08; margin-top:10px}
+.head .ro{font-family:var(--mono); font-size:12px; letter-spacing:.24em;
+  text-transform:uppercase; color:var(--mute); margin-top:14px}
+.head .place{font-size:14px; color:var(--mute); margin-top:4px}
+.lead-work{display:flex; gap:clamp(22px,4vw,54px); align-items:flex-end;
+  flex-wrap:wrap; margin-top:44px}
+.lead-work .art{view-transition-name:hero-work}
+.lead-work .meta{flex:1 1 230px; min-width:0; padding-bottom:4px}
+.lead-work .ttl{font-family:var(--min); font-size:clamp(18px,2.2vw,22px)}
+.lead-work .d{font-family:var(--mono); font-size:11.5px; color:var(--mute); margin-top:8px}
+.lead-work .p{font-family:var(--mono); font-size:14px; margin-top:3px}
+.lead-work .pick{font-size:12.5px; color:var(--mute); margin-top:12px; line-height:1.8; max-width:20em}
+.sect{border-top:1px solid var(--rule); margin-top:52px; padding-top:28px}
+.sect > .en{margin-bottom:10px}
+.sect h2{font-family:var(--min); font-weight:600; font-size:clamp(19px,2.4vw,24px)}
+.words{font-family:var(--min); font-size:clamp(16px,1.9vw,18.5px); line-height:2.15;
+  max-width:26em; margin-top:18px}
+.words p{margin:0 0 1.4em}
+.steps{display:grid; grid-template-columns:repeat(auto-fit,minmax(215px,1fr)); gap:22px; margin-top:22px}
+.ph{aspect-ratio:4/3; border:1px dashed var(--rule); display:grid; place-items:center;
+  color:var(--mute); font-family:var(--mono); font-size:10.5px; letter-spacing:.08em;
+  text-align:center; padding:10px; background:var(--sheet)}
+.steps p{margin:9px 0 0; font-size:13.5px; line-height:1.85; color:var(--mute)}
+.strip{display:flex; align-items:flex-end; gap:clamp(18px,3.5vw,48px); overflow-x:auto;
+  scroll-snap-type:x proximity; overscroll-behavior-x:contain;
+  border-bottom:1px solid var(--ink); padding:30px 2px 0; margin-top:22px}
+.strip figure{flex:0 0 auto; scroll-snap-align:center; margin:0; position:relative;
+  width:calc(var(--w) * var(--mmpx) * 1px)}
+.strip .art{width:100%; height:calc(var(--h) * var(--mmpx) * 1px)}
+.strip figcaption{font-family:var(--mono); font-size:9.5px; color:var(--mute);
+  margin:7px 0 0; white-space:nowrap; line-height:1.6}
+.strip .jt{font-family:var(--jp); font-size:12px; color:var(--ink); display:block}
+.cv{margin-top:18px; max-width:34em}
+.cv div{display:flex; gap:18px; border-bottom:1px solid var(--rule); padding:9px 0; font-size:13.5px}
+.cv .y{font-family:var(--mono); font-size:11.5px; color:var(--mute); flex:0 0 70px}
+.ask{border-left:2px solid var(--shu); padding-left:16px; margin-top:24px; max-width:28em}
+.ask b{display:block; font-weight:500; margin-bottom:4px}
+.ask span{font-size:13.5px; color:var(--mute); line-height:1.85}
+.hold{border:1px solid var(--ink); padding:16px 18px; margin-top:24px; max-width:30em}
+.hold b{display:block; font-weight:500; font-size:15px; margin:4px 0 7px}
+.hold p{margin:0; font-size:13.5px; line-height:1.9; color:var(--mute)}
+</style>
+</head>
+<body>
+<div class="protobar">これは<b>プロトタイプ</b>です。作家名・作品名・価格はすべて架空のサンプルです。画像はパブリックドメインの美術館所蔵作品を仮に使用しています。<span class="pe">This is a prototype. Artists, titles and prices are fictional samples.</span></div>
+
+<div class="wrap">
+  <nav class="bar">
+    <a class="mark" href="index.html">BARAKA<small>バラカ</small></a>
+    <a href="index.html">ホーム</a>
+    <a href="works.html">すべての作品</a>
+    <a href="artists.html" aria-current="page">作家一覧</a>
+    <a href="trade.html">法人の方へ</a>
+  </nav>
+
+  <header class="head">
+    <span class="en">今月の作家 ／ This month's artist ・ 2026.10</span>
+    <h1>森　柊</h1>
+    <div class="ro">Mori Shū</div>
+    <div class="place">1991年生まれ ／ 神奈川県藤沢市</div>
+  </header>
+
+  <section class="lead-work">
+    <div class="art" style="--w:1312;--h:2148">
+      <img src="img/w5.jpg" width="1312" height="2148" alt="朝の輪郭（森　柊）" fetchpriority="high" decoding="async">
+    </div>
+    <div class="meta">
+      <span class="ttl">朝の輪郭</span>
+      <span class="d">H2,148 × W1,312 mm ／ 油彩・キャンバス ／ 9.0 kg</span>
+      <span class="p">¥320,000</span>
+      <span class="pick">この1点は、作家本人に選んでもらいました。<br>
+        <span class="en" style="margin-top:4px">Chosen by the artist, not by us.</span></span>
+    </div>
+  </section>
+
+  <!-- ── the artist's own words ── -->
+  <section class="sect">
+    <span class="en">In the artist's own words</span>
+    <h2>制作の言葉</h2>
+    <div class="words">
+      <p>海の近くに住んでいると、同じ壁でも朝と夕方では別の色に見えます。わたしはその「見え方が変わる時間」を絵具の層として重ねていきます。</p>
+      <p>下の層はほとんど見えません。それでも、上から塗った色の出かたが変わります。だから、見えなくなるものを何度も描きます。</p>
+      <p>描き終えた絵は、置かれた部屋の光によってもう一度仕上がる、と思っています。だから、どこに掛かるのかをいつも考えながら描いています。できれば、朝のひかりが入る壁に。</p>
+    </div>
+  </section>
+
+  <!-- ── process ── -->
+  <section class="sect">
+    <span class="en">How the work is made</span>
+    <h2>制作について</h2>
+    <div class="steps">
+      <div>
+        <div class="ph">工房の写真が入ります<br>STUDIO PHOTO</div>
+        <p>藤沢の自宅兼工房。南向きの窓から入る光のもとで描いています。</p>
+      </div>
+      <div>
+        <div class="ph">手元の写真が入ります<br>HANDS / DETAIL</div>
+        <p>絵具は自分で練ります。顔料と油の配合は季節で変えています。</p>
+      </div>
+      <div>
+        <div class="ph">表面の接写が入ります<br>SURFACE, ACTUAL SIZE</div>
+        <p>表面の厚みは最大で3mmほど。実物では光の当たり方で見え方が変わります。</p>
+      </div>
+    </div>
+    <p class="en" style="margin-top:14px">写真は準備中です ／ Photographs to follow</p>
+  </section>
+
+  <!-- ── full body of work, true scale ── -->
+  <section class="sect">
+    <span class="en">The full body of work, at true relative size</span>
+    <h2>これまでの作品</h2>
+    <p class="plain" style="margin-top:12px">大きさの比率はすべて実物どおりです。横にスクロールできます。</p>
+    <div class="strip" id="strip"></div>
+    <p class="en" style="margin-top:8px">← scroll →</p>
+  </section>
+
+  <!-- ── chronology ── -->
+  <section class="sect">
+    <span class="en">Chronology</span>
+    <h2>来歴</h2>
+    <div class="cv">
+      <div><span class="y">1991</span><span>神奈川県藤沢市生まれ</span></div>
+      <div><span class="y">2014</span><span>多摩美術大学 絵画学科 油画専攻 卒業</span></div>
+      <div><span class="y">2016</span><span>初個展「みえなくなるもの」（横浜）</span></div>
+      <div><span class="y">2019</span><span>グループ展「海沿いの絵画」（藤沢）</span></div>
+      <div><span class="y">2022</span><span>個展「朝の壁」（東京・代官山）</span></div>
+      <div><span class="y">2024</span><span>藤沢市内に工房を移転</span></div>
+      <div><span class="y">2026</span><span>バラカ 取扱い開始</span></div>
+    </div>
+  </section>
+
+  <!-- ── the artist's own conditions ── -->
+  <section class="sect">
+    <span class="en">A request from the artist</span>
+    <h2>作家からのお願い</h2>
+    <div class="ask">
+      <b>クライアント資料では作品をトリミングしないでください。</b>
+      <span>全体が入るかたちで掲載いただけると助かります。掲載時には作品名と制作年も添えてください。</span>
+    </div>
+    <p class="plain" style="margin-top:20px;font-size:14px">作家は掲載条件を自分で決められます。わたしたちはそれをそのまま載せます。<br>
+      <span class="en" style="margin-top:5px">Artists set their own conditions. We publish them as written.</span></p>
+  </section>
+
+  <!-- ── hold + enquiry ── -->
+  <section class="sect">
+    <span class="en">Enquire</span>
+    <h2>この作家の作品について</h2>
+    <div class="hold">
+      <span class="en">2-week hold</span>
+      <b>2週間、お取り置きできます。</b>
+      <p>一点ものですので、施主様がご検討中に他所へ売れてしまうことのないようお取り置きします。作品番号をお知らせください。</p>
+    </div>
+    <div class="contact" id="contact">
+      <span class="en">Contact</span><b>お問い合わせ</b>
+      <span class="sel">hello@baraka.art</span><br>
+      <span class="sel" style="font-size:13px">045-000-0000</span>
+      <span class="tax">表示価格はすべて税込です。適格請求書（インボイス）を発行できます。配送・設置費は別途お見積りします。</span>
+    </div>
+    <div class="doors">
+      <a class="door" href="works.html">すべての作品を見る</a>
+      <a class="door ghost" href="trade.html#designer">設計・デザインの方へ</a>
+    </div>
+  </section>
+
+  <div class="note"><b>プロトタイプ</b>／Prototype. 作家・作品名・価格・来歴はすべてサンプルです。<b>画像はパブリックドメインの美術館所蔵作品</b>を仮に使用しています（寸法は実物の寸法です）。<br>
+    Sample data. Images are public-domain museum works used as placeholders, shown at their real dimensions.</div>
+
+  <footer>
+    <span>BARAKA</span>
+    <a href="index.html">ホーム</a>
+    <a href="works.html">すべての作品</a>
+    <a href="trade.html">法人・設計の方へ</a>
+  </footer>
+</div>
+
+<script>
+const W=[
+ {no:"BK-021",t:"立つ",w:2717,h:2133,f:"img/w7.jpg",sold:true},
+ {no:"BK-007",t:"波の記憶",w:2260,h:1715,f:"img/w6.jpg"},
+ {no:"BK-014",t:"朝の輪郭",w:2148,h:1312,f:"img/w5.jpg"},
+ {no:"BK-052",t:"海辺の家",w:1460,h:960,f:"img/w4.jpg"},
+ {no:"BK-032",t:"白い午後",w:1015,h:610,f:"img/w3.jpg"},
+ {no:"BK-045",t:"堆積",w:946,h:511,f:"img/w2.jpg"},
+ {no:"BK-061",t:"小さな庭",w:364,h:250,f:"img/w1.jpg"}
+];
+const mm=n=>Math.round(n).toLocaleString("en-US");
+document.getElementById("strip").innerHTML = W.map(k=>
+  '<figure style="--w:'+k.w+';--h:'+k.h+'">'+
+    '<div class="art"><img src="'+k.f+'" width="'+k.w+'" height="'+k.h+'" alt="'+k.t+'" loading="lazy" decoding="async">'+
+    (k.sold?'<span class="sold">完売</span>':'')+'</div>'+
+    '<figcaption><span class="jt">'+k.t+'</span>H'+mm(k.h)+' × W'+mm(k.w)+' mm</figcaption>'+
+  '</figure>').join("");
+</script>
+</body>
+</html>

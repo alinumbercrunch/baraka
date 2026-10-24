@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>作家一覧 — Baraka</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Shippori+Mincho:wght@400;600&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="style.css">
+<style>
+.arow{display:flex; gap:clamp(20px,4vw,48px); border-bottom:1px solid var(--rule);
+  padding-block:30px; flex-wrap:wrap; align-items:flex-start}
+.arow .who{flex:0 0 230px}
+.arow h2{font-family:var(--min); font-weight:600; font-size:clamp(24px,3.4vw,32px); line-height:1.25}
+.arow h2 a{text-decoration:none; border-bottom:2px solid var(--rule); padding-bottom:2px}
+.arow h2 a:hover{border-bottom-color:var(--ink)}
+.arow .ro{font-family:var(--mono); font-size:11px; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--mute); margin-top:8px}
+.arow p{margin:8px 0 0; font-size:13px; color:var(--mute)}
+.mstrip{flex:1 1 260px; display:flex; gap:12px; align-items:flex-end; flex-wrap:wrap; min-width:0}
+.mini{display:block; flex:0 0 auto}
+.mini img{display:block; height:92px; width:auto; border:1px solid rgba(0,0,0,.28); background:var(--sheet)}
+.mini:hover img{outline:2px solid var(--ink); outline-offset:4px}
+</style>
+</head>
+<body>
+<div class="protobar">これは<b>プロトタイプ</b>です。作家名・作品名・価格はすべて架空のサンプルです。画像はパブリックドメインの美術館所蔵作品を仮に使用しています。<span class="pe">This is a prototype. Artists, titles and prices are fictional samples.</span></div>
+
+<div class="wrap">
+  <nav class="bar">
+    <a class="mark" href="index.html">BARAKA<small>バラカ</small></a>
+    <a href="index.html">ホーム</a>
+    <a href="works.html">すべての作品</a>
+    <a href="artists.html" aria-current="page">作家一覧</a>
+    <a href="trade.html">法人の方へ</a>
+  </nav>
+  <header style="padding-block:30px 0">
+    <span class="en">Artists</span>
+    <h1 class="worktitle" style="font-size:clamp(22px,3vw,30px);margin-top:4px">作家一覧</h1>
+    <p class="plain" style="margin-top:12px">毎月ひとり、作家を紹介しています。<b>紹介が終わったあとも、作品はそのまま販売しています。</b></p>
+    <p class="en">One artist is featured each month. Their work stays for sale afterwards.</p>
+  </header>
+
+    <article class="arow">
+      <div class="who">
+        <span class="en">2026.10　今月の作家</span>
+        <h2><a href="artist-mori.html">森　柊</a></h2>
+        <div class="ro">Mori Shū ／ 藤沢</div>
+        <p>3点 掲載中</p>
+      </div>
+      <div class="mstrip"><a href="bk014.html" class="mini"><img src="img/w5.jpg" width="2148" height="1312" alt="朝の輪郭" loading="lazy" decoding="async"></a><a href="bk052.html" class="mini"><img src="img/w4.jpg" width="1460" height="960" alt="海辺の家" loading="lazy" decoding="async"></a><a href="bk061.html" class="mini"><img src="img/w1.jpg" width="364" height="250" alt="小さな庭" loading="lazy" decoding="async"></a></div>
+    </article>
+    <article class="arow">
+      <div class="who">
+        <span class="en">2026.09</span>
+        <h2><a href="artist-nakamura.html">中村あかり</a></h2>
+        <div class="ro">Nakamura Akari ／ 鎌倉</div>
+        <p>2点 掲載中</p>
+      </div>
+      <div class="mstrip"><a href="bk007.html" class="mini"><img src="img/w6.jpg" width="2260" height="1715" alt="波の記憶" loading="lazy" decoding="async"></a><a href="bk032.html" class="mini"><img src="img/w3.jpg" width="1015" height="610" alt="白い午後" loading="lazy" decoding="async"></a></div>
+    </article>
+    <article class="arow">
+      <div class="who">
+        <span class="en">2026.08</span>
+        <h2><a href="artist-komatsu.html">小松　杏</a></h2>
+        <div class="ro">Komatsu An ／ 茅ヶ崎</div>
+        <p>1点 掲載中</p>
+      </div>
+      <div class="mstrip"><a href="bk045.html" class="mini"><img src="img/w2.jpg" width="946" height="511" alt="堆積" loading="lazy" decoding="async"></a></div>
+    </article>
+    <article class="arow">
+      <div class="who">
+        <span class="en">2026.07</span>
+        <h2><a href="artist-ishii.html">石井悠真</a></h2>
+        <div class="ro">Ishii Yūma ／ 逗子</div>
+        <p>0点 掲載中（1点 完売）</p>
+      </div>
+      <div class="mstrip"><a href="bk021.html" class="mini"><img src="img/w7.jpg" width="2717" height="2133" alt="立つ" loading="lazy" decoding="async"></a></div>
+    </article>
+
+  <div class="note"><b>プロトタイプ</b>／Prototype. 作家名・作品名・価格はサンプルです。<b>画像はパブリックドメインの美術館所蔵作品</b>を仮に使用しています（寸法は実物の寸法です）。</div>
+
+  <footer>
+    <span>BARAKA</span>
+    <a href="works.html">すべての作品</a>
+    <a href="artists.html">作家一覧</a>
+    <a href="trade.html">法人の方へ</a>
+  </footer>
+</div>
+</body>
+</html>

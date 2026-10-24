@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>石井悠真 — Baraka</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Shippori+Mincho:wght@400;600&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="style.css">
+<style>
+.head{padding-block:44px 0}
+.head h1{font-family:var(--min); font-weight:600; letter-spacing:.05em;
+  font-size:clamp(40px,10vw,92px); line-height:1.1; margin-top:10px}
+.head .ro{font-family:var(--mono); font-size:12px; letter-spacing:.22em; text-transform:uppercase;
+  color:var(--mute); margin-top:14px}
+.head .place{font-size:14px; color:var(--mute); margin-top:4px}
+.strip{display:flex; align-items:flex-end; gap:clamp(18px,3.5vw,46px); overflow-x:auto;
+  scroll-snap-type:x proximity; border-bottom:1px solid var(--ink); padding:30px 2px 0; margin-top:24px}
+.strip figure{flex:0 0 auto; scroll-snap-align:center; margin:0; width:calc(var(--w) * var(--mmpx) * 1px)}
+.strip .art{width:100%; height:calc(var(--h) * var(--mmpx) * 1px)}
+.strip a{display:block; text-decoration:none}
+.strip a:hover .art{outline:2px solid var(--ink); outline-offset:5px}
+.strip figcaption{font-family:var(--mono); font-size:9.5px; color:var(--mute); margin-top:7px; white-space:nowrap}
+.strip .jt{font-family:var(--jp); font-size:12px; color:var(--ink); display:block}
+.words{font-family:var(--min); font-size:clamp(15.5px,1.9vw,18px); line-height:2.1; max-width:26em; margin-top:20px}
+</style>
+</head>
+<body>
+<div class="protobar">これは<b>プロトタイプ</b>です。作家名・作品名・価格はすべて架空のサンプルです。画像はパブリックドメインの美術館所蔵作品を仮に使用しています。<span class="pe">This is a prototype. Artists, titles and prices are fictional samples.</span></div>
+
+<div class="wrap">
+  <nav class="bar">
+    <a class="mark" href="index.html">BARAKA<small>バラカ</small></a>
+    <a href="index.html">ホーム</a>
+    <a href="works.html">すべての作品</a>
+    <a href="artists.html" aria-current="page">作家一覧</a>
+    <a href="trade.html">法人の方へ</a>
+  </nav>
+  <a class="back" href="artists.html" style="display:inline-block;margin-top:22px;font-size:13px;color:var(--mute);text-decoration:none;border-bottom:1px solid var(--rule)">← 作家一覧にもどる</a>
+  <header class="head">
+    <span class="en">2026.07 に紹介した作家 ／ Featured 2026.07</span>
+    <h1>石井悠真</h1>
+    <div class="ro">Ishii Yūma</div>
+    <div class="place">1985年生まれ ／ 神奈川県逗子</div>
+  </header>
+  <p class="words">プロフィールと制作の言葉は準備中です。作品は引き続き販売しています。</p>
+  <section style="border-top:1px solid var(--rule);margin-top:40px;padding-top:24px">
+    <span class="en">Works, at true relative size</span>
+    <h2 class="worktitle">作品</h2>
+    <div class="strip"><figure style="--w:2717;--h:2133"><a href="bk021.html"><div class="art"><img src="img/w7.jpg" width="2717" height="2133" alt="立つ" loading="lazy" decoding="async"><span class="sold">完売</span></div></a><figcaption><span class="jt">立つ</span>H2,133 × W2,717 mm</figcaption></figure></div>
+    <p class="en" style="margin-top:8px">← scroll →</p>
+  </section>
+  <div class="contact" style="margin-top:34px">
+    <span class="en">Enquire</span><b>作品について</b>
+    <span class="sel">hello@baraka.art</span>
+    <span class="tax">表示価格はすべて税込です。2週間のお取り置きができます。</span>
+  </div>
+  <div class="note"><b>プロトタイプ</b>／Prototype. 作家名・作品名・価格はサンプルです。<b>画像はパブリックドメインの美術館所蔵作品</b>を仮に使用しています（寸法は実物の寸法です）。</div>
+
+  <footer>
+    <span>BARAKA</span>
+    <a href="works.html">すべての作品</a>
+    <a href="artists.html">作家一覧</a>
+    <a href="trade.html">法人の方へ</a>
+  </footer>
+</div>
+</body>
+</html>

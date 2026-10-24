@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>作品を見る — Baraka</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Shippori+Mincho:wght@400;600&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="style.css">
+<style>
+.wallbox{border-top:1px solid var(--ink); border-bottom:1px solid var(--rule);
+  padding-block:16px; margin-top:24px}
+.wallbox h2{font-size:15px}
+.presets{display:flex; flex-wrap:wrap; gap:7px; margin-top:10px}
+.presets button{font-size:12.5px; padding:6px 12px; background:transparent;
+  color:var(--ink); border:1px solid var(--rule)}
+.presets button[aria-pressed="true"]{background:var(--ink); color:var(--sheet); border-color:var(--ink)}
+.sizerow{display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-top:12px;
+  font-family:var(--mono); font-size:13px}
+.col{margin-top:10px}
+.item{display:flex; gap:clamp(20px,4vw,52px); align-items:flex-end;
+  padding-block:44px; border-bottom:1px solid var(--rule);
+  content-visibility:auto; contain-intrinsic-size:auto 560px}
+.col:has(.item:hover) .item:not(:hover) .art{opacity:.45}
+.facts{flex:1 1 200px; min-width:0; padding-bottom:4px}
+.facts .t{font-size:17px; font-weight:500}
+.facts .a{font-size:12.5px; color:var(--mute)}
+.facts .d{font-family:var(--mono); font-size:11.5px; color:var(--dim); margin-top:6px}
+.facts .p{font-family:var(--mono); font-size:14px; margin-top:2px}
+.facts .v{font-family:var(--mono); font-size:11px; line-height:1.65; margin-top:9px;
+  color:var(--dim); white-space:pre-line; border-left:2px solid var(--dim); padding-left:9px}
+.facts .v.no{color:var(--shu); border-left-color:var(--shu)}
+.add{margin-top:12px; border:1px solid var(--rule); background:transparent; color:var(--ink);
+  font-size:12.5px; padding:5px 12px}
+.add[aria-pressed="true"]{background:var(--ink); color:var(--sheet); border-color:var(--ink)}
+.cmp{display:flex; align-items:flex-end; gap:clamp(14px,3vw,40px); overflow-x:auto;
+  border-bottom:1px solid var(--ink); padding:28px 2px 0; margin-top:14px}
+.cmp div{flex:0 0 auto; position:relative;
+  width:calc(var(--w) * var(--mmpx) * 1px); height:calc(var(--h) * var(--mmpx) * 1px);
+  border:1px solid rgba(0,0,0,.28)}
+.cmp div i{position:absolute; inset:0}
+.cmp div b{position:absolute; bottom:calc(100% + 5px); left:0; font-family:var(--mono);
+  font-size:9.5px; color:var(--mute); white-space:nowrap; font-weight:400}
+.selrow{display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+  border-bottom:1px solid var(--rule); padding-block:10px; font-size:13.5px}
+.selrow .nm{flex:1 1 150px; min-width:0}
+.total{display:flex; justify-content:space-between; border-top:1px solid var(--ink);
+  padding-top:11px; margin-top:6px; font-family:var(--mono); font-size:15px}
+.empty{color:var(--mute); font-size:13.5px; padding-block:14px}
+.tools{display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-top:22px}
+.tools .tl{font-size:12px; color:var(--mute); margin-right:4px}
+.tools button{font-size:13px; padding:7px 14px; background:transparent; color:var(--ink);
+  border:1px solid var(--rule)}
+.tools button:hover{border-color:var(--ink)}
+.tools button b{font-family:var(--mono); font-weight:500}
+.artlink{display:block; flex:0 0 auto; text-decoration:none}
+.artlink:hover .art{outline:2px solid var(--ink); outline-offset:5px}
+.more{display:inline-block; margin-top:10px; font-size:13px; text-decoration:none;
+  border-bottom:1px solid var(--rule); padding-bottom:1px; width:fit-content}
+.more:hover{border-bottom-color:var(--ink)}
+.facts{display:flex; flex-direction:column; align-items:flex-start}
+.totop{display:inline-block; margin-top:26px; font-size:12.5px; color:var(--mute);
+  text-decoration:none; border-bottom:1px solid var(--rule)}
+.totop:hover{color:var(--ink); border-bottom-color:var(--ink)}
+.close{margin-left:auto; background:none; border:0; color:var(--mute); font-size:12px;
+  border-bottom:1px solid var(--rule); padding:2px 0}
+.close:hover{color:var(--ink); border-bottom-color:var(--ink)}
+.bands{display:flex; gap:7px; flex-wrap:wrap; margin:10px 0 14px}
+.bands button{font-size:12.5px; padding:5px 12px; background:transparent; color:var(--ink);
+  border:1px solid var(--rule)}
+.bands button[aria-pressed="true"]{background:var(--ink); color:var(--sheet); border-color:var(--ink)}
+.drop{background:none; border:0; color:var(--mute); font-size:15px; line-height:1; padding:0 2px}
+.drop:hover{color:var(--shu)}
+.actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px; align-items:center}
+.actions button{border:1px solid var(--ink); background:transparent; color:var(--ink);
+  font-size:13px; padding:8px 16px}
+.actions button:hover{background:var(--ink); color:var(--sheet)}
+.said{font-size:12px; color:var(--dim)}
+.tax{font-size:12px; color:var(--mute); margin-top:6px}
+.artist{margin-top:46px; border-top:1px solid var(--ink); padding-top:30px}
+.artist h3{font-family:var(--min); font-size:clamp(32px,7vw,56px); font-weight:600;
+  letter-spacing:.04em; line-height:1.2}
+.romaji{font-family:var(--mono); font-size:11px; letter-spacing:.2em; color:var(--mute); text-transform:uppercase}
+.statement{font-family:var(--min); max-width:26em; margin-top:18px; line-height:2.1;
+  font-size:clamp(15.5px,1.8vw,18px)}
+.strip{display:flex; align-items:flex-end; gap:clamp(16px,3vw,44px); overflow-x:auto;
+  scroll-snap-type:x proximity; overscroll-behavior-x:contain;
+  border-bottom:1px solid var(--ink); padding:26px 2px 0; margin-top:26px}
+.strip > div{flex:0 0 auto; scroll-snap-align:center; position:relative;
+  width:calc(var(--w) * var(--mmpx) * 1px); height:calc(var(--h) * var(--mmpx) * 1px);
+  border:1px solid rgba(0,0,0,.28)}
+.strip > div i{position:absolute; inset:0}
+.strip > div b{position:absolute; bottom:calc(100% + 5px); left:0; font-family:var(--mono);
+  font-size:9px; color:var(--mute); font-weight:400; white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="protobar">これは<b>プロトタイプ</b>です。作家名・作品名・価格はすべて架空のサンプルです。画像はパブリックドメインの美術館所蔵作品を仮に使用しています。<span class="pe">This is a prototype. Artists, titles and prices are fictional samples.</span></div>
+
+<div class="wrap" id="top">
+  <nav class="bar">
+    <a class="mark" href="index.html">BARAKA<small>バラカ</small></a>
+    <a href="index.html">ホーム</a>
+    <a href="works.html" aria-current="page">すべての作品</a>
+    <a href="artists.html">作家一覧</a>
+    <a href="trade.html">法人の方へ</a>
+  </nav>
+
+  <header style="padding-block:30px 0">
+    <span class="en">All works · 4 artists</span>
+    <h1 class="worktitle" style="font-size:clamp(22px,3vw,30px);margin-top:4px">すべての作品</h1>
+    <p class="plain" style="margin-top:12px">いま販売している作品です。<b>紹介が終わった作家の作品も、そのまま販売しています。</b>すべて実際の大きさのまま並べています。小さい作品は、小さく見えます。<br>
+      気になる作品は<b>押すと詳しいページ</b>がひらきます。</p>
+  </header>
+
+  <section class="wallbox" id="wallbox">
+    <h2>① かける壁の寸法を入れてください</h2>
+    <p style="font-size:13.5px;color:var(--mute);margin:6px 0 0;line-height:1.8">入れると、どの作品が収まるか、どの高さに掛ければよいかが各作品の下に出ます。だいたいで結構です。分からなければボタンをどれか押してください。</p>
+    <div class="presets" id="presets"></div>
+    <div class="sizerow">
+      幅 <input type="number" id="wW" aria-label="壁の幅 mm" min="600" max="12000" step="10" placeholder="3400">
+      × 高 <input type="number" id="wH" aria-label="壁の高さ mm" min="1800" max="4000" step="10" placeholder="2400">
+      <span style="font-family:var(--jp);font-size:12px;color:var(--mute)">mm</span>
+    </div>
+  </section>
+
+  <div class="tools">
+    <span class="tl">② 見かた</span>
+    <button type="button" id="bList">一覧（表）で見る</button>
+    <button type="button" id="bSize">大きさをくらべる</button>
+    <button type="button" id="bSel">選んだ作品 <b>0</b></button>
+  </div>
+
+  <div class="col" id="col"></div>
+
+  <section class="sec" id="sizeview" hidden>
+    <header><b>大きさをくらべる</b><span class="en">Size comparison — not a hanging plan</span><button type="button" class="close" data-close="sizeview">閉じる ×</button></header>
+    <div class="cmp" id="cmp"></div>
+    <p class="en" style="margin-top:8px">床に並べて比べたものです ／ lined up on the floor to compare</p>
+  </section>
+
+  <section class="sec" id="listview" hidden>
+    <header><b>一覧</b><span class="en">All works</span><button type="button" class="close" data-close="listview">閉じる ×</button></header><div class="bands" id="bands"></div>
+    <div class="scroller"><table>
+      <thead><tr>
+        <th><span class="en">No.</span>番号</th><th><span class="en">Artist</span>作家</th>
+        <th><span class="en">Title</span>作品名</th><th><span class="en">Size mm</span>寸法</th>
+        <th><span class="en">Medium</span>技法</th><th><span class="en">Weight</span>重量</th>
+        <th><span class="en">Fixing</span>取付</th><th><span class="en">Price</span>価格</th>
+      </tr></thead><tbody id="tb"></tbody>
+    </table></div>
+  </section>
+
+  <section class="sec" id="selview" hidden>
+    <header><b>選んだ作品（お問い合わせ用リスト）</b><span class="en">Your selection — rooms, totals, one enquiry</span><button type="button" class="close" data-close="selview">閉じる ×</button></header>
+    <div id="selbody"></div>
+  </section>
+
+
+  <div class="doors" style="margin-top:34px"><a class="door" href="artists.html">作家一覧を見る</a></div>
+
+  <a class="totop" href="#top">↑ ページの先頭にもどる</a>
+
+  <div class="note"><b>プロトタイプ</b>／Prototype. 作家名・作品名・価格はサンプルです。<b>画像はパブリックドメインの美術館所蔵作品</b>を仮に使用しています（寸法は実物の寸法です）。<br>
+    Images are public-domain museum works used as placeholders. The dimensions shown are their real dimensions.</div>
+
+  <footer>
+    <span>BARAKA</span>
+    <a href="index.html">ホーム</a>
+    <a href="trade.html">法人・設計の方へ</a>
+  </footer>
+</div>
+
+<script>
+const W=[
+ {no:"BK-014",t:"朝の輪郭",a:"森　柊",ap:"artist-mori.html",mon:"2026.10",w:2148,h:1312,d:45,med:"油彩・キャンバス",kg:9.0,fix:"アンカー必要",price:320000,f:"img/w5.jpg"},
+ {no:"BK-052",t:"海辺の家",a:"森　柊",ap:"artist-mori.html",mon:"2026.10",w:1460,h:960,d:35,med:"油彩・キャンバス",kg:4.5,fix:"アンカー必要",price:198000,f:"img/w4.jpg"},
+ {no:"BK-061",t:"小さな庭",a:"森　柊",ap:"artist-mori.html",mon:"2026.10",w:364,h:250,d:20,med:"水彩・紙",kg:0.4,fix:"フック可",price:48000,f:"img/w1.jpg"},
+ {no:"BK-007",t:"波の記憶",a:"中村あかり",ap:"artist-nakamura.html",mon:"2026.09",w:2260,h:1715,d:50,med:"アクリル・麻",kg:12.4,fix:"下地補強が必要",price:420000,f:"img/w6.jpg"},
+ {no:"BK-032",t:"白い午後",a:"中村あかり",ap:"artist-nakamura.html",mon:"2026.09",w:1015,h:610,d:30,med:"油彩・パネル",kg:2.0,fix:"アンカー必要",price:128000,f:"img/w3.jpg"},
+ {no:"BK-045",t:"堆積",a:"小松　杏",ap:"artist-komatsu.html",mon:"2026.08",w:946,h:511,d:25,med:"ミクストメディア",kg:1.5,fix:"フック可",price:96000,f:"img/w2.jpg"},
+ {no:"BK-021",t:"立つ",a:"石井悠真",ap:"artist-ishii.html",mon:"2026.07",w:2717,h:2133,d:60,med:"岩絵具・和紙",kg:18.5,fix:"下地補強が必要",price:680000,f:"img/w7.jpg",sold:true}
+];
+const PRESETS=[{l:"玄関",w:1800,h:2400},{l:"ソファ上",w:3400,h:2400},{l:"寝室",w:2700,h:2400},
+  {l:"会議室",w:4500,h:2500},{l:"内見用の空室",w:3600,h:2400}];
+const mm=n=>Math.round(n).toLocaleString("en-US"), yen=n=>"¥"+n.toLocaleString("en-US");
+const pic=(k,eager)=>'<img src="'+k.f+'" width="'+k.w+'" height="'+k.h+'" alt="'+k.t+'（'+k.a+'）"'+
+  (eager?' fetchpriority="high" decoding="async"':' loading="lazy" decoding="async"')+'>';
+const wWi=document.getElementById("wW"), wHi=document.getElementById("wH");
+const hasWall=()=>(+wWi.value>0 && +wHi.value>0);
+const wallW=()=>+wWi.value||3400, wallH=()=>+wHi.value||2400;
+let picked={};
+
+function advise(k){
+  if(!hasWall()) return null;
+  const Wd=wallW(), Hd=wallH();
+  const overW=k.w-Wd, tooTall=k.h>(Hd-450);
+  if(overW>0||tooTall) return {no:true,txt:"→ この壁には大きすぎます"+
+    (overW>0?"\n幅が "+mm(overW)+" mm 超過":"")+(tooTall?"\n高さが足りません":"")};
+  let c=1500;
+  if(c+k.h/2 > Hd-150) c=Math.round((Hd-150-k.h/2)/10)*10;
+  const bottom=Math.round(c-k.h/2);
+  return {no:false, txt:"壁幅の "+Math.round(k.w/Wd*100)+"％ ／ 左右の余白 各"+mm((Wd-k.w)/2)+" mm\n"+
+    (c===1500 ? "中心 床から 1,500 mm ／ 下端 "+mm(bottom)+" mm"
+              : "掛け位置を少し下げれば収まります（中心 "+mm(c)+" mm ／ 下端 "+mm(bottom)+" mm）")+
+    "\n→ 収まります"};
+}
+function renderCol(){
+  document.getElementById("col").innerHTML = W.map((k,i)=>{
+    const v=advise(k);
+    const page = k.no.replace("-","").toLowerCase()+".html";
+    return '<article class="item">'+
+      '<a class="artlink" href="'+page+'">'+
+      '<div class="art"'+(k.hero?' style="--w:'+k.w+';--h:'+k.h+';view-transition-name:hero-work"':' style="--w:'+k.w+';--h:'+k.h+'"')+'>'+
+        pic(k, i===0)+(k.sold?'<span class="sold">完売</span>':'')+'</div></a>'+
+      '<div class="facts"><span class="t">'+k.t+'</span>'+
+      '<span class="a"><a href="'+k.ap+'">'+k.a+'</a> <span class="mute">／ '+k.mon+'</span></span>'+
+      '<span class="d">H'+mm(k.h)+' × W'+mm(k.w)+' × D'+k.d+' mm'+' ／ '+k.kg.toFixed(1)+' kg</span>'+
+      '<span class="p">'+yen(k.price)+'</span>'+
+      '<a class="more" href="'+page+'">くわしく見る →</a>'+
+      (v?'<span class="v'+(v.no?' no':'')+'">'+v.txt+'</span>':'')+
+      (k.sold?'':'<button type="button" class="add" data-no="'+k.no+'" aria-pressed="'+(!!picked[k.no])+'" title="あとでまとめてお問い合わせできます">'+(picked[k.no]?'リストに追加済み':'+ リストに入れる')+'</button>')+
+      '</div></article>';
+  }).join("");
+}
+document.getElementById("col").addEventListener("click",e=>{
+  const b=e.target.closest(".add"); if(!b) return;
+  const n=b.dataset.no; if(picked[n]) delete picked[n]; else picked[n]={room:""};
+  save(); renderCol(); renderSel(); chips();
+});
+function renderCmp(){
+  document.getElementById("cmp").innerHTML=[...W].sort((a,b)=>b.h-a.h).map(k=>
+    '<div style="--w:'+k.w+';--h:'+k.h+'"><b>'+mm(k.h)+' mm</b>'+pic(k)+'</div>').join("");
+}
+let band=null;
+const BANDS=[{l:"すべて",min:0,max:1e9},{l:"〜10万円",min:0,max:100000},
+  {l:"10〜20万円",min:100000,max:200000},{l:"20〜30万円",min:200000,max:300000}];
+const bandsEl=document.getElementById("bands");
+bandsEl.innerHTML=BANDS.map((b,i)=>'<button type="button" data-b="'+i+'" aria-pressed="'+(i===0)+'">'+b.l+'</button>').join("");
+bandsEl.onclick=e=>{ const b=e.target.closest("button"); if(!b) return;
+  band=+b.dataset.b===0?null:BANDS[+b.dataset.b];
+  [...bandsEl.children].forEach(x=>x.setAttribute("aria-pressed",String(x===b)));
+  renderTable(); };
+function renderTable(){
+const rows = W.filter(k=>!band || (k.price>=band.min && k.price<band.max));
+document.getElementById("tb").innerHTML=rows.map(k=>
+ '<tr><td class="fig">'+k.no+'</td><td><a href="'+k.ap+'">'+k.a+'</a></td><td>'+k.t+(k.sold?' <span class="mute">完売</span>':'')+'</td>'+
+ '<td class="fig">'+mm(k.h)+' × '+mm(k.w)+' × '+k.d+'</td><td>'+k.med+'</td>'+
+ '<td class="fig">'+k.kg.toFixed(1)+' kg</td><td class="mute">'+k.fix+'</td>'+
+ '<td class="fig">'+yen(k.price)+'</td></tr>').join("");
+}
+renderTable();
+document.getElementById("strip").innerHTML=W.filter(k=>k.a==="森　柊")
+  .map(k=>'<div style="--w:'+k.w+';--h:'+k.h+'"><b>'+mm(k.h)+' mm</b>'+pic(k)+'</div>').join("");
+
+function renderSel(){
+  const keys=Object.keys(picked), host=document.getElementById("selbody");
+  if(!keys.length){ host.innerHTML='<p class="empty">まだ選ばれていません。作品の「選ぶ」を押すと、ここに部屋ごとにまとめられます。</p>'; return }
+  let sum=0;
+  const rows=keys.map(n=>{
+    const k=W.find(x=>x.no===n); sum+=k.price;
+    return '<div class="selrow"><button type="button" class="drop" data-drop="'+n+'" aria-label="外す">×</button>'+
+      '<span class="fig" style="font-size:11.5px">'+k.no+'</span>'+
+      '<span class="nm">'+k.t+' <span class="mute">'+k.a+'</span></span>'+
+      '<input type="text" data-room="'+n+'" aria-label="部屋名" placeholder="部屋名（例 201号室）" value="'+(picked[n].room||"")+'">'+
+      '<span class="fig">'+mm(k.h)+'×'+mm(k.w)+'</span><span class="fig">'+k.kg.toFixed(1)+' kg</span>'+
+      '<span class="fig">'+yen(k.price)+'</span></div>';
+  }).join("");
+  host.innerHTML=rows+'<div class="total"><span>'+keys.length+' 点 ／ 作品代金のみ</span><span>'+yen(sum)+'</span></div>'+
+    '<p class="tax">表示価格はすべて税込です。配送・設置費は別途お見積りします。適格請求書（インボイス）を発行できます。</p>'+
+    '<div class="actions"><button type="button" id="copyList">この内容をコピー</button>'+
+    '<span class="said" id="said"></span>'+
+    '<span style="font-size:13px">コピーして <span class="sel">hello@baraka.art</span> へお送りください。</span></div>';
+  host.querySelectorAll("input[data-room]").forEach(i=>
+    i.addEventListener("input",()=>{ picked[i.dataset.room].room=i.value; save() }));
+  host.querySelectorAll("button[data-drop]").forEach(b=>
+    b.addEventListener("click",()=>{ delete picked[b.dataset.drop]; save(); renderCol(); renderSel(); chips() }));
+  const cp=document.getElementById("copyList");
+  if(cp) cp.addEventListener("click",()=>{
+    const lines=["BARAKA ／ 選んだ作品",""].concat(keys.map(n=>{
+      const k=W.find(x=>x.no===n);
+      return [picked[n].room||"（部屋名なし）", k.no, k.t, k.a,
+        "H"+mm(k.h)+"×W"+mm(k.w)+"×D"+k.d+"mm", k.kg.toFixed(1)+"kg", k.fix, yen(k.price)].join(" ／ ");
+    })).concat(["", keys.length+" 点　合計 "+yen(sum)+"（税込・作品代金のみ）",
+      "配送・設置費は別途お見積り。適格請求書を発行できます。"]).join("\n");
+    const done=ok=>{ const s=document.getElementById("said");
+      if(s){ s.textContent = ok ? "コピーしました" : "下のテキストを選択してコピーしてください"; } };
+    try{
+      navigator.clipboard.writeText(lines).then(()=>done(true)).catch(()=>fallback());
+    }catch(e){ fallback() }
+    function fallback(){
+      const ta=document.createElement("textarea"); ta.value=lines;
+      ta.style.cssText="width:100%;height:160px;margin-top:10px;font-family:var(--mono);font-size:12px";
+      cp.parentNode.appendChild(ta); ta.select(); done(false);
+    }
+  });
+}
+function chips(){
+  
+  document.querySelector("#bSel b").textContent = Object.keys(picked).length;
+}
+function show(id){ ["sizeview","listview","selview"].forEach(v=>{ document.getElementById(v).hidden=(v!==id) }) }
+document.addEventListener("click",e=>{ const b=e.target.closest(".close"); if(!b) return;
+  document.getElementById(b.dataset.close).hidden=true;
+  window.scrollTo({top:0,behavior:"smooth"}); });
+document.getElementById("bSize").onclick=()=>{ show("sizeview"); document.getElementById("sizeview").scrollIntoView({behavior:"smooth"}) };
+document.getElementById("bList").onclick=()=>{ show("listview"); document.getElementById("listview").scrollIntoView({behavior:"smooth"}) };
+document.getElementById("bSel").onclick =()=>{ show("selview");  document.getElementById("selview").scrollIntoView({behavior:"smooth"}) };
+
+const pe=document.getElementById("presets");
+pe.innerHTML=PRESETS.map((p,i)=>'<button type="button" data-i="'+i+'" aria-pressed="false">'+p.l+'</button>').join("");
+pe.onclick=e=>{ const b=e.target.closest("button"); if(!b) return;
+  const p=PRESETS[+b.dataset.i]; wWi.value=p.w; wHi.value=p.h;
+  [...pe.children].forEach(x=>x.setAttribute("aria-pressed",String(x===b)));
+  renderCol(); chips(); save(); };
+function onSize(){ [...pe.children].forEach(x=>x.setAttribute("aria-pressed","false")); renderCol(); chips(); save() }
+wWi.addEventListener("input",onSize); wHi.addEventListener("input",onSize);
+function save(){ try{ localStorage.setItem("bk3",JSON.stringify({w:wWi.value,h:wHi.value,p:picked})) }catch(e){} }
+try{ const s=JSON.parse(localStorage.getItem("bk3")||"{}");
+  if(s.w) wWi.value=s.w; if(s.h) wHi.value=s.h; if(s.p&&typeof s.p==="object") picked=s.p;
+}catch(e){}
+if(location.hash==="#list") show("listview");
+renderCol(); renderCmp(); renderSel(); chips();
+</script>
+</body>
+</html>
