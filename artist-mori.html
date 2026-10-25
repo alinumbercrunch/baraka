@@ -50,6 +50,8 @@
 .hold{border:1px solid var(--ink); padding:16px 18px; margin-top:24px; max-width:30em}
 .hold b{display:block; font-weight:500; font-size:15px; margin:4px 0 7px}
 .hold p{margin:0; font-size:13.5px; line-height:1.9; color:var(--mute)}
+#strip a{text-decoration:none; color:inherit; display:block}
+#strip a:hover .art{outline:1.5px solid var(--ink); outline-offset:4px}
 </style>
 </head>
 <body>
@@ -64,6 +66,7 @@
     <a href="trade.html">法人の方へ</a>
     <a href="enquiry.html"><b>お問い合わせ</b></a>
   </nav>
+  <a class="back" href="artists.html" style="display:inline-block;margin-top:22px;font-size:13px;color:var(--mute);text-decoration:none;border-bottom:1px solid var(--rule)">← 作家一覧にもどる</a>
 
   <header class="head">
     <span class="en">今月の作家 ／ This month's artist ・ 2026.10</span>
@@ -181,7 +184,11 @@
     <span>BARAKA</span>
     <a href="index.html">ホーム</a>
     <a href="works.html">すべての作品</a>
-    <a href="trade.html">法人・設計の方へ</a>
+    <a href="artists.html">作家一覧</a>
+    <a href="trade.html">法人の方へ</a>
+    <a href="join.html">作家の方へ</a>
+    <a href="enquiry.html">お問い合わせ</a>
+    <a href="about.html">バラカについて</a>
   </footer>
 </div>
 
@@ -198,9 +205,11 @@ const W=[
 const mm=n=>Math.round(n).toLocaleString("en-US");
 document.getElementById("strip").innerHTML = W.map(k=>
   '<figure style="--w:'+k.w+';--h:'+k.h+'">'+
+    '<a href="'+k.no.replace("-","").toLowerCase()+'.html">'+
     '<div class="art"><img src="'+k.f+'" width="'+k.w+'" height="'+k.h+'" alt="'+k.t+'" loading="lazy" decoding="async">'+
     (k.sold?'<span class="sold">完売</span>':'')+'</div>'+
     '<figcaption><span class="jt">'+k.t+'</span>H'+mm(k.h)+' × W'+mm(k.w)+' mm</figcaption>'+
+    '</a>'+
   '</figure>').join("");
 </script>
 </body>

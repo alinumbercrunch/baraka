@@ -168,7 +168,11 @@
   <footer>
     <span>BARAKA</span>
     <a href="index.html">ホーム</a>
-    <a href="trade.html">法人・設計の方へ</a>
+    <a href="artists.html">作家一覧</a>
+    <a href="trade.html">法人の方へ</a>
+    <a href="join.html">作家の方へ</a>
+    <a href="enquiry.html">お問い合わせ</a>
+    <a href="about.html">バラカについて</a>
   </footer>
 </div>
 
@@ -247,9 +251,6 @@ document.getElementById("tb").innerHTML=rows.map(k=>
  '<td class="fig">'+yen(k.price)+'</td></tr>').join("");
 }
 renderTable();
-document.getElementById("strip").innerHTML=W.filter(k=>k.a==="森　柊")
-  .map(k=>'<div style="--w:'+k.w+';--h:'+k.h+'"><b>'+mm(k.h)+' mm</b>'+pic(k)+'</div>').join("");
-
 function renderSel(){
   const keys=Object.keys(picked), host=document.getElementById("selbody");
   if(!keys.length){ host.innerHTML='<p class="empty">まだ選ばれていません。作品の「選ぶ」を押すと、ここに部屋ごとにまとめられます。</p>'; return }
