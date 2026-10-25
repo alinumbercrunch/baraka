@@ -29,9 +29,8 @@
   max-width:26em; margin-top:18px}
 .words p{margin:0 0 1.4em}
 .steps{display:grid; grid-template-columns:repeat(auto-fit,minmax(215px,1fr)); gap:22px; margin-top:22px}
-.ph{aspect-ratio:4/3; border:1px dashed var(--rule); display:grid; place-items:center;
-  color:var(--mute); font-family:var(--mono); font-size:10.5px; letter-spacing:.08em;
-  text-align:center; padding:10px; background:var(--sheet)}
+.plab{display:block; font-size:13px; font-weight:500; color:var(--ink);
+  border-top:1px solid var(--ink); padding-top:9px}
 .steps p{margin:9px 0 0; font-size:13.5px; line-height:1.85; color:var(--mute)}
 .strip{display:flex; align-items:flex-end; gap:clamp(18px,3.5vw,48px); overflow-x:auto;
   scroll-snap-type:x proximity; overscroll-behavior-x:contain;
@@ -103,15 +102,15 @@
     <h2>制作について</h2>
     <div class="steps">
       <div>
-        <div class="ph">工房<br>STUDIO</div>
+        <span class="plab">工房</span>
         <p>藤沢の自宅兼工房。南向きの窓から入る光のもとで描いています。</p>
       </div>
       <div>
-        <div class="ph">手元<br>HANDS</div>
+        <span class="plab">手元</span>
         <p>絵具は自分で練ります。顔料と油の配合は季節で変えています。</p>
       </div>
       <div>
-        <div class="ph">表面<br>SURFACE</div>
+        <span class="plab">表面</span>
         <p>表面の厚みは最大で3mmほど。実物では光の当たり方で見え方が変わります。</p>
       </div>
     </div>
