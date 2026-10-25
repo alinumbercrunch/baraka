@@ -18,7 +18,7 @@
 .sizerow{display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-top:12px;
   font-family:var(--mono); font-size:13px}
 .col{margin-top:10px}
-.item{display:flex; gap:clamp(20px,4vw,52px); align-items:flex-end;
+.item{display:flex; flex-wrap:wrap; gap:clamp(20px,4vw,52px); align-items:flex-end;
   padding-block:44px; border-bottom:1px solid var(--rule);
   content-visibility:auto; contain-intrinsic-size:auto 560px}
 .col:has(.item:hover) .item:not(:hover) .art{opacity:.45}
