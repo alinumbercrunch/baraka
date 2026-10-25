@@ -110,12 +110,12 @@
   <header style="padding-block:30px 0">
     <span class="en">All works · 4 artists</span>
     <h1 class="worktitle" style="font-size:clamp(22px,3vw,30px);margin-top:4px">すべての作品</h1>
-    <p class="plain" style="margin-top:12px">いま販売している作品です。<b>紹介が終わった作家の作品も、そのまま販売しています。</b>すべて実際の大きさのまま並べています。小さい作品は、小さく見えます。<br>
-      気になる作品は<b>押すと詳しいページ</b>がひらきます。</p>
+    <p class="plain" style="margin-top:12px">いま販売している作品です。<b>紹介が終わった作家の作品も、そのまま販売しています。</b><br>
+      作品を押すと、詳しいページがひらきます。</p>
   </header>
 
   <section class="wallbox" id="wallbox">
-    <h2>① かける壁の寸法を入れてください</h2>
+    <h2>かける壁の寸法を入れてください（任意）</h2>
     <p style="font-size:13.5px;color:var(--mute);margin:6px 0 0;line-height:1.8">入れると、どの作品が収まるか、どの高さに掛ければよいかが各作品の下に出ます。だいたいで結構です。分からなければボタンをどれか押してください。</p>
     <div class="presets" id="presets"></div>
     <div class="sizerow">
@@ -126,25 +126,19 @@
   </section>
 
   <div class="tools">
-    <span class="tl">② 見かた</span>
+    <span class="tl">見かた</span>
     <button type="button" id="bList">一覧（表）で見る</button>
-    <button type="button" id="bSize">大きさをくらべる</button>
     <button type="button" id="bSel">選んだ作品 <b>0</b></button>
   </div>
 
   <section class="sec" style="padding-block:10px 0">
-    <header><b>大きさをくらべる</b><span class="en">Every work, one baseline, true relative size</span></header>
+    <header><b>大きさくらべ</b><span class="en">Every work on one baseline, at true relative size</span></header>
     <div class="cmp" id="frieze"></div>
-    <p class="en" style="margin-top:8px">床に並べて比べたものです ／ lined up on the floor to compare</p>
+    <p class="intro" style="margin-top:8px">床に並べて比べたものです。実際は壁に掛けます。押すと詳しいページがひらきます。</p>
   </section>
 
   <div class="col" id="col"></div>
 
-  <section class="sec" id="sizeview" hidden>
-    <header><b>大きさをくらべる</b><span class="en">Size comparison — not a hanging plan</span><button type="button" class="close" data-close="sizeview">閉じる ×</button></header>
-    <div class="cmp" id="cmp"></div>
-    <p class="en" style="margin-top:8px">床に並べて比べたものです ／ lined up on the floor to compare</p>
-  </section>
 
   <section class="sec" id="listview" hidden>
     <header><b>一覧</b><span class="en">All works</span><button type="button" class="close" data-close="listview">閉じる ×</button></header><div class="bands" id="bands"></div>
@@ -235,10 +229,6 @@ document.getElementById("col").addEventListener("click",e=>{
   const n=b.dataset.no; if(picked[n]) delete picked[n]; else picked[n]={room:""};
   save(); renderCol(); renderSel(); chips();
 });
-function renderCmp(){
-  document.getElementById("cmp").innerHTML=[...W].sort((a,b)=>b.h-a.h).map(k=>
-    '<div style="--w:'+k.w+';--h:'+k.h+'"><b>'+mm(k.h)+' mm</b>'+pic(k)+'</div>').join("");
-}
 let band=null;
 const BANDS=[{l:"すべて",min:0,max:1e9},{l:"〜10万円",min:0,max:100000},
   {l:"10〜20万円",min:100000,max:200000},{l:"20〜30万円",min:200000,max:300000}];
@@ -306,11 +296,10 @@ function chips(){
   
   document.querySelector("#bSel b").textContent = Object.keys(picked).length;
 }
-function show(id){ ["sizeview","listview","selview"].forEach(v=>{ document.getElementById(v).hidden=(v!==id) }) }
+function show(id){ ["listview","selview"].forEach(v=>{ document.getElementById(v).hidden=(v!==id) }) }
 document.addEventListener("click",e=>{ const b=e.target.closest(".close"); if(!b) return;
   document.getElementById(b.dataset.close).hidden=true;
   window.scrollTo({top:0,behavior:"smooth"}); });
-document.getElementById("bSize").onclick=()=>{ show("sizeview"); document.getElementById("sizeview").scrollIntoView({behavior:"smooth"}) };
 document.getElementById("bList").onclick=()=>{ show("listview"); document.getElementById("listview").scrollIntoView({behavior:"smooth"}) };
 document.getElementById("bSel").onclick =()=>{ show("selview");  document.getElementById("selview").scrollIntoView({behavior:"smooth"}) };
 
@@ -327,7 +316,7 @@ try{ const s=JSON.parse(localStorage.getItem("bk3")||"{}");
   if(s.w) wWi.value=s.w; if(s.h) wHi.value=s.h; if(s.p&&typeof s.p==="object") picked=s.p;
 }catch(e){}
 if(location.hash==="#list") show("listview");
-renderCol(); renderCmp(); renderSel(); chips();
+renderCol(); renderSel(); chips();
 document.getElementById("frieze").innerHTML=[...W].sort((a,b)=>b.h-a.h).map(k=>
   '<div style="--w:'+k.w+';--h:'+k.h+'"><b>'+mm(k.h)+' mm</b>'+pic(k)+'</div>').join("");
 </script>
