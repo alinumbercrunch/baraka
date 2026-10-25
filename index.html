@@ -1,39 +1,110 @@
 <title>Baraka</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Shippori+Mincho:wght@400;600&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=Shippori+Mincho:wght@400;600&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
 <link rel="stylesheet" href="style.css">
 
-
-<div class="protobar">これは<b>プロトタイプ</b>です。作家名・作品名・価格はすべて架空のサンプルです。画像はパブリックドメインの美術館所蔵作品を仮に使用しています。<span class="pe">This is a prototype. Artists, titles and prices are fictional samples.</span></div>
 <style>
-.hero{display:flex; gap:clamp(24px,5vw,60px); align-items:flex-end; padding-block:54px 0; flex-wrap:wrap}
-.hero .art{view-transition-name:hero-work}
-.hero .side{flex:1 1 270px; min-width:0; padding-bottom:4px}
-.hero .d{font-family:var(--mono); font-size:11.5px; color:var(--mute); margin-top:10px}
-.hero .p{font-family:var(--mono); font-size:15px; margin-top:3px}
-.saying{border-top:1px solid var(--rule); margin-top:46px; padding-top:30px}
-.saying .who{font-family:var(--mono); font-size:11px; letter-spacing:.14em;
-  text-transform:uppercase; color:var(--mute); margin-top:18px}
-.what{border-top:1px solid var(--ink); margin-top:54px; padding-top:28px}
-.what li{list-style:none; padding:0 0 16px; font-size:17px; line-height:1.9; max-width:25em}
+/* ── the entrance: one dark screen, one work, one word ── */
+.stage{position:relative; height:100svh; min-height:560px; background:#101314; overflow:hidden;
+  margin-left:calc(50% - 50vw); width:100vw;
+  display:grid; grid-template-rows:1fr auto; color:#F2F1EC}
+.stage .inner{position:relative; display:flex; align-items:center; justify-content:center;
+  padding:clamp(56px,9vh,96px) max(18px,env(safe-area-inset-left,0px)) 0 max(18px,env(safe-area-inset-right,0px))}
+.stage figure{margin:0; position:relative}
+.stage img{display:block; width:auto; height:auto; max-height:52svh; max-width:min(78vw,760px);
+  border:1px solid rgba(255,255,255,.14); box-shadow:0 18px 60px rgba(0,0,0,.55)}
+.word{position:absolute; left:max(18px,env(safe-area-inset-left,0px)); right:0; bottom:clamp(78px,13vh,150px);
+  pointer-events:none; z-index:2; mix-blend-mode:difference; color:#fff}
+.ident{display:flex; justify-content:space-between; align-items:flex-end; gap:20px; flex-wrap:wrap;
+  padding:0 max(18px,env(safe-area-inset-right,0px)) clamp(18px,3vh,30px) max(18px,env(safe-area-inset-left,0px))}
+.ident .l{font-family:var(--mono); font-size:10px; letter-spacing:.2em; text-transform:uppercase;
+  color:rgba(242,241,236,.6); display:block}
+.ident .nm{font-family:var(--min); font-weight:600; font-size:clamp(21px,3.4vw,30px);
+  letter-spacing:.01em; line-height:1.25; margin-top:5px}
+.ident .nm a{color:inherit; text-decoration:none; border-bottom:1px solid rgba(242,241,236,.3); padding-bottom:2px}
+.ident .nm a:hover{border-bottom-color:#F2F1EC}
+.ident .wk{font-family:var(--mono); font-size:11px; color:rgba(242,241,236,.6); text-align:right}
+.cue{font-family:var(--mono); font-size:10px; letter-spacing:.16em; color:rgba(242,241,236,.5);
+  text-transform:uppercase; animation:nudge 1.9s ease-in-out infinite}
+@keyframes nudge{0%,100%{transform:translateY(0)}50%{transform:translateY(5px)}}
+@media (prefers-reduced-motion:reduce){.cue{animation:none}}
+
+/* the entrance blurs away as the paper arrives underneath */
+@supports (animation-timeline: view()){
+  @media not (prefers-reduced-motion){
+    .stage{animation:dissolve linear both; animation-timeline:view(); animation-range:cover 40% cover 100%}
+    @keyframes dissolve{
+      40%{filter:none; opacity:1}
+      100%{filter:blur(9px); opacity:0}
+    }
+  }
+}
+
+/* ── the frieze: every work, true relative size, on one baseline ── */
+.frieze{background:#15191B; padding:clamp(34px,6vh,62px) 0 0}
+.frieze .lab{display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap;
+  padding:0 max(18px,env(safe-area-inset-left,0px)) 22px; color:rgba(242,241,236,.62);
+  font-family:var(--mono); font-size:10.5px; letter-spacing:.14em; text-transform:uppercase}
+.frieze .lab b{color:var(--shu); font-weight:400}
+.rail{display:flex; align-items:flex-end; gap:clamp(20px,4vw,56px); overflow-x:auto;
+  padding:0 max(18px,env(safe-area-inset-left,0px)) clamp(26px,5vh,46px);
+  scroll-snap-type:x proximity; overscroll-behavior-x:contain}
+.rail a{flex:0 0 auto; scroll-snap-align:center; text-decoration:none; display:block}
+.rail figure{margin:0; width:calc(var(--w) * var(--fmm) * 1px)}
+.rail .fr{position:relative; height:calc(var(--h) * var(--fmm) * 1px);
+  border:1px solid rgba(255,255,255,.16)}
+.rail img{position:absolute; inset:0; width:100%; height:100%; display:block}
+.rail a:hover .fr{outline:1px solid #F2F1EC; outline-offset:5px}
+.rail figcaption{font-family:var(--mono); font-size:9.5px; color:rgba(242,241,236,.55);
+  margin-top:9px; white-space:nowrap; line-height:1.7}
+.rail .jt{font-family:var(--jp); font-size:12px; color:#F2F1EC; display:block}
+.frieze{--fmm:.085}
+@media (max-width:900px){ .frieze{--fmm:.055} }
+
+/* ── paper below ── */
+.voice-sec{border-top:1px solid var(--rule); margin-top:56px; padding-top:34px}
+.voice{font-family:var(--min); font-size:clamp(16px,2vw,19.5px); line-height:2.15; max-width:26em}
+.sig{font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--mute); margin-top:20px}
+.what{border-top:1px solid var(--ink); margin-top:56px; padding-top:28px}
 .what ul{margin:0; padding:0}
+.what li{list-style:none; padding:0 0 16px; font-size:17px; line-height:1.9; max-width:25em}
 .what .sub{font-size:12.5px; color:var(--mute); display:block; line-height:1.6}
-.who-for{display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:14px; margin-top:48px}
+.who-for{display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:14px; margin-top:50px}
 .who-for a{display:block; border:1px solid var(--rule); padding:20px 22px; text-decoration:none;
-  transition:border-color .2s, background .2s}
+  transition:border-color calc(var(--beat)*.25), background calc(var(--beat)*.25)}
 .who-for a:hover{border-color:var(--ink)}
 .who-for b{display:block; font-weight:500; font-size:16px; margin-bottom:6px}
 .who-for span{font-size:13.5px; color:var(--mute); display:block; line-height:1.8}
-.name{border-top:1px solid var(--rule); margin-top:54px; padding-top:26px; max-width:31em}
-.name .word{font-family:var(--mono); letter-spacing:.2em; font-size:12px; color:var(--mute)}
+.hold-breath{height:34vh}
+.name{border-top:1px solid var(--rule); padding-top:26px; max-width:31em}
+.name .word2{font-family:var(--mono); letter-spacing:.2em; font-size:12px; color:var(--mute)}
 .name p{margin:12px 0 0; line-height:2}
-.whatis{font-size:14.5px; color:var(--mute); line-height:1.9; max-width:34em; margin:16px 0 0}
-.namelink{text-decoration:none; border-bottom:2px solid var(--rule); padding-bottom:3px}
-.namelink:hover{border-bottom-color:var(--ink)}
+.closing{font-family:var(--min); font-size:clamp(19px,3vw,27px); line-height:1.7; margin-top:18px}
 </style>
 
-<div class="wrap">
+<div class="protobar">これは<b>プロトタイプ</b>です。作家名・作品名・価格はすべて架空のサンプルです。画像はパブリックドメインの美術館所蔵作品を仮に使用しています。<span class="pe">This is a prototype. Artists, titles and prices are fictional samples.</span></div>
+
+<!-- ══ the entrance ══ -->
+<section class="stage">
+  <div class="inner">
+    <figure>
+      <img src="img/w5.jpg" width="2148" height="1312" alt="朝の輪郭（森　柊）" fetchpriority="high" decoding="async">
+    </figure>
+    <div class="word masked"><h1 class="shout" id="shout">BARAKA</h1></div>
+  </div>
+  <div class="ident">
+    <div>
+      <span class="l">今月の作家 ／ October 2026</span>
+      <div class="nm"><a href="artist-mori.html">森　柊</a></div>
+    </div>
+    <div class="wk">朝の輪郭<br>H2,148 × W1,312 mm<br>¥320,000</div>
+  </div>
+  <div class="ident" style="padding-top:0"><span class="cue">↓ scroll</span></div>
+</section>
+
+<div class="wrap" id="top">
   <nav class="bar">
     <a class="mark" href="index.html">BARAKA<small>バラカ</small></a>
     <a href="index.html" aria-current="page">ホーム</a>
@@ -41,37 +112,34 @@
     <a href="artists.html">作家一覧</a>
     <a href="trade.html">法人の方へ</a>
   </nav>
+</div>
 
-  <p class="whatis">まだ広く知られていない作家を<b>毎月ひとり</b>紹介しています。紹介が終わったあとも、作品はそのまま販売しています。<span class="en" style="display:inline;text-transform:none;letter-spacing:0;font-size:12px"> ／ One artist a month. We show the work, and we sell it.</span></p>
+<!-- ══ the frieze: the argument, made physical ══ -->
+<section class="frieze bleed">
+  <div class="lab">
+    <span><b>実際の大きさの比率で</b>　at true relative size</span>
+    <span>→ よこにスクロール</span>
+  </div>
+  <div class="rail" id="rail"></div>
+</section>
 
-  <!-- ── the artist first ── -->
-  <section class="hero">
-    <div class="art" style="--w:2148;--h:1312"><img src="img/w5.jpg" width="2148" height="1312" alt="朝の輪郭（森　柊）" fetchpriority="high" decoding="async"></div>
-    <div class="side">
-      <span class="en">今月の作家 ／ This month</span>
-      <h1 class="artistname"><a href="artist-mori.html" class="namelink">森　柊</a></h1>
-      <p class="worktitle">朝の輪郭</p>
-      <span class="d">H1,312 × W2,148 mm</span>
-      <span class="p">¥320,000</span>
-    </div>
-  </section>
-
-  <section class="saying">
+<div class="wrap">
+  <!-- ══ the artist's voice ══ -->
+  <section class="voice-sec">
     <p class="voice">海の近くに住んでいると、同じ壁でも朝と夕方では別の色に見えます。わたしはその「見え方が変わる時間」を絵具の層として重ねていきます。描き終えた絵は、置かれた部屋の光によってもう一度仕上がる。だから、どこに掛かるのかをいつも考えながら描いています。</p>
-    <p class="who">森　柊 ／ Mori Shū ・ 藤沢</p>
+    <p class="sig">森　柊 ／ Mori Shū ・ 藤沢</p>
     <div class="doors">
-      <a class="door" href="works.html">すべての作品を見る</a>
-      <a class="door ghost" href="artist-mori.html">森　柊について</a>
-      <a class="door ghost" href="artists.html">作家一覧</a>
+      <a class="door" href="artist-mori.html">森　柊について</a>
+      <a class="door ghost" href="works.html">すべての作品を見る</a>
     </div>
   </section>
 
-  <!-- ── what this is, in three plain lines ── -->
+  <!-- ══ what this is ══ -->
   <section class="what">
     <h2 class="worktitle" style="margin-bottom:18px">バラカは、こういう場所です</h2>
     <ul>
       <li><b>毎月ひとり</b>作家を紹介します。これまでの作家の作品も、ずっと販売しています。
-        <span class="sub">One artist each month. We show their work, and we sell it.</span></li>
+        <span class="sub">One artist a month. Their work stays for sale afterwards.</span></li>
       <li>写真は切り取りません。作品どうしの大きさも、本当のままです。
         <span class="sub">We never crop a work, and we never resize one to match another.</span></li>
       <li>壁の寸法を入れると、その部屋に合うかどうかが分かります。
@@ -79,7 +147,7 @@
     </ul>
   </section>
 
-  <!-- ── three doors ── -->
+  <!-- ══ three doors ══ -->
   <section class="who-for">
     <a href="trade.html#designer">
       <b>設計・デザインの方へ</b>
@@ -95,29 +163,56 @@
     </a>
   </section>
 
-  <!-- ── the name ── -->
+  <div class="hold-breath"></div>
+
+  <!-- ══ the name ══ -->
   <section class="name">
-    <span class="word">BARAKA ／ بركة</span>
+    <span class="word2">BARAKA ／ بركة</span>
     <p class="plain">アラビア語で「祝福」。一度きりの贈り物ではなく、<b>小さなものが増えていき、思っていたより多くの人に届く</b>——そういう言葉です。</p>
-    <p class="voice" style="margin-top:16px;font-size:18px">小さな一枚から、作家は育つ。</p>
+    <p class="closing">小さな一枚から、作家は育つ。</p>
   </section>
 
   <section class="contact" id="contact">
     <span class="en">Contact</span><b>お問い合わせ</b>
     <span class="sel">hello@baraka.art</span><br>
     <span class="sel" style="font-size:13px">045-000-0000</span>
-    <span class="en" style="margin-top:7px">配送・設置・請求書対応 ご相談ください</span>
     <span class="tax">表示価格はすべて税込です。適格請求書（インボイス）を発行できます。</span>
   </section>
 
-  <div class="note"><b>プロトタイプ</b>／Prototype. 作家名・作品名・価格はサンプルです。<b>画像はパブリックドメインの美術館所蔵作品</b>を仮に使用しています（寸法は実物の寸法です）。<br>
-    Images are public-domain museum works used as placeholders, shown at their real dimensions.</div>
-
   <footer>
     <span>BARAKA</span>
-    <a href="works.html">今月の作品</a>
-    <a href="artist-mori.html">作家について</a>
-    <a href="trade.html">法人・設計の方へ</a>
+    <a href="works.html">すべての作品</a>
+    <a href="artists.html">作家一覧</a>
+    <a href="trade.html">法人の方へ</a>
     <a href="#contact">お問い合わせ</a>
   </footer>
 </div>
+
+<script>
+/* the word rises, letter by letter, out of its mask */
+(function(){
+  const el = document.getElementById("shout");
+  const txt = el.textContent.trim();
+  el.setAttribute("aria-label", txt);
+  el.innerHTML = [...txt].map((ch,i)=>
+    '<span class="ch" aria-hidden="true" style="--d:'+(i*45)+'ms">'+(ch===" "?"&nbsp;":ch)+'</span>').join("");
+  requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.add("go")));
+})();
+
+/* the frieze — every work, one baseline, true relative size */
+const RAIL=[
+ {no:"BK-021",t:"立つ",      w:2717,h:2133,f:"img/w7.jpg",p:"bk021.html",sold:true},
+ {no:"BK-007",t:"波の記憶",  w:2260,h:1715,f:"img/w6.jpg",p:"bk007.html"},
+ {no:"BK-014",t:"朝の輪郭",  w:2148,h:1312,f:"img/w5.jpg",p:"bk014.html"},
+ {no:"BK-052",t:"海辺の家",  w:1460,h:960, f:"img/w4.jpg",p:"bk052.html"},
+ {no:"BK-032",t:"白い午後",  w:1015,h:610, f:"img/w3.jpg",p:"bk032.html"},
+ {no:"BK-045",t:"堆積",      w:946, h:511, f:"img/w2.jpg",p:"bk045.html"},
+ {no:"BK-061",t:"小さな庭",  w:364, h:250, f:"img/w1.jpg",p:"bk061.html"}
+];
+document.getElementById("rail").innerHTML = RAIL.map(k=>
+ '<a href="'+k.p+'"><figure style="--w:'+k.w+';--h:'+k.h+'">'+
+   '<div class="fr"><img src="'+k.f+'" width="'+k.w+'" height="'+k.h+'" alt="'+k.t+'" loading="lazy" decoding="async">'+
+   (k.sold?'<span class="sold">完売</span>':'')+'</div>'+
+   '<figcaption><span class="jt">'+k.t+'</span>H'+k.h.toLocaleString("en-US")+' mm</figcaption>'+
+ '</figure></a>').join("");
+</script>

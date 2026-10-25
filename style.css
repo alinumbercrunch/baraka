@@ -1,10 +1,12 @@
 /* Baraka — shared. One column, one scale, nothing cropped. */
 :root{
-  --paper:#EFF0EC; --ink:#15191B; --rule:#C6CBC4; --mute:#6D7772;
+  --paper:#EFEEE7; --ink:#15191B; --rule:#C6C7BF; --mute:#6D7772;
   --dim:#2E4A8F;   --shu:#B23A2E; --sheet:#F8F9F6;
   --mmpx:0.30;
   --jp:"Zen Kaku Gothic New","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;
   --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --disp:"Instrument Serif",Georgia,serif;
+  --beat:.9s;
   --min:"Shippori Mincho","Hiragino Mincho ProN","Yu Mincho",serif;
 }
 @media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){
@@ -126,3 +128,17 @@ tbody tr:hover .mute,tbody tr:hover .fig{color:var(--sheet)}
 .protobar .pe{display:block; opacity:.85; font-size:11px;
   font-family:"IBM Plex Mono",monospace; letter-spacing:.02em; margin-top:2px}
 body{padding-top:0}
+
+
+/* ── display type: Latin, large, tracked in, leaded tight ── */
+.shout{font-family:var(--disp); font-weight:400; line-height:.84; letter-spacing:-.035em;
+  font-size:clamp(52px,13.5vw,186px); margin:0}
+.shout .ch{display:inline-block; opacity:0; transform:translate3d(0,120%,0)}
+.shout.go .ch{opacity:1; transform:none;
+  transition:transform calc(var(--beat)*1.2) cubic-bezier(.19,1,.22,1) var(--d),
+             opacity   calc(var(--beat)*1.2) cubic-bezier(.19,1,.22,1) var(--d)}
+.masked{clip-path:inset(-.35em -100vw)}
+@media (prefers-reduced-motion:reduce){ .shout .ch{opacity:1; transform:none; transition:none} }
+
+/* ── full-bleed breakout ── */
+.bleed{width:100vw; margin-left:calc(50% - 50vw)}
