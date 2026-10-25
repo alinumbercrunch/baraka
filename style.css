@@ -1,7 +1,7 @@
 /* Baraka — shared. One column, one scale, nothing cropped. */
 :root{
   --paper:#EFEEE7; --ink:#15191B; --rule:#C6C7BF; --mute:#6D7772;
-  --dim:#2E4A8F;   --shu:#B23A2E; --sheet:#F8F9F6;
+  --dim:#2E4A8F;   --shu:#B23A2E; --sheet:#F8F9F6; --stage:#101314;
   --mmpx:0.30;
   --jp:"Zen Kaku Gothic New","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;
   --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
@@ -11,10 +11,10 @@
 }
 @media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){
   --paper:#101315; --ink:#E8EBE6; --rule:#2F3634; --mute:#8D9792;
-  --dim:#8DB0F2;  --shu:#E8705F; --sheet:#181C1D; color-scheme:dark } }
+  --dim:#8DB0F2;  --shu:#E8705F; --sheet:#181C1D; --stage:#20272A; color-scheme:dark } }
 :root[data-theme="dark"]{
   --paper:#101315; --ink:#E8EBE6; --rule:#2F3634; --mute:#8D9792;
-  --dim:#8DB0F2;  --shu:#E8705F; --sheet:#181C1D; color-scheme:dark }
+  --dim:#8DB0F2;  --shu:#E8705F; --sheet:#181C1D; --stage:#20272A; color-scheme:dark }
 @media (max-width:1100px){ :root{ --mmpx:0.22 } }
 @media (max-width:760px){  :root{ --mmpx:0.145 } }
 @media (max-width:480px){  :root{ --mmpx:0.12 } }
@@ -131,8 +131,6 @@ tbody tr:hover .mute,tbody tr:hover .fig{color:var(--sheet)}
 body{padding-top:0}
 
 
-/* ── display type: Latin, large, tracked in, leaded tight ── */
-.shout{font-family:var(--disp); font-weight:400; line-height:.84; letter-spacing:-.035em;
   font-size:clamp(52px,13.5vw,186px); margin:0}
 .shout .ch{display:inline-block; opacity:0; transform:translate3d(0,120%,0)}
 .shout.go .ch{opacity:1; transform:none;
@@ -142,4 +140,6 @@ body{padding-top:0}
 @media (prefers-reduced-motion:reduce){ .shout .ch{opacity:1; transform:none; transition:none} }
 
 /* ── full-bleed breakout ── */
-.bleed{width:100vw; margin-left:calc(50% - 50vw)}
+
+
+.tax{display:block; font-size:12px; color:var(--mute); line-height:1.75; margin-top:9px}

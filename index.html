@@ -1,9 +1,13 @@
-<title>Baraka</title>
-<meta name="claude:viewport-fit-sides" content="cover">
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Baraka ／ バラカ — まだ広く知られていない作家の絵を、実際の大きさのまま</title>
+<meta name="description" content="まだ広く知られていない作家の絵を、実際の大きさのまま見て買えるカタログです。毎月ひとり作家を紹介し、紹介後も作品は販売を続けます。湘南・東京・関東。">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Shippori+Mincho:wght@400;600&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
 <link rel="stylesheet" href="style.css">
-
 <style>
 /* ── 1 · header, issue marker, audience row ── */
 .issue{display:flex; justify-content:space-between; align-items:baseline; gap:14px;
@@ -14,7 +18,7 @@
 .aud a:hover{color:var(--ink); border-bottom-color:var(--ink)}
 
 /* ── 2 · hero: ~70vh so the next section peeks ── */
-.hero{background:#101314; color:#F2F1EC; margin-top:16px;
+.hero{background:var(--stage); color:#F2F1EC; margin-top:16px;
   width:100vw; margin-left:calc(50% - 50vw);
   min-height:min(70svh,660px); display:grid; align-content:center;
   padding-block:clamp(30px,5vh,52px)}
@@ -67,8 +71,9 @@
 .past .mo{font-family:var(--mono); font-size:10px; letter-spacing:.14em; color:var(--mute); text-transform:uppercase}
 .past b{display:block; font-family:var(--min); font-weight:600; font-size:20px; margin:4px 0 2px}
 .past span{font-size:12.5px; color:var(--mute)}
-.past .mini{display:flex; gap:7px; align-items:flex-end; margin-top:12px; height:52px}
-.past .mini img{height:100%; width:auto; border:1px solid rgba(0,0,0,.25)}
+.past .mini{margin-top:13px}
+.past .mini img{display:block; width:100%; height:auto; border:1px solid rgba(0,0,0,.25)}
+.past .sold{position:static; display:inline-block; margin-top:9px}
 
 /* ── 5 · reading ── */
 .read{border:1px solid var(--rule); padding:20px 22px; margin-top:22px; max-width:40em}
@@ -90,7 +95,8 @@
 .what li{list-style:none; padding:0 0 15px; font-size:16.5px; line-height:1.9; max-width:25em}
 .what .sub{font-size:12.5px; color:var(--mute); display:block; line-height:1.6}
 </style>
-
+</head>
+<body>
 <div class="protobar">これは<b>プロトタイプ</b>です。作家名・作品名・価格はすべて架空のサンプルです。画像はパブリックドメインの美術館所蔵作品を仮に使用しています。<span class="pe">This is a prototype. Artists, titles and prices are fictional samples.</span></div>
 
 <div class="wrap" id="top">
@@ -121,13 +127,13 @@
       <h1 class="lead">まだ広く知られていない作家の絵を、<b>実際の大きさのまま</b>見て、買えるカタログです。</h1>
       <p class="tag">小さな一枚から、作家は育つ。</p>
       <div class="who">
-        <span class="lb">今月の作家</span>
+        <span class="lb">今月の作家 ・ 2週間お取り置きできます</span>
         <div class="nm">森　柊</div>
-        <div class="wk">朝の輪郭 ／ H2,148 × W1,312 mm ／ ¥320,000</div>
+        <div class="wk">朝の輪郭 ／ H1,312 × W2,148 mm ／ ¥320,000</div>
       </div>
       <div class="doors">
         <a class="door" href="#thismonth">今月の作品を見る</a>
-        <a class="door ghost" href="works.html">すべての作品</a>
+        <a class="door ghost" href="works.html#wallbox">壁の寸法から探す</a>
       </div>
     </div>
   </div>
@@ -197,6 +203,7 @@
   <!-- 8 · contact -->
   <section class="contact" id="contact">
     <span class="en">Contact</span><b>お問い合わせ</b>
+    <span style="display:block;font-size:13.5px;margin-bottom:9px">2営業日以内にご返信します。お取り置きのご希望もこちらから。</span>
     <span class="sel">hello@baraka.art</span><br>
     <span class="sel" style="font-size:15px">045-000-0000</span>
     <span class="en" style="margin-top:6px">平日 10:00–18:00</span>
@@ -237,5 +244,8 @@ document.getElementById("grid").innerHTML = MONTH.map(k=>
 document.getElementById("past").innerHTML = PAST.map(a=>
  '<a href="'+a.p+'"><span class="mo">'+a.mo+'</span><b>'+a.n+'</b>'+
   '<span>'+a.pl+' ／ '+(a.c?a.c+'点 販売中':'完売')+'</span>'+
-  '<div class="mini">'+a.im.map(s=>'<img src="'+s+'" alt="" loading="lazy" decoding="async">').join("")+'</div></a>').join("");
+  '<div class="mini"><img src="'+a.im[0]+'" alt="" loading="lazy" decoding="async"></div>'+
+  (a.c?'':'<span class="sold">完売</span>')+'</a>').join("");
 </script>
+</body>
+</html>
