@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>お問い合わせ — Baraka</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Shippori+Mincho:wght@400;600&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="style.css">
+<style>
+.head{padding-block:34px 0}
+.head h1{font-family:var(--min); font-weight:600; font-size:clamp(23px,3.4vw,32px); margin-top:6px}
+.head p{margin:10px 0 0; font-size:14.5px; color:var(--mute); line-height:1.9; max-width:32em}
+
+/* what happens next — stated before the form, not after */
+.steps{display:grid; grid-template-columns:repeat(auto-fit,minmax(205px,1fr)); gap:18px;
+  border-top:1px solid var(--ink); border-bottom:1px solid var(--rule);
+  margin-top:26px; padding-block:22px}
+.steps .n{font-family:var(--mono); font-size:10.5px; letter-spacing:.14em; color:var(--dim)}
+.steps h2{font-size:15px; font-weight:500; margin-top:5px}
+.steps p{margin:5px 0 0; font-size:13px; color:var(--mute); line-height:1.85}
+
+form{margin-top:30px; max-width:36em}
+fieldset{border:0; padding:0; margin:0 0 26px}
+legend{font-size:12px; color:var(--mute); font-family:var(--mono); letter-spacing:.1em;
+  text-transform:uppercase; padding:0 0 10px}
+.f{margin-bottom:16px}
+.f label{display:block; font-size:13.5px; margin-bottom:5px}
+.f .opt{color:var(--mute); font-size:12px; margin-left:6px}
+.f input[type=text],.f input[type=email],.f input[type=tel],.f textarea,.f select{
+  width:100%; font-family:var(--jp); font-size:15px; padding:10px 12px;
+  background:var(--sheet); color:var(--ink); border:1px solid var(--rule); border-radius:0}
+.f textarea{min-height:110px; line-height:1.8; resize:vertical}
+.f input:focus-visible,.f textarea:focus-visible,.f select:focus-visible{
+  outline:3px solid var(--dim); outline-offset:0; border-color:var(--dim)}
+.f .hint{font-size:12px; color:var(--mute); margin-top:5px; line-height:1.7}
+.check{display:flex; gap:11px; align-items:flex-start; border:1px solid var(--ink);
+  padding:14px 16px; margin-bottom:16px}
+.check input{margin-top:4px; width:17px; height:17px; accent-color:var(--dim); flex:0 0 auto}
+.check b{display:block; font-weight:500; font-size:14.5px}
+.check span{font-size:12.5px; color:var(--mute); line-height:1.8; display:block; margin-top:3px}
+.picked{border:1px solid var(--rule); background:var(--sheet); padding:14px 16px; margin-bottom:16px}
+.picked .row{display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+  padding:7px 0; border-bottom:1px solid var(--rule); font-size:13.5px}
+.picked .row:last-child{border-bottom:0}
+.picked .no{font-family:var(--mono); font-size:11px; color:var(--mute); flex:0 0 58px}
+.picked input[type=text]{flex:1 1 130px; font-size:13px; padding:5px 8px;
+  background:var(--paper); border:1px solid var(--rule); color:var(--ink); font-family:var(--jp)}
+.picked .none{font-size:13px; color:var(--mute); line-height:1.8}
+.send{font-size:15px; padding:14px 30px; background:var(--ink); color:var(--sheet);
+  border:1px solid var(--ink); cursor:pointer}
+.send:hover{background:transparent; color:var(--ink)}
+.out{border:1px solid var(--ink); padding:18px 20px; margin-top:24px}
+.out b{display:block; font-weight:500; font-size:15.5px; margin-bottom:8px}
+.out textarea{width:100%; min-height:220px; font-family:var(--mono); font-size:12px;
+  line-height:1.75; padding:12px; background:var(--sheet); color:var(--ink); border:1px solid var(--rule)}
+.out .how{font-size:13.5px; line-height:1.95; margin:12px 0 0}
+.out .big{font-family:var(--mono); font-size:16px; -webkit-user-select:all; user-select:all}
+.ok{font-size:13px; color:var(--dim); margin-top:8px; min-height:1.4em}
+</style>
+</head>
+<body>
+<div class="protobar">これは<b>プロトタイプ</b>です。作家名・作品名・価格はすべて架空のサンプルです。送信先のメールアドレスも仮のものです。<span class="pe">Prototype. The contact details are not real.</span></div>
+<div class="wrap">
+  <nav class="bar">
+    <a class="mark" href="index.html">BARAKA<small>バラカ</small></a>
+    <a href="index.html">ホーム</a>
+    <a href="works.html">すべての作品</a>
+    <a href="artists.html">作家一覧</a>
+    <a href="trade.html">法人の方へ</a>
+    <a href="enquiry.html" aria-current="page"><b>お問い合わせ</b></a>
+  </nav>
+
+  <header class="head">
+    <span class="en">Enquire</span>
+    <h1>お問い合わせ</h1>
+    <p>作品のご相談、お見積り、2週間のお取り置き。どれもこのフォームからお送りいただけます。はじめてのご連絡でも、作品番号だけで結構です。</p>
+  </header>
+
+  <section class="steps">
+    <div><span class="n">01</span><h2>1営業日以内にご返信します</h2>
+      <p>担当者からお返事します。平日10:00–18:00。</p></div>
+    <div><span class="n">02</span><h2>ご希望なら、その場でお取り置き</h2>
+      <p>2週間お取り置きします。施主様のご検討中に売れてしまうことはありません。</p></div>
+    <div><span class="n">03</span><h2>お見積りをお送りします</h2>
+      <p>作品代金・配送・設置を分けて記載します。請求書払い、インボイス対応。</p></div>
+  </section>
+
+  <form id="form" novalidate>
+    <fieldset>
+      <legend>お問い合わせの内容</legend>
+
+      <div class="picked" id="picked"></div>
+
+      <div class="f">
+        <label for="numbers">作品番号<span class="opt">（分かる場合）</span></label>
+        <input type="text" id="numbers" name="numbers" placeholder="BK-014, BK-052">
+        <p class="hint">作品ページの「作品番号」をご記入ください。複数可。</p>
+      </div>
+
+      <label class="check">
+        <input type="checkbox" id="hold" name="hold">
+        <span><b>2週間のお取り置きを希望する</b>
+        <span>施主様へのご提案中、他所へ販売しません。</span></span>
+      </label>
+
+      <label class="check">
+        <input type="checkbox" id="install" name="install">
+        <span><b>配送・設置の見積りも希望する</b>
+        <span>養生のうえ取り付けまで。耐震・ピクチャーレールもご相談ください。</span></span>
+      </label>
+
+      <div class="f">
+        <label for="wall">壁の寸法<span class="opt">（任意・だいたいで結構です）</span></label>
+        <input type="text" id="wall" name="wall" placeholder="幅 3400 × 高 2450 mm">
+      </div>
+
+      <div class="f">
+        <label for="msg">ご相談内容<span class="opt">（任意）</span></label>
+        <textarea id="msg" name="msg" placeholder="お部屋の様子、ご予算、ご希望の納期など。お写真は返信メールに添付いただけます。"></textarea>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>ご連絡先</legend>
+      <div class="f">
+        <label for="kind">お客様の区分</label>
+        <select id="kind" name="kind">
+          <option>設計事務所・デザイン会社</option>
+          <option>工務店・内装会社</option>
+          <option>不動産会社</option>
+          <option>個人のお客様</option>
+          <option>その他</option>
+        </select>
+      </div>
+      <div class="f">
+        <label for="company">会社名<span class="opt">（個人の方は不要です）</span></label>
+        <input type="text" id="company" name="company">
+      </div>
+      <div class="f">
+        <label for="name">お名前</label>
+        <input type="text" id="name" name="name" autocomplete="name">
+      </div>
+      <div class="f">
+        <label for="email">メールアドレス</label>
+        <input type="email" id="email" name="email" autocomplete="email" inputmode="email">
+      </div>
+      <div class="f">
+        <label for="tel">お電話番号<span class="opt">（任意）</span></label>
+        <input type="tel" id="tel" name="tel" autocomplete="tel" inputmode="tel">
+      </div>
+    </fieldset>
+
+    <button type="submit" class="send">内容をまとめる</button>
+    <p class="ok" id="ok"></p>
+  </form>
+
+  <section class="out" id="out" hidden>
+    <b>この内容をお送りください</b>
+    <textarea id="body" readonly aria-label="お問い合わせ内容"></textarea>
+    <p class="how">下のボタンでコピーして、メールまたはお電話でお送りください。</p>
+    <div class="doors" style="margin-top:12px">
+      <button type="button" class="door" id="copy">内容をコピー</button>
+    </div>
+    <p class="ok" id="ok2"></p>
+    <p class="how" style="margin-top:14px">
+      <span class="big">hello@baraka.art</span><br>
+      <span class="big">045-000-0000</span><br>
+      <span class="en" style="margin-top:6px">平日 10:00–18:00</span>
+    </p>
+  </section>
+
+  <div class="note"><b>プロトタイプ</b>／Prototype. 現在このフォームは送信されません。内容をまとめてコピーする機能のみ動作します。<br>
+    This form does not send yet — it assembles your enquiry so you can copy it.</div>
+
+  <footer>
+    <span>BARAKA</span>
+    <a href="index.html">ホーム</a>
+    <a href="works.html">すべての作品</a>
+    <a href="trade.html">法人の方へ</a>
+    <a href="about.html">バラカという名前について</a>
+  </footer>
+</div>
+
+<script>
+const TITLES={"BK-014":"朝の輪郭","BK-007":"波の記憶","BK-052":"海辺の家","BK-032":"白い午後",
+              "BK-045":"堆積","BK-061":"小さな庭","BK-021":"立つ"};
+
+/* a work number can arrive in the link: enquiry.html#bk014 */
+const h=(location.hash||"").replace("#","").toUpperCase();
+const fromLink = /^BK\d{3}$/.test(h) ? h.slice(0,2)+"-"+h.slice(2) : null;
+
+/* or from the list built on the works page */
+let picked={};
+try{ const s=JSON.parse(localStorage.getItem("bk3")||"{}"); if(s.p&&typeof s.p==="object") picked=s.p; }catch(e){}
+try{ const s=JSON.parse(localStorage.getItem("bk3")||"{}");
+  if(s.w&&s.h) document.getElementById("wall").value="幅 "+s.w+" × 高 "+s.h+" mm"; }catch(e){}
+
+const keys=Object.keys(picked);
+const box=document.getElementById("picked");
+if(keys.length){
+  box.innerHTML='<p class="hint" style="margin:0 0 8px">作品ページで選んだ作品です。お部屋の名前を入れておくと、お見積りが早くなります。</p>'+
+    keys.map(n=>'<div class="row"><span class="no">'+n+'</span><span>'+(TITLES[n]||"")+'</span>'+
+      '<input type="text" data-room="'+n+'" aria-label="'+n+' の部屋名" placeholder="部屋名（例 201号室）" value="'+((picked[n]&&picked[n].room)||"")+'"></div>').join("");
+} else if(fromLink){
+  box.innerHTML='<div class="row"><span class="no">'+fromLink+'</span><span>'+(TITLES[fromLink]||"")+'</span></div>';
+  document.getElementById("numbers").value=fromLink;
+} else {
+  box.innerHTML='<p class="none">作品が決まっている場合は下に番号をご記入ください。まだお決まりでなくても結構です。</p>';
+}
+box.querySelectorAll("input[data-room]").forEach(i=>i.addEventListener("input",()=>{
+  if(picked[i.dataset.room]) picked[i.dataset.room].room=i.value;
+}));
+
+const v=id=>(document.getElementById(id).value||"").trim();
+document.getElementById("form").addEventListener("submit",e=>{
+  e.preventDefault();
+  const ok=document.getElementById("ok");
+  if(!v("name") || !v("email")){
+    ok.textContent="お名前とメールアドレスをご記入ください。"; ok.style.color="var(--shu)";
+    document.getElementById(v("name")?"email":"name").focus(); return;
+  }
+  ok.textContent="";
+  const L=[];
+  L.push("BARAKA お問い合わせ","");
+  const ks=Object.keys(picked);
+  if(ks.length){
+    L.push("【ご相談の作品】");
+    ks.forEach(n=>L.push("  "+n+"  "+(TITLES[n]||"")+((picked[n]&&picked[n].room)?"  ／ "+picked[n].room:"")));
+  } else if(v("numbers")) L.push("【ご相談の作品】","  "+v("numbers"));
+  L.push("");
+  if(document.getElementById("hold").checked)    L.push("・2週間のお取り置きを希望します");
+  if(document.getElementById("install").checked) L.push("・配送・設置の見積りを希望します");
+  if(v("wall")) L.push("・壁の寸法："+v("wall"));
+  if(v("msg"))  L.push("", "【ご相談内容】", v("msg"));
+  L.push("", "【ご連絡先】",
+    "  区分：" + v("kind"),
+    v("company") ? "  会社名：" + v("company") : null,
+    "  お名前：" + v("name"),
+    "  メール：" + v("email"),
+    v("tel") ? "  電話：" + v("tel") : null);
+  const text=L.filter(x=>x!==null).join("\n");
+  const out=document.getElementById("out");
+  document.getElementById("body").value=text;
+  out.hidden=false;
+  out.scrollIntoView({behavior:"smooth",block:"start"});
+});
+
+document.getElementById("copy").addEventListener("click",()=>{
+  const ta=document.getElementById("body"), ok2=document.getElementById("ok2");
+  const done=s=>{ ok2.textContent=s; };
+  try{
+    navigator.clipboard.writeText(ta.value)
+      .then(()=>done("コピーしました。メールに貼り付けてお送りください。"))
+      .catch(()=>{ ta.select(); done("上の文章を選択してコピーしてください。"); });
+  }catch(err){ ta.select(); done("上の文章を選択してコピーしてください。"); }
+});
+</script>
+</body>
+</html>

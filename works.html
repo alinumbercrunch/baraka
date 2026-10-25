@@ -104,7 +104,7 @@
     <a href="works.html" aria-current="page">すべての作品</a>
     <a href="artists.html">作家一覧</a>
     <a href="trade.html">法人の方へ</a>
-    <a href="#contact"><b>お問い合わせ</b></a>
+    <a href="enquiry.html"><b>お問い合わせ</b></a>
   </nav>
 
   <header style="padding-block:30px 0">
@@ -265,9 +265,10 @@ function renderSel(){
   }).join("");
   host.innerHTML=rows+'<div class="total"><span>'+keys.length+' 点 ／ 作品代金のみ</span><span>'+yen(sum)+'</span></div>'+
     '<p class="tax">表示価格はすべて税込です。配送・設置費は別途お見積りします。適格請求書（インボイス）を発行できます。</p>'+
-    '<div class="actions"><button type="button" id="copyList">この内容をコピー</button>'+
+    '<div class="actions"><a class="door" href="enquiry.html" style="padding:8px 18px;font-size:13px">この内容で問い合わせる</a>'+
+    '<button type="button" id="copyList">内容をコピー</button>'+
     '<span class="said" id="said"></span>'+
-    '<span style="font-size:13px">コピーして <span class="sel">hello@baraka.art</span> へお送りください。</span></div>';
+    '<span style="font-size:13px">部屋名はそのままフォームに引き継がれます。</span></div>';
   host.querySelectorAll("input[data-room]").forEach(i=>
     i.addEventListener("input",()=>{ picked[i.dataset.room].room=i.value; save() }));
   host.querySelectorAll("button[data-drop]").forEach(b=>
