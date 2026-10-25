@@ -16,7 +16,8 @@
   --paper:#101315; --ink:#E8EBE6; --rule:#2F3634; --mute:#8D9792;
   --dim:#8DB0F2;  --shu:#E8705F; --sheet:#181C1D; color-scheme:dark }
 @media (max-width:1100px){ :root{ --mmpx:0.22 } }
-@media (max-width:700px){  :root{ --mmpx:0.16 } }
+@media (max-width:760px){  :root{ --mmpx:0.145 } }
+@media (max-width:480px){  :root{ --mmpx:0.12 } }
 
 /* page-to-page transition — two lines, no library */
 @view-transition{ navigation:auto }
@@ -26,7 +27,7 @@
 
 *{box-sizing:border-box}
 html{ -webkit-text-size-adjust:100% }
-body{background:var(--paper); color:var(--ink); font-family:var(--jp); font-size:15px;
+body{overflow-x:clip; background:var(--paper); color:var(--ink); font-family:var(--jp); font-size:15px;
   line-height:1.85; line-break:strict; word-break:keep-all; margin:0;
   -webkit-font-smoothing:antialiased; font-feature-settings:"palt" 1}
 .wrap{padding-left:max(16px,env(safe-area-inset-left,0px));
