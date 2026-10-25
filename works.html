@@ -104,6 +104,7 @@
     <a href="works.html" aria-current="page">すべての作品</a>
     <a href="artists.html">作家一覧</a>
     <a href="trade.html">法人の方へ</a>
+    <a href="#contact"><b>お問い合わせ</b></a>
   </nav>
 
   <header style="padding-block:30px 0">
@@ -130,6 +131,12 @@
     <button type="button" id="bSize">大きさをくらべる</button>
     <button type="button" id="bSel">選んだ作品 <b>0</b></button>
   </div>
+
+  <section class="sec" style="padding-block:10px 0">
+    <header><b>大きさをくらべる</b><span class="en">Every work, one baseline, true relative size</span></header>
+    <div class="cmp" id="frieze"></div>
+    <p class="en" style="margin-top:8px">床に並べて比べたものです ／ lined up on the floor to compare</p>
+  </section>
 
   <div class="col" id="col"></div>
 
@@ -321,6 +328,8 @@ try{ const s=JSON.parse(localStorage.getItem("bk3")||"{}");
 }catch(e){}
 if(location.hash==="#list") show("listview");
 renderCol(); renderCmp(); renderSel(); chips();
+document.getElementById("frieze").innerHTML=[...W].sort((a,b)=>b.h-a.h).map(k=>
+  '<div style="--w:'+k.w+';--h:'+k.h+'"><b>'+mm(k.h)+' mm</b>'+pic(k)+'</div>').join("");
 </script>
 </body>
 </html>
