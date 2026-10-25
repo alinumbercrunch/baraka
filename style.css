@@ -57,15 +57,9 @@ body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-in
 .bar [aria-current]{border-bottom-color:var(--ink)}
 
 /* ── type ──────────────────────────────── */
-.min{font-family:var(--min); font-weight:400}
-.artistname{font-family:var(--min); font-weight:600; letter-spacing:.04em;
-  line-height:1.2; font-size:clamp(30px,6vw,56px)}
 .worktitle{font-family:var(--min); font-weight:400; font-size:clamp(19px,2.4vw,24px); line-height:1.5}
-.voice{font-family:var(--min); font-size:clamp(16px,2vw,19px); line-height:2.1;
-  max-width:26em; font-weight:400}
 .plain{font-size:17px; line-height:2; max-width:24em}
 .plain b{font-weight:500}
-.pitch{font-size:clamp(18px,2.4vw,23px); line-height:1.72; max-width:21em; font-weight:500}
 .sec{padding-block:34px 10px}
 .sec > header{display:flex; align-items:baseline; gap:12px; margin-bottom:8px}
 .sec > header b{font-weight:500; font-size:16px}
@@ -129,15 +123,6 @@ tbody tr:hover .mute,tbody tr:hover .fig{color:var(--sheet)}
 .protobar .pe{display:block; opacity:.85; font-size:11px;
   font-family:"IBM Plex Mono",monospace; letter-spacing:.02em; margin-top:2px}
 body{padding-top:0}
-
-
-  font-size:clamp(52px,13.5vw,186px); margin:0}
-.shout .ch{display:inline-block; opacity:0; transform:translate3d(0,120%,0)}
-.shout.go .ch{opacity:1; transform:none;
-  transition:transform calc(var(--beat)*1.2) cubic-bezier(.19,1,.22,1) var(--d),
-             opacity   calc(var(--beat)*1.2) cubic-bezier(.19,1,.22,1) var(--d)}
-.masked{clip-path:inset(-.35em -100vw)}
-@media (prefers-reduced-motion:reduce){ .shout .ch{opacity:1; transform:none; transition:none} }
 
 /* ── full-bleed breakout ── */
 

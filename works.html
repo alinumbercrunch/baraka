@@ -38,7 +38,7 @@
 .cmp div{flex:0 0 auto; position:relative;
   width:calc(var(--w) * var(--mmpx) * 1px); height:calc(var(--h) * var(--mmpx) * 1px);
   border:1px solid rgba(0,0,0,.28)}
-.cmp div i{position:absolute; inset:0}
+.cmp div img{position:absolute; inset:0; width:100%; height:100%; display:block; background:var(--sheet)}
 .cmp div b{position:absolute; bottom:calc(100% + 5px); left:0; font-family:var(--mono);
   font-size:9.5px; color:var(--mute); white-space:nowrap; font-weight:400}
 .selrow{display:flex; align-items:center; gap:12px; flex-wrap:wrap;
@@ -77,21 +77,6 @@
 .actions button:hover{background:var(--ink); color:var(--sheet)}
 .said{font-size:12px; color:var(--dim)}
 .tax{font-size:12px; color:var(--mute); margin-top:6px}
-.artist{margin-top:46px; border-top:1px solid var(--ink); padding-top:30px}
-.artist h3{font-family:var(--min); font-size:clamp(32px,7vw,56px); font-weight:600;
-  letter-spacing:.04em; line-height:1.2}
-.romaji{font-family:var(--mono); font-size:11px; letter-spacing:.2em; color:var(--mute); text-transform:uppercase}
-.statement{font-family:var(--min); max-width:26em; margin-top:18px; line-height:2.1;
-  font-size:clamp(15.5px,1.8vw,18px)}
-.strip{display:flex; align-items:flex-end; gap:clamp(16px,3vw,44px); overflow-x:auto;
-  scroll-snap-type:x proximity; overscroll-behavior-x:contain;
-  border-bottom:1px solid var(--ink); padding:26px 2px 0; margin-top:26px}
-.strip > div{flex:0 0 auto; scroll-snap-align:center; position:relative;
-  width:calc(var(--w) * var(--mmpx) * 1px); height:calc(var(--h) * var(--mmpx) * 1px);
-  border:1px solid rgba(0,0,0,.28)}
-.strip > div i{position:absolute; inset:0}
-.strip > div b{position:absolute; bottom:calc(100% + 5px); left:0; font-family:var(--mono);
-  font-size:9px; color:var(--mute); font-weight:400; white-space:nowrap}
 </style>
 </head>
 <body>
@@ -180,9 +165,9 @@
 const W=[
  {no:"BK-014",t:"朝の輪郭",a:"森　柊",ap:"artist-mori.html",mon:"2026.10",w:2148,h:1312,d:45,med:"油彩・キャンバス",kg:9.0,fix:"アンカー必要",price:320000,f:"img/w5.jpg"},
  {no:"BK-052",t:"海辺の家",a:"森　柊",ap:"artist-mori.html",mon:"2026.10",w:1460,h:960,d:35,med:"油彩・キャンバス",kg:4.5,fix:"アンカー必要",price:198000,f:"img/w4.jpg"},
- {no:"BK-061",t:"小さな庭",a:"森　柊",ap:"artist-mori.html",mon:"2026.10",w:364,h:250,d:20,med:"水彩・紙",kg:0.4,fix:"フック可",price:48000,f:"img/w1.jpg"},
+ {no:"BK-061",t:"小さな庭",a:"森　柊",ap:"artist-mori.html",mon:"2026.10",w:364,h:258,d:20,med:"水彩・紙",kg:0.4,fix:"フック可",price:48000,f:"img/w1.jpg"},
  {no:"BK-007",t:"波の記憶",a:"中村あかり",ap:"artist-nakamura.html",mon:"2026.09",w:2260,h:1715,d:50,med:"アクリル・麻",kg:12.4,fix:"下地補強が必要",price:420000,f:"img/w6.jpg"},
- {no:"BK-032",t:"白い午後",a:"中村あかり",ap:"artist-nakamura.html",mon:"2026.09",w:1015,h:610,d:30,med:"油彩・パネル",kg:2.0,fix:"アンカー必要",price:128000,f:"img/w3.jpg"},
+ {no:"BK-032",t:"白い午後",a:"中村あかり",ap:"artist-nakamura.html",mon:"2026.09",w:1015,h:594,d:30,med:"油彩・パネル",kg:2.0,fix:"アンカー必要",price:128000,f:"img/w3.jpg"},
  {no:"BK-045",t:"堆積",a:"小松　杏",ap:"artist-komatsu.html",mon:"2026.08",w:946,h:511,d:25,med:"ミクストメディア",kg:1.5,fix:"フック可",price:96000,f:"img/w2.jpg"},
  {no:"BK-021",t:"立つ",a:"石井悠真",ap:"artist-ishii.html",mon:"2026.07",w:2717,h:2133,d:60,med:"岩絵具・和紙",kg:18.5,fix:"下地補強が必要",price:680000,f:"img/w7.jpg",sold:true}
 ];
