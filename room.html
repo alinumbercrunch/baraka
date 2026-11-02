@@ -71,6 +71,14 @@ body{display:flex; flex-direction:column}
 .hung.sold::after{content:""; position:absolute; right:-14px; bottom:0; width:8px; height:8px;
   border-radius:50%; background:var(--shu)}
 
+/* a label beside each work, and the artist's words lettered on the wall */
+.lab{position:absolute; left:calc(100% + 110 * var(--u)); bottom:0; width:calc(380 * var(--u));
+  font-family:var(--min); font-size:calc(52 * var(--u)); line-height:1.5; color:#3a342c}
+.lab small{display:block; font-size:.78em; color:var(--mute); white-space:nowrap}
+.says{position:absolute; top:calc(500 * var(--u)); left:calc(var(--l) * var(--u)); width:calc(700 * var(--u));
+  height:calc(1900 * var(--u)); margin:0; writing-mode:vertical-rl; font-family:var(--min); font-size:calc(120 * var(--u));
+  line-height:1.8; letter-spacing:.08em; color:#4a4238; line-break:strict; word-break:normal}
+
 /* ── the title card: the room's name, set like an exhibition poster. It steps aside for the work ── */
 .card{--ink:#2a2622; --blend:multiply; position:absolute; inset:0; pointer-events:none; overflow:hidden;
   color:var(--ink); transition:opacity .4s ease}
@@ -115,6 +123,7 @@ body{display:flex; flex-direction:column}
   .rm{position:relative; width:calc(var(--wide) * var(--u)); height:100%; transform:none}
   .wall.back{transform:none; left:0; top:0; background:var(--tint),var(--plaster),linear-gradient(#f4efe7 88%,#d8c3a2 88%)}
   .hung{scroll-snap-align:center}
+  .lab{font-size:calc(66 * var(--u)); width:calc(460 * var(--u))}
   #panel{inset:auto 0 0 0; width:100%; height:auto; max-height:88svh; border-left:0; border-top:1px solid var(--rule)}
   #pi{display:block; width:auto; max-width:100%; max-height:32svh; margin:0 auto 8px}
 }
@@ -173,9 +182,11 @@ function roomHTML(r,pl,x){
   const wall=(id,len,inner)=>'<div class="wall '+id+'" style="--len:'+len+'">'+inner+'</div>';
   const hungOn=id=>pl.spots.filter(s=>s.wall===id).map(({k,x,y})=>
     '<a class="hung'+(k.sold?' sold':'')+'" id="h'+k.no+'" href="#'+r.artist+'/'+k.no+'" style="--l:'+(x-k.w/2)+';--t:'+(pl.h-y-k.h/2)+';--w:'+k.w+';--h:'+k.h+'">'+
-    '<img src="'+k.f+'" width="'+k.w+'" height="'+k.h+'" alt="'+k.t+'（'+k.a+'）'+(k.sold?' 完売':'')+'"></a>').join("");
+    '<img src="'+k.f+'" width="'+k.w+'" height="'+k.h+'" alt="'+k.t+'（'+k.a+'）'+(k.sold?' 完売':'')+'">'+
+    '<span class="lab" aria-hidden="true">'+k.t+'<small>'+mm(k.h)+' × '+mm(k.w)+'</small></span></a>').join("");
+  const words=ARTIST[r.artist].words, says=words&&pl.says?'<p class="says" style="--l:'+(pl.says.x-ROOM.says/2)+'">'+words+'</p>':"";
   return '<div class="rm" style="--x:'+x+';--wide:'+pl.w+';--deep:'+pl.d+';--high:'+pl.h+'">'+
-    wall("back",pl.w,hungOn("back"))+(flat()?"":
+    wall("back",pl.w,hungOn("back")+says)+(flat()?"":
     wall("left",pl.d,hungOn("left"))+wall("right",pl.d,hungOn("right"))+wall("floor",pl.w,"")+wall("top",pl.w,""))+'</div>';
 }
 function label(r){

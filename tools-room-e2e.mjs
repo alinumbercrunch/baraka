@@ -202,6 +202,14 @@ const checks = {
     const art = await js(`(()=>{const i=document.querySelector(".hung img"),c=getComputedStyle(i),h=getComputedStyle(i.parentNode);return [c.filter,c.mixBlendMode,c.opacity,h.filter].join()})()`);
     assert.equal(art, "none,normal,1,none");
   },
+  "every work has a label, and only artists with words get lettering": async () => {
+    await load("#mori");
+    assert.equal(await js(`document.querySelectorAll(".hung .lab").length`), 3);
+    assert.equal(await js(`document.querySelectorAll(".says").length`), 1);
+    assert.ok((await js(`document.querySelector(".says").textContent`)).startsWith("描き終えた絵"));
+    await load("#komatsu");   // has wall space but no statement: nothing is invented
+    assert.equal(await js(`document.querySelectorAll(".says").length`), 0);
+  },
   "reduced motion: no walking, no glide": async () => {
     await cdp("Emulation.setEmulatedMedia", { features: [{ name: "prefers-reduced-motion", value: "reduce" }] });
     await load("#mori");

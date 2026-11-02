@@ -87,6 +87,19 @@ test("sun: reads the hour in Japan, wherever the visitor's clock is", () => {
   assert.equal(sunAt(jst(0)), "evening");
 });
 
+test("words: stand on the back wall clear of the work, or don't appear", () => {
+  for (const works of rooms) {
+    const room = plan(works);
+    if (!room.says) continue;
+    const half = ROOM.says / 2, first = Math.min(...room.spots.filter(p => p.wall === "back").map(p => p.x - p.k.w / 2));
+    assert.equal(room.says.wall, "back");
+    assert.ok(room.says.x - half >= ROOM.clear, "clear of the corner");
+    assert.ok(room.says.x + half <= first - ROOM.clear, "clear of the work");
+  }
+  assert.ok(plan(route("#mori").works).says, "Mori's room has space");
+  assert.equal(plan([{ no: "W", w: 4000, h: 800 }]).says, null, "a wall-filling work leaves no space");
+});
+
 test("neighbour: artists wrap round both ways", () => {
   assert.equal(neighbour(ARTISTS[0], -1), ARTISTS.at(-1));
   assert.equal(neighbour(ARTISTS.at(-1), 1), ARTISTS[0]);

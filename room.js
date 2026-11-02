@@ -1,6 +1,6 @@
 /* Baraka — the room as arithmetic, in millimetres. No DOM here, so all of it can be tested. */
 /* lens, step: Codrops' 2000px perspective and 500px walk-in on a 1440px screen, as multiples of room width */
-const ROOM={w:4800,d:12000,h:3000,gap:500,near:1200,grow:600,air:900,lens:1.39,step:.35};
+const ROOM={w:4800,d:12000,h:3000,gap:500,near:1200,grow:600,air:900,says:700,clear:300,lens:1.39,step:.35};
 
 const artistKey=k=>k.ap.replace(/^artist-|\.html$/g,"");
 const ARTISTS=[...new Set(WORKS.map(artistKey))];
@@ -45,8 +45,14 @@ function plan(works,flat){
     const walls=flat?[{id:"back",from:0,to:w}]:
       [{id:"back",from:0,to:w},{id:"left",from:near,to:d,near:"from"},{id:"right",from:0,to:d-near,near:"to"}];
     const spots=layout(works,walls);
-    if(spots) return {w,d,h:ROOM.h,spots};
+    if(spots) return {w,d,h:ROOM.h,spots,says:wordsAt(spots)};
   }
+}
+
+/* the artist's words stand on the back wall, left of the work, the one wall read head-on. null if no room */
+function wordsAt(spots){
+  const run=Math.min(...spots.filter(s=>s.wall==="back").map(s=>s.x-s.k.w/2));
+  return run>=ROOM.says+ROOM.clear*2 ? {wall:"back",x:run/2} : null;
 }
 
 /* where a wall point sits in the room, centred on the room, and the turn that faces it */
