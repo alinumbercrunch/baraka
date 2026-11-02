@@ -184,28 +184,26 @@ legend{font-size:12px; color:var(--mute); font-family:var(--mono); letter-spacin
   </footer>
 </div>
 
+<script src="works.js"></script>
 <script>
-const TITLES={"BK-014":"朝の輪郭","BK-007":"波の記憶","BK-052":"海辺の家","BK-032":"白い午後",
-              "BK-045":"堆積","BK-061":"小さな庭","BK-021":"立つ"};
+const title=no=>(byNo(no)||{}).t||"";
 
 /* a work number can arrive in the link: enquiry.html#bk014 */
 const h=(location.hash||"").replace("#","").toUpperCase();
 const fromLink = /^BK\d{3}$/.test(h) ? h.slice(0,2)+"-"+h.slice(2) : null;
 
 /* or from the list built on the works page */
-let picked={};
-try{ const s=JSON.parse(localStorage.getItem("bk3")||"{}"); if(s.p&&typeof s.p==="object") picked=s.p; }catch(e){}
-try{ const s=JSON.parse(localStorage.getItem("bk3")||"{}");
-  if(s.w&&s.h) document.getElementById("wall").value="幅 "+s.w+" × 高 "+s.h+" mm"; }catch(e){}
+const picked=loadPicks();
+{ const s=loadStore(); if(s.w&&s.h) document.getElementById("wall").value="幅 "+s.w+" × 高 "+s.h+" mm"; }
 
 const keys=Object.keys(picked);
 const box=document.getElementById("picked");
 if(keys.length){
   box.innerHTML='<p class="hint" style="margin:0 0 8px">作品ページで選んだ作品です。お部屋の名前を入れておくと、お見積りが早くなります。</p>'+
-    keys.map(n=>'<div class="row"><span class="no">'+n+'</span><span>'+(TITLES[n]||"")+'</span>'+
+    keys.map(n=>'<div class="row"><span class="no">'+n+'</span><span>'+title(n)+'</span>'+
       '<input type="text" data-room="'+n+'" aria-label="'+n+' の部屋名" placeholder="部屋名（例 201号室）" value="'+((picked[n]&&picked[n].room)||"")+'"></div>').join("");
 } else if(fromLink){
-  box.innerHTML='<div class="row"><span class="no">'+fromLink+'</span><span>'+(TITLES[fromLink]||"")+'</span></div>';
+  box.innerHTML='<div class="row"><span class="no">'+fromLink+'</span><span>'+title(fromLink)+'</span></div>';
   document.getElementById("numbers").value=fromLink;
 } else {
   box.innerHTML='<p class="none">作品が決まっている場合は下に番号をご記入ください。まだお決まりでなくても結構です。</p>';
@@ -228,7 +226,7 @@ document.getElementById("form").addEventListener("submit",e=>{
   const ks=Object.keys(picked);
   if(ks.length){
     L.push("【ご相談の作品】");
-    ks.forEach(n=>L.push("  "+n+"  "+(TITLES[n]||"")+((picked[n]&&picked[n].room)?"  ／ "+picked[n].room:"")));
+    ks.forEach(n=>L.push("  "+n+"  "+title(n)+((picked[n]&&picked[n].room)?"  ／ "+picked[n].room:"")));
   } else if(v("numbers")) L.push("【ご相談の作品】","  "+v("numbers"));
   L.push("");
   if(document.getElementById("hold").checked)    L.push("・2週間のお取り置きを希望します");

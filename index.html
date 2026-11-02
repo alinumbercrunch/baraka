@@ -239,21 +239,17 @@
   </footer>
 </div>
 
+<script src="works.js"></script>
 <script>
-const MONTH=[
- {t:"朝の輪郭", w:2148,h:1312,f:"img/w5.jpg",p:"bk014.html",price:320000},
- {t:"海辺の家", w:1460,h:960, f:"img/w4.jpg",p:"bk052.html",price:198000},
- {t:"小さな庭", w:364, h:258, f:"img/w1.jpg",p:"bk061.html",price:48000}
-];
+const MONTH=WORKS.filter(k=>k.ap===WORKS[0].ap);
 const PAST=[
  {mo:"2026.09", n:"中村あかり", pl:"鎌倉",   p:"artist-nakamura.html", c:2, im:["img/w6.jpg","img/w3.jpg"]},
  {mo:"2026.08", n:"小松　杏",   pl:"茅ヶ崎", p:"artist-komatsu.html",  c:1, im:["img/w2.jpg"]},
  {mo:"2026.07", n:"石井悠真",   pl:"逗子",   p:"artist-ishii.html",    c:0, im:["img/w7.jpg"]}
 ];
-const yen=n=>"¥"+n.toLocaleString("en-US"), mm=n=>n.toLocaleString("en-US");
 
 document.getElementById("grid").innerHTML = MONTH.map(k=>
- '<a href="'+k.p+'"><figure style="--w:'+k.w+';--h:'+k.h+'">'+
+ '<a href="'+page(k)+'"><figure style="--w:'+k.w+';--h:'+k.h+'">'+
   '<div class="fr"><img src="'+k.f+'" width="'+k.w+'" height="'+k.h+'" alt="'+k.t+'" loading="lazy" decoding="async"></div>'+
   '<figcaption>'+k.t+'<span class="d">H'+mm(k.h)+' × W'+mm(k.w)+' mm</span>'+
   '<span class="p">'+yen(k.price)+'</span></figcaption></figure></a>').join("");

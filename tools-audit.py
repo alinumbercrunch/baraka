@@ -11,6 +11,7 @@ import io, os, re, sys, glob, json
 os.chdir(sys.argv[1] if len(sys.argv) > 1 else ".")
 PAGES = sorted(glob.glob("*.html"))
 SRC = {f: io.open(f, encoding="utf-8").read() for f in PAGES}
+DATA = io.open("works.js", encoding="utf-8").read()
 fails, warns = [], []
 
 
@@ -203,6 +204,13 @@ for f, s in SRC.items():
         if off >= 2:
             fail("dimensions", f"{f}: {img} is {rw}x{rh} but declared {dw}x{dh} "
                                f"- stretched {off:.0f}%")
+
+for wd, hd, img in re.findall(r'w:(\d+),h:(\d+),.*?f:"(img/[^"]+)"', DATA):
+    rw, rh = REAL.get(img, (0, 1))
+    if not rw:
+        fail("images", f"works.js: {img} referenced but not present")
+    elif abs(rw / rh - int(wd) / int(hd)) / (int(wd) / int(hd)) >= .02:
+        fail("dimensions", f"works.js: {img} is {rw}x{rh} but declared {wd}x{hd}")
 
 # 9 ── images
 refs = set()
