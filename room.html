@@ -14,7 +14,8 @@ body{display:flex; flex-direction:column}
 .cap .by{margin-left:auto; display:flex; gap:16px; font-size:12.5px}
 .cap .by a{color:var(--mute); text-decoration:none; border-bottom:1px solid var(--rule)}
 .cap h1{font-family:var(--min); font-weight:600; font-size:clamp(17px,2.2vw,21px)}
-#stage{flex:1 1 0; min-height:0; position:relative; overflow:clip; background:#e6dfd2}
+.hall{flex:1 1 0; min-height:0; position:relative; display:flex}
+#stage{flex:1 1 0; min-width:0; position:relative; overflow:clip; background:#e6dfd2}
 
 /* ── the room: every length is millimetres × --u, so one number sets the true scale ── */
 #room{position:absolute; left:50%; top:50%; width:0; height:0; transform-style:preserve-3d}
@@ -58,6 +59,21 @@ body{display:flex; flex-direction:column}
 .hung.sold::after{content:""; position:absolute; right:-14px; bottom:0; width:8px; height:8px;
   border-radius:50%; background:var(--shu)}
 
+/* ── the title card: the room's name, set like an exhibition poster. It steps aside for the work ── */
+.card{--ink:#2a2622; --blend:multiply; position:absolute; inset:0; pointer-events:none; overflow:hidden;
+  color:var(--ink); transition:opacity .4s ease}
+#stage.look~.card,#stage:has(.hung:hover)~.card,#stage:has(.hung:focus-visible)~.card{opacity:0}
+.card>*{position:absolute; margin:0; transition:transform .55s cubic-bezier(.2,1,.3,1),opacity .55s ease}
+.card.off>*{opacity:0; transform:translateY(70px)}
+.card>:nth-child(2){transition-delay:.08s}
+.card>:nth-child(3){transition-delay:.16s}
+.card>:nth-child(4){transition-delay:.24s}
+#cn{left:4vw; top:50%; translate:0 -50%; font-family:var(--min); font-weight:600; font-size:min(15vw,30svh);
+  line-height:1.02; letter-spacing:.02em; white-space:pre; mix-blend-mode:var(--blend)}
+#cr{right:4vw; bottom:calc(6% + 96px); font-family:var(--min); font-size:clamp(20px,3vw,38px); letter-spacing:.06em}
+#ct{right:4vw; bottom:calc(6% + 54px); background:var(--shu); color:#fff; font-size:14px; letter-spacing:.1em; padding:4px 12px}
+#cd{right:4vw; bottom:6%; color:var(--shu); font-family:var(--mono); font-size:15px; letter-spacing:.08em}
+
 /* ── the panel: the work stays visible, whole, beside it ── */
 #panel{position:fixed; inset:0 0 0 auto; margin:0; width:340px; max-width:100%; height:100%; max-height:100%;
   border:0; border-left:1px solid var(--rule); padding:0; background:var(--paper); color:var(--ink)}
@@ -80,7 +96,7 @@ body{display:flex; flex-direction:column}
 .sum{color:var(--shu); font-size:13px; margin:12px 0 0}
 
 /* ── phones: no room fits a portrait screen, so one long wall to swipe along ── */
-@media (prefers-reduced-motion:reduce){ .wall::before{transition:none} }
+@media (prefers-reduced-motion:reduce){ .wall::before,.card,.card>*{transition:none} }
 @media (max-width:760px){
   #stage{overflow-x:auto; scroll-snap-type:x proximity}
   #room{position:relative; left:0; top:0; height:100%}
@@ -109,7 +125,10 @@ body{display:flex; flex-direction:column}
     <span class="by"><a id="toPrev" href="index.html"></a><a id="toNext" href="index.html"></a></span>
   </header>
 </div>
-<main id="stage"><div id="room"></div></main>
+<div class="hall" id="hall">
+  <main id="stage"><div id="room"></div></main>
+  <div class="card off" id="card" aria-hidden="true"><p id="cn"></p><p id="cr"></p><p id="ct"></p><p id="cd"></p></div>
+</div>
 
 <dialog id="panel" aria-labelledby="pt"><div class="in">
   <button type="button" class="x" id="px">閉じる ×</button>
@@ -150,6 +169,11 @@ function roomHTML(r,pl,x){
 function label(r){
   $("ttl").textContent=r.works[0].a+"の展示室";
   document.title=r.works[0].a+"の展示室 — Baraka";
+  const info=ARTIST[r.artist], left=r.works.filter(k=>!k.sold).length;
+  $("cn").textContent=r.works[0].a.replace("　","\n");
+  $("cr").textContent="“"+info.ro+"”";
+  $("ct").textContent="展示室 "+info.pl;
+  $("cd").textContent=r.works[0].mon+" ／ "+(left?left+"点 販売中":"完売");
   for(const [id,by,txt] of [["toPrev",-1,"← "],["toNext",1,""]]){
     const a=neighbour(r.artist,by), n=WORKS.find(k=>artistKey(k)===a).a;
     $(id).href="#"+a; $(id).textContent=by<0?txt+n:n+" →";
@@ -168,6 +192,7 @@ const go=(t,how)=>new Promise(done=>{
 /* the demo's move: back out of the doorway, along to the next door, and in */
 async function walk(r,by){
   busy=true;
+  $("card").classList.add("off");
   const s=size(), next=plan(r.works,false), along=-by*plot.w;
   await go(rest(plot,s,{in:false}),WALK);
   rm.insertAdjacentHTML("beforeend",roomHTML(r,next,-along));
@@ -226,6 +251,7 @@ function sync(){
     rm.getBoundingClientRect();
     go(rest(plot,size()),ENTER);
   } else aim();
+  $("card").classList.remove("off");
 }
 function shut(){ location.hash=now.artist }
 function step(by){

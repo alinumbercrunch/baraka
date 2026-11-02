@@ -10,9 +10,9 @@ globalThis.localStorage = {
 };
 const files = ["works.js", "room.js"];
 const api = new Function(files.map(f => readFileSync(f, "utf8")).join("\n") +
-  `;return { WORKS, hang, byNo, page, loadStore, saveStore, loadPicks, togglePick,
+  `;return { ARTIST, WORKS, hang, byNo, page, loadStore, saveStore, loadPicks, togglePick,
      ROOM, ARTISTS, route, plan, place, lens, face, tilt, neighbour }`)();
-const { WORKS, hang, byNo, page, loadStore, saveStore, loadPicks, togglePick,
+const { ARTIST, WORKS, hang, byNo, page, loadStore, saveStore, loadPicks, togglePick,
   ROOM, ARTISTS, route, plan, place, lens, face, tilt, neighbour } = api;
 
 test("hang: eye level, lowered only when the top would crowd the ceiling", () => {
@@ -69,6 +69,10 @@ test("route: anything but a known artist and their own work falls back safely", 
   assert.equal(route("#mori/BK-021").work, null, "another artist's work");
   assert.equal(route("#mori/BK-014").work.no, "BK-014");
   assert.equal(route("#ishii").works.length, 1);
+});
+
+test("every artist has a romanised name and a place for their title card", () => {
+  for (const a of ARTISTS) assert.ok(ARTIST[a]?.ro && ARTIST[a]?.pl, a);
 });
 
 test("neighbour: artists wrap round both ways", () => {

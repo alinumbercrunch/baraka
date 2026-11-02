@@ -8,6 +8,8 @@ const WORKS=[
  {no:"BK-045",t:"堆積",a:"小松　杏",ap:"artist-komatsu.html",mon:"2026.08",w:946,h:511,d:25,med:"ミクストメディア",kg:1.5,fix:"フック可",price:96000,f:"img/w2.jpg"},
  {no:"BK-021",t:"立つ",a:"石井悠真",ap:"artist-ishii.html",mon:"2026.07",w:2717,h:2133,d:60,med:"岩絵具・和紙",kg:18.5,fix:"下地補強が必要",price:680000,f:"img/w7.jpg",sold:true}
 ];
+const ARTIST={mori:{ro:"Mori Shū",pl:"藤沢"},nakamura:{ro:"Nakamura Akari",pl:"鎌倉"},
+  komatsu:{ro:"Komatsu An",pl:"茅ヶ崎"},ishii:{ro:"Ishii Yūma",pl:"逗子"}};
 const mm=n=>Math.round(n).toLocaleString("en-US"), yen=n=>"¥"+n.toLocaleString("en-US");
 const byNo=no=>WORKS.find(k=>k.no===no);
 const page=k=>k.no.replace("-","").toLowerCase()+".html";

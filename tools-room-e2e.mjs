@@ -176,6 +176,19 @@ const checks = {
     assert.ok(await until(`document.activeElement.classList.contains("hung")`), "reached a work");
     assert.notEqual(await js(`getComputedStyle(document.activeElement).outlineColor`), "rgba(0, 0, 0, 0)");
   },
+  "the title card follows the room, and steps aside for a work": async () => {
+    await load("#mori");
+    const card = id => `document.getElementById("${id}").textContent`, off = `document.getElementById("card").classList.contains("off")`;
+    assert.ok(await until(`!${off}`), "shown on arrival");
+    assert.equal(await js(card("cn")), "森\n柊");
+    await js(`location.hash="#nakamura"`);
+    assert.ok(await until(off), "leaves with the room");
+    assert.ok(await until(`!${off}&&${card("cn")}==="中村あかり"`), "returns with the next");
+    await js(`location.hash="#ishii"`);
+    assert.ok(await until(`${card("cd")}.endsWith("完売")`, 4000), "sold out says so");
+    await js(`document.querySelector(".hung").click()`);
+    assert.ok(await until(`getComputedStyle(document.getElementById("card")).opacity==="0"`), "clear of the work");
+  },
   "reduced motion: no walking, no glide": async () => {
     await cdp("Emulation.setEmulatedMedia", { features: [{ name: "prefers-reduced-motion", value: "reduce" }] });
     await load("#mori");
