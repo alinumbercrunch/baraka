@@ -194,7 +194,7 @@
 
 <script src="works.js"></script>
 <script>
-document.getElementById("strip").innerHTML = [...WORKS].sort((a,b)=>b.h-a.h).map(k=>
+document.getElementById("strip").innerHTML = WORKS.filter(k=>k.ap==="artist-mori.html").sort((a,b)=>b.h-a.h).map(k=>
   '<figure style="--w:'+k.w+';--h:'+k.h+'">'+
     '<a href="'+page(k)+'">'+
     '<div class="art"><img src="'+k.f+'" width="'+k.w+'" height="'+k.h+'" alt="'+k.t+'" loading="lazy" decoding="async">'+
