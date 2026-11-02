@@ -36,5 +36,8 @@ dependencies. Fonts from Google Fonts. Everything else is in this folder.
 | `artists.html` | Every artist, by the month they were featured |
 | `artist-*.html` | One page per artist |
 | `bk*.html` | One page per artwork |
+| `room.html` | Walk-through gallery, one room per artist (`room.html#mori`) |
 | `trade.html` | Terms for designers, real-estate firms and artists |
 | `style.css` | All styling |
+| `works.js` | The list of works and the rules that read it |
+| `room.js` | The room's arithmetic, in millimetres |

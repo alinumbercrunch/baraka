@@ -12,7 +12,7 @@ const store = new Map();
 
 const mkEl = id => {
   const el = {
-    id, _html: "", value: "", hidden: false, dataset: {}, style: {},
+    id, _html: "", value: "", hidden: false, dataset: {}, style: { setProperty() {} },
     textContent: "", checked: false, children: [],
     get innerHTML() { return this._html },
     set innerHTML(v) {
@@ -21,7 +21,7 @@ const mkEl = id => {
       this.children = [...String(v).matchAll(/<button/g)].map(() => mkEl(id + "-child"));
     },
     setAttribute() {}, getAttribute() { return null }, removeAttribute() {},
-    addEventListener() {}, removeEventListener() {},
+    addEventListener() {}, removeEventListener() {}, getBoundingClientRect() { return { left: 0 } },
     appendChild() {}, scrollIntoView() {}, focus() {}, select() {},
     closest() { return null }, querySelector() { return null },
     querySelectorAll() { return [] },
@@ -67,6 +67,9 @@ Object.defineProperty(globalThis, "navigator", {
   configurable: true, writable: true,
 });
 globalThis.scrollTo = () => {};
+globalThis.addEventListener = () => {};
+globalThis.requestAnimationFrame = () => {};
+globalThis.ResizeObserver = class { observe() {} };
 globalThis.matchMedia = () => ({ matches: false, addEventListener() {} });
 
 const blocks = [...html.matchAll(/<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script>/g)].map(m => m[1]);
