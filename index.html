@@ -29,13 +29,15 @@
 .hero .lead{font-family:var(--min); font-weight:600; font-size:clamp(20px,2.8vw,28px); line-height:1.75; margin:0; max-width:none}
 .hero .lead b{font-weight:600}
 .hero .tag{color:var(--mute); margin:10px 0 0}
-.hero img{view-transition-name:hero-work; display:block; width:auto; height:auto; margin:clamp(20px,4vh,36px) auto 0;
+.hero img{view-transition-name:hero-work; display:block; width:auto; height:auto; margin:14px auto 0;
   max-width:100%; max-height:min(44svh,420px); box-shadow:0 2px 10px rgba(0,0,0,.2)}
+/* on a phone the painting and its button come first: nothing decorative above them */
+@media (max-width:760px){ .issue,.protobar .pe{display:none} .hero{padding-block:14px 10px} }
 .hero .doors{justify-content:center; margin-top:clamp(18px,3vh,26px)}
 
 /* ── 2d · the proof: the month's works, standing on one thin line at true relative size ── */
 .proof{text-align:center; margin-top:clamp(44px,8vh,72px)}
-.by{font-family:var(--min); margin:0}
+.by{font-family:var(--min); margin:clamp(18px,3vh,28px) 0 0}
 .by a{text-decoration:none; font-weight:600; font-size:clamp(18px,2.2vw,22px); border-bottom:1px solid var(--rule); margin:0 .3em}
 .by a:hover{border-bottom-color:var(--ink)}
 
@@ -94,6 +96,7 @@
 <section class="hero wrap">
   <h1 class="lead">まだ広く知られていない作家の絵を、<br><b>実際の大きさのまま</b>見て、買えるカタログです。</h1>
   <p class="tag">設計する部屋に、モデルルームに、ご自宅に。卸価格でのお取引もできます。</p>
+  <p class="by">今月の作家<a href="artist-mori.html">森　柊</a></p>
   <img src="img/w5.jpg" width="2148" height="1312" alt="朝の輪郭（森　柊）" fetchpriority="high" decoding="async">
   <div class="doors"><a class="door" href="room.html">展示室に入る</a></div>
 </section>
@@ -109,9 +112,8 @@
 
   <!-- 2d · the proof: true relative size -->
   <section class="proof">
-    <p class="by">今月の作家<a href="artist-mori.html">森　柊</a>2週間お取り置きできます</p>
     <div class="grid" id="grid"></div>
-    <p class="tax">表示価格はすべて税込です。配送・設置費は別途お見積りします。</p>
+    <p class="tax">作品は2週間お取り置きできます。表示価格はすべて税込です。配送・設置費は別途お見積りします。</p>
   </section>
 
   <!-- 4 · still available -->

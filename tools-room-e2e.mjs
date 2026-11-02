@@ -219,6 +219,8 @@ const checks = {
       assert.ok(await until(`document.readyState==="complete"&&!!document.querySelector(".hero .door")`));
       assert.deepEqual(await js(`[...document.querySelectorAll(".hero .door")].map(a=>a.getAttribute("href"))`), ["room.html"]);
       assert.equal(await js(`document.querySelectorAll(".hero img").length`), 1);
+      assert.ok(await js(`!!(document.querySelector(".hero .by").compareDocumentPosition(document.querySelector(".hero img"))&Node.DOCUMENT_POSITION_FOLLOWING)`), "the artist is named above the painting");
+      assert.equal(await js(`document.querySelector(".hero .by").textContent.includes("お取り置き")`), false, "a hold is about works, so it sits by the prices");
       assert.equal(await js(`document.querySelector(".hero").textContent.includes("¥")`), false, "nothing to read but the promise");
       assert.ok(await js(`document.querySelector(".hero .door").getBoundingClientRect().bottom<=innerHeight`), width + ": button in view without scrolling");
     }
@@ -240,6 +242,8 @@ const checks = {
     assert.equal(await js(`[...document.images].filter(i=>i.getAttribute("src")==="img/w5.jpg").length`), 2, "and nowhere else");
     for (const gone of [".quote", ".contact", ".note"]) assert.equal(await js(`document.querySelectorAll("${gone}").length`), 0, gone);
     assert.ok(await js(`document.querySelector(".proof").textContent.includes("税込")`), "tax note beside the prices");
+    assert.ok(await js(`document.querySelector(".proof").textContent.includes("作品は2週間お取り置きできます")`), "the hold is beside the prices");
+    assert.equal(await js(`document.querySelectorAll(".by").length`), 1, "the artist is named once");
   },
   "the month's works open the page, on one floor, at true relative size": async () => {
     for (const [width, height] of [[1440, 900], [390, 780]]) {
@@ -254,7 +258,7 @@ const checks = {
     }
     await cdp("Emulation.clearDeviceMetricsOverride");
     assert.equal(await js(`document.querySelectorAll("#thismonth").length`), 0, "no second introduction");
-    assert.equal(await js(`document.querySelectorAll('.proof a[href="artist-mori.html"]').length`), 1, "the artist is named once, and links on");
+    assert.equal(await js(`document.querySelectorAll('.hero a[href="artist-mori.html"]').length`), 1, "the artist is named once, and links on");
   },
   "designers can reach the wall-size tool from their own section": async () => {
     await cdp("Page.navigate", { url: home.replace("index", "trade") });
