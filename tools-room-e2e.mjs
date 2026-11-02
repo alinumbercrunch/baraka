@@ -242,6 +242,11 @@ const checks = {
     assert.equal(await js(`document.querySelectorAll("#thismonth").length`), 0, "no second introduction");
     assert.equal(await js(`document.querySelectorAll('.hero a[href="artist-mori.html"]').length`), 1, "the artist is named once, and links on");
   },
+  "designers can reach the wall-size tool from their own section": async () => {
+    await cdp("Page.navigate", { url: home.replace("index", "trade") });
+    assert.ok(await until(`document.readyState==="complete"`));
+    assert.equal(await js(`document.querySelectorAll('#designer a[href="works.html#wallbox"]').length`), 1);
+  },
   "browsers without page transitions still walk in": async () => {
     const { identifier } = await cdp("Page.addScriptToEvaluateOnNewDocument", { source: `delete Window.prototype.onpagereveal; delete window.onpagereveal;
       addEventListener("pagereveal", e => e.stopImmediatePropagation(), true)` });
