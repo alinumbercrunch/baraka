@@ -226,9 +226,23 @@ const checks = {
     await cdp("Page.navigate", { url: home });
     assert.ok(await until(`document.readyState==="complete"&&!!document.querySelector("#grid a")`));
     assert.equal(await js(`[...document.images].filter(i=>i.getAttribute("src")==="img/w5.jpg").length`), 1, "the hero work once");
-    assert.equal(await js(`document.querySelectorAll("#grid a").length`), 2, "the month's other works");
     for (const gone of [".quote", ".contact", ".note"]) assert.equal(await js(`document.querySelectorAll("${gone}").length`), 0, gone);
-    assert.ok(await js(`document.getElementById("thismonth").textContent.includes("税込")`), "tax note beside the prices");
+    assert.ok(await js(`document.querySelector(".hero").textContent.includes("税込")`), "tax note beside the prices");
+  },
+  "the month's works open the page, on one floor, at true relative size": async () => {
+    for (const [width, height] of [[1440, 900], [390, 780]]) {
+      await cdp("Emulation.setDeviceMetricsOverride", { width, height, deviceScaleFactor: 1, mobile: false });
+      await cdp("Page.navigate", { url: home });
+      assert.ok(await until(`document.readyState==="complete"&&document.querySelectorAll(".hero #grid .fr").length===3`), "all three in the hero");
+      const f = await js(`[...document.querySelectorAll("#grid .fr")].map(e=>{const r=e.getBoundingClientRect();return {w:r.width,b:r.bottom,r:r.right,l:r.left}})`);
+      assert.ok(Math.max(...f.map(x => x.b)) - Math.min(...f.map(x => x.b)) < 1, width + ": one floor");
+      assert.ok(Math.abs(f[0].w / f[2].w - 2148 / 364) < .5, width + ": true ratio " + (f[0].w / f[2].w).toFixed(2));
+      assert.ok(Math.min(...f.map(x => x.l)) >= 0 && Math.max(...f.map(x => x.r)) <= width, width + ": all on screen");
+      assert.equal(await js(`document.documentElement.scrollWidth<=innerWidth`), true, width + ": no sideways scroll");
+    }
+    await cdp("Emulation.clearDeviceMetricsOverride");
+    assert.equal(await js(`document.querySelectorAll("#thismonth").length`), 0, "no second introduction");
+    assert.equal(await js(`document.querySelectorAll('.hero a[href="artist-mori.html"]').length`), 1, "the artist is named once, and links on");
   },
   "browsers without page transitions still walk in": async () => {
     const { identifier } = await cdp("Page.addScriptToEvaluateOnNewDocument", { source: `delete Window.prototype.onpagereveal; delete window.onpagereveal;
