@@ -59,9 +59,12 @@ const checks = {
     assert.ok(await until(open));
     assert.equal(await js("location.hash"), "#mori/BK-052");
     assert.equal(await js(`document.getElementById("pt").textContent`), "海辺の家");
+    const shade = `getComputedStyle(document.querySelector(".wall"),"::before").visibility`;
     assert.ok(await js(`document.getElementById("stage").classList.contains("look")`), "room dims");
+    assert.equal(await js(shade), "visible");
     await key("Escape");
     assert.ok(await until(`!document.getElementById("stage").classList.contains("look")`), "room lifts");
+    assert.ok(await until(`${shade}==="hidden"`, 3000), "shade gone, so new walls can't flash it");
   },
   "Esc closes, clears the link, and puts focus back on the work": async () => {
     await load("#mori/BK-052");
@@ -156,6 +159,22 @@ const checks = {
         performance.now()-t0<700 ? requestAnimationFrame(frame) : done(Math.max(...xs)-Math.min(...xs)) })();
     })`);
     assert.ok(seen < 2, "painting drifted " + Math.round(seen) + "px after landing");
+  },
+  "the next room is built and its paintings ready before the camera moves": async () => {
+    await load("#mori");
+    await wait(1000);
+    const still = await js(`document.getElementById("room").style.transform`);
+    await js(`location.hash="#nakamura"`);
+    assert.ok(await until(`document.getElementById("room").style.transform!==${JSON.stringify(still)}`));
+    assert.equal(await js(`document.querySelectorAll(".rm").length`), 2, "already there as the camera leaves");
+    assert.ok(await js(`[...document.querySelectorAll(".rm:last-child img")].every(i=>i.complete&&i.naturalWidth)`), "images ready");
+  },
+  "a painting that won't decode doesn't strand the visitor between rooms": async () => {
+    await load("#mori");
+    await wait(1000);
+    await js(`HTMLImageElement.prototype.decode=()=>Promise.reject(new Error("bad image"))`);
+    await js(`location.hash="#nakamura"`);
+    assert.ok(await until(`document.querySelectorAll(".rm").length===1&&!!document.getElementById("hBK-007")`, 4000));
   },
   "the pointer tilts the room, but not a painting you are looking at": async () => {
     await load("#mori");

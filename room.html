@@ -51,9 +51,9 @@ body{display:flex; flex-direction:column}
   background:var(--tint),linear-gradient(90deg,#ded6c9,#f0ebe2 38%,var(--sky) 42% 58%,#f0ebe2 62%,#ded6c9);
   transform:rotateX(-90deg) translateZ(calc(var(--high) * var(--u) / -2))}
 /* the room falls back as you walk up to a work; the work's own light does not */
-.wall::before{content:""; position:absolute; inset:0; background:#2a2622; opacity:0;
-  transition:opacity 1.8s ease}
-.look .wall::before{opacity:.28}
+.wall::before{content:""; position:absolute; inset:0; background:#2a2622; opacity:0; visibility:hidden;
+  transition:opacity 1.8s ease,visibility 0s 1.8s}   /* hidden, not just clear: a new wall can flash it at full strength */
+.look .wall::before{opacity:.28; visibility:visible; transition:opacity 1.8s ease}
 .hung{position:absolute; left:calc(var(--l) * var(--u)); top:calc(var(--t) * var(--u));
   width:calc(var(--w) * var(--u)); height:calc(var(--h) * var(--u));
   box-shadow:0 2px 7px rgba(0,0,0,.28); z-index:0; transition:box-shadow .3s ease;
@@ -217,8 +217,11 @@ async function walk(r,by){
   busy=true;
   $("card").classList.add("off");
   const s=size(), next=plan(r.works,false), along=-by*plot.w;
-  await go(rest(plot,s,{in:false}),WALK);
+  /* built and drawn before the camera leaves, or the graphics card shows empty space where it should be */
   rm.insertAdjacentHTML("beforeend",roomHTML(r,next,-along));
+  await Promise.all([...rm.lastElementChild.querySelectorAll("img")].map(i=>i.decode().catch(()=>{})));
+  await new Promise(requestAnimationFrame);
+  await go(rest(plot,s,{in:false}),WALK);
   await go(rest(plot,s,{in:false,x:along}),WALK);
   await go(rest(next,s,{x:along}),WALK);
   rm.style.transition="none";
