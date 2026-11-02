@@ -251,6 +251,13 @@ for f, s in SRC.items():
     if got != NAV:
         fail("nav", f"{f}: nav differs from the other pages: {[t for _, t in got]}")
 
+# 13 ── Baraka takes the order and the money; the artist delivers. No page may promise otherwise
+BROKEN_PROMISES = ("保険対応", "7日以内")
+for f, s in SRC.items():
+    for w in BROKEN_PROMISES:
+        if w in body_of(s):
+            fail("promise", f"{f}: promises {w}")
+
 # ── report
 print("=" * 62)
 print(f"  {len(PAGES)} pages audited")
