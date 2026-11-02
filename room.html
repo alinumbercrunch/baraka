@@ -4,6 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>展示室 — Baraka</title>
+<script>
+/* the page transition into this room, if there was one, finishes before the walk in begins.
+   Up here because it fires at first paint, which can come before the end of the body */
+const revealed=new Promise(done=>"onpagereveal" in window
+  ?addEventListener("pagereveal",e=>done(e.viewTransition?.finished),{once:true}):done());
+</script>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Shippori+Mincho:wght@400;600&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
 <link rel="stylesheet" href="style.css">
@@ -70,6 +76,11 @@ body{display:flex; flex-direction:column}
 /* gallery convention: a red dot beside a sold work */
 .hung.sold::after{content:""; position:absolute; right:-14px; bottom:0; width:8px; height:8px;
   border-radius:50%; background:var(--shu)}
+
+/* arriving from a page showing this work, it travels on to its place on the back wall */
+#stage:not(.look) .lead img{view-transition-name:hero-work}
+::view-transition-group(hero-work){animation-duration:.9s; animation-timing-function:cubic-bezier(.45,0,.15,1)}
+::view-transition-old(root),::view-transition-new(root){animation-duration:.7s}
 
 /* a label beside each work, and the artist's words lettered on the wall */
 .lab{position:absolute; left:calc(100% + 110 * var(--u)); bottom:0; width:calc(380 * var(--u));
@@ -179,9 +190,10 @@ const size=()=>({w:stage.clientWidth,h:stage.clientHeight});
 const flat=()=>phone.matches;
 const motion=()=>!flat()&&!still.matches;
 function roomHTML(r,pl,x){
+  const lead=pl.spots[0].k;
   const wall=(id,len,inner)=>'<div class="wall '+id+'" style="--len:'+len+'">'+inner+'</div>';
   const hungOn=id=>pl.spots.filter(s=>s.wall===id).map(({k,x,y})=>
-    '<a class="hung'+(k.sold?' sold':'')+'" id="h'+k.no+'" href="#'+r.artist+'/'+k.no+'" style="--l:'+(x-k.w/2)+';--t:'+(pl.h-y-k.h/2)+';--w:'+k.w+';--h:'+k.h+'">'+
+    '<a class="hung'+(k.sold?' sold':'')+(k===lead?' lead':'')+'" id="h'+k.no+'" href="#'+r.artist+'/'+k.no+'" style="--l:'+(x-k.w/2)+';--t:'+(pl.h-y-k.h/2)+';--w:'+k.w+';--h:'+k.h+'">'+
     '<img src="'+k.f+'" width="'+k.w+'" height="'+k.h+'" alt="'+k.t+'（'+k.a+'）'+(k.sold?' 完売':'')+'">'+
     '<span class="lab" aria-hidden="true">'+k.t+'<small>'+mm(k.h)+' × '+mm(k.w)+'</small></span></a>').join("");
   const words=ARTIST[r.artist].words, says=words&&pl.says?'<p class="says" style="--l:'+(pl.says.x-ROOM.says/2)+'">'+words+'</p>':"";
@@ -273,13 +285,20 @@ function sync(){
   if(built!==now.artist+flat()) build(now);
   if(now.work){ fill(now.work,now); if(!panel.open) panel.showModal() }
   else if(panel.open) panel.close();
-  if(!was&&!now.work&&motion()){    // arriving: start at the door and walk in
-    aim("none");
-    rm.style.transform=rest(plot,size(),{in:false});
-    rm.getBoundingClientRect();
-    go(rest(plot,size()),ENTER);
-  } else aim();
+  if(!was&&!now.work&&motion()) return arrive();
+  aim();
   $("card").classList.remove("off");
+}
+async function arrive(){    // start at the door, and walk in once the page has finished arriving
+  busy=true;
+  aim("none");
+  rm.style.transform=rest(plot,size(),{in:false});
+  rm.getBoundingClientRect();
+  await revealed;
+  $("card").classList.remove("off");
+  await go(rest(plot,size()),ENTER);
+  busy=false;
+  sync();
 }
 function light(id){
   $("hall").dataset.sun=id;

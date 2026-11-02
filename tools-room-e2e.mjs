@@ -16,7 +16,8 @@ const site = createServer(async (q, a) => {
   } catch { a.writeHead(404).end() }
 }).listen(0, "127.0.0.1");
 await new Promise(r => site.once("listening", r));
-const base = `http://127.0.0.1:${site.address().port}/room.html`;
+const home = `http://127.0.0.1:${site.address().port}/index.html`;
+const base = home.replace("index", "room");
 
 const profile = await mkdtemp(join(tmpdir(), "baraka-"));
 const chrome = spawn(CHROME, ["--headless=new", "--remote-debugging-port=0", "--user-data-dir=" + profile,
@@ -175,6 +176,30 @@ const checks = {
     await js(`HTMLImageElement.prototype.decode=()=>Promise.reject(new Error("bad image"))`);
     await js(`location.hash="#nakamura"`);
     assert.ok(await until(`document.querySelectorAll(".rm").length===1&&!!document.getElementById("hBK-007")`, 4000));
+  },
+  "from the home page the painting travels, and the walk in waits for it": async () => {
+    await cdp("Page.navigate", { url: "about:blank" });
+    await cdp("Page.navigate", { url: home });
+    assert.ok(await until(`document.readyState==="complete"`));
+    await wait(500);
+    await js(`document.querySelector('.hero a[href^="room.html"]').click()`);
+    assert.ok(await until(`location.pathname.endsWith("room.html")&&!!document.querySelector(".wall")`));
+    assert.equal(await js(`getComputedStyle(document.querySelector(".lead img")).viewTransitionName`), "hero-work");
+    assert.equal(await js(`document.getElementById("card").classList.contains("off")`), true, "card waits");
+    assert.ok((await js(`document.getElementById("room").style.transform`)).startsWith("translate3d(0px, 0px, 0px)"), "still at the door");
+    assert.ok(await until(`!document.getElementById("card").classList.contains("off")`, 4000), "then the room opens");
+    assert.ok(await until(`document.getElementById("room").style.transition.includes("0.9s")||document.getElementById("room").style.transition.includes("1.8s")`));
+  },
+  "browsers without page transitions still walk in": async () => {
+    const { identifier } = await cdp("Page.addScriptToEvaluateOnNewDocument", { source: `delete Window.prototype.onpagereveal; delete window.onpagereveal` });
+    await load("#mori");
+    assert.ok(await until(`!document.getElementById("card").classList.contains("off")`), "not stranded at the door");
+    await cdp("Page.removeScriptToEvaluateOnNewDocument", { identifier });
+  },
+  "a click during the walk in still opens the work": async () => {
+    await load("#mori");
+    await js(`location.hash="#mori/BK-052"`);
+    assert.ok(await until(`document.getElementById("panel").open`, 3000));
   },
   "the pointer tilts the room, but not a painting you are looking at": async () => {
     await load("#mori");
