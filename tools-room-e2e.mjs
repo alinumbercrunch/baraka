@@ -9,6 +9,9 @@ import { extname, join, normalize } from "node:path";
 import assert from "node:assert/strict";
 
 const REAL = process.argv.includes("--real");
+// a stuck browser must fail the run, not hang it
+const watchdog = setTimeout(() => { console.log("  TIMED OUT: browser stopped responding"); chrome.kill(); process.exit(2) }, REAL ? 120000 : 240000);
+watchdog.unref();
 
 const CHROME = process.env.CHROME || "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
 const TYPES = { ".html": "text/html", ".js": "text/javascript", ".css": "text/css", ".jpg": "image/jpeg" };
