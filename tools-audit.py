@@ -252,7 +252,8 @@ for f, s in SRC.items():
         fail("nav", f"{f}: nav differs from the other pages: {[t for _, t in got]}")
 
 # 13 ── Baraka takes the order and the money; the artist delivers. No page may promise otherwise
-BROKEN_PROMISES = ("保険対応", "7日以内")
+BROKEN_PROMISES = ("保険対応", "7日以内", "こちらで取り付け", "取付まで承ります", "原状回復", "取り外し・再設置",
+                   "1週間以内", "在庫あり ／ 2週間")
 for f, s in SRC.items():
     for w in BROKEN_PROMISES:
         if w in body_of(s):
