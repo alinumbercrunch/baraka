@@ -61,6 +61,9 @@ const open = `document.getElementById("panel").open`;
 
 await cdp("Page.enable"); await cdp("Runtime.enable");
 
+const nameClear = () => js(`(()=>{const r=document.createRange();r.selectNodeContents(document.getElementById("cn"));
+  const lines=[...r.getClientRects()], facts=["cr","ct","cd"].map(id=>document.getElementById(id).getBoundingClientRect());
+  return !lines.some(l=>facts.some(f=>l.left+1<f.right&&f.left+1<l.right&&l.top+.2*l.height<f.bottom&&f.top<l.bottom-.2*l.height))})()`);
 const checks = {
   "clicking a work opens its panel and gives it a link": async () => {
     await load("#mori");
@@ -270,8 +273,17 @@ const checks = {
       await wait(150);
       const r = await js(`(()=>{const c=document.getElementById("cn"),b=document.createRange();b.selectNodeContents(c);const t=b.getBoundingClientRect(),e=c.getBoundingClientRect(),s=document.getElementById("card").getBoundingClientRect();return [t.left-s.left,s.right-t.right,e.top-s.top,s.bottom-e.bottom]})()`);
       assert.ok(r.every(v => v >= 0), name + ": " + r.map(Math.round));
+      assert.ok(await nameClear(), name + " clear of the details");
     }
     await cdp("Emulation.clearDeviceMetricsOverride");
+    for (const hash of ["#mori", "#nakamura"]) {
+      await load(hash);
+      await wait(200);
+      assert.ok(await nameClear(), hash + " as written");
+      await js(`document.getElementById("cn").textContent="Akari Nakamura"`);
+      await wait(200);
+      assert.ok(await nameClear(), hash + " translated");
+    }
   },
   "the light changes the room and never the painting": async () => {
     await load("#mori");
