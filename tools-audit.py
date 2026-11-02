@@ -259,6 +259,11 @@ for f, s in SRC.items():
         if w in body_of(s):
             fail("promise", f"{f}: promises {w}")
 
+# 14 ── artists must see what a sale asks of them before they apply
+for w in ("梱包・配送・設置は作家", "他所で販売しない", "納品確認の翌月末", "納品までの破損"):
+    if w not in SRC["join.html"]:
+        fail("promise", f"join.html: doesn't tell artists: {w}")
+
 # ── report
 print("=" * 62)
 print(f"  {len(PAGES)} pages audited")

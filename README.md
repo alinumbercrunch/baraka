@@ -22,6 +22,12 @@ really does appear about a seventh the height of a 2,717 mm canvas.
 Enter your wall dimensions and each work tells you whether it fits, and at what
 height to hang it.
 
+## How a sale works
+
+Baraka takes the order and the payment, keeps 15%, and pays the artist the month
+after delivery is confirmed. The artist packs, delivers and installs. Baraka holds
+no stock and delivers nothing.
+
 ## Built with
 
 Plain HTML, CSS and vanilla JavaScript. No build step, no framework, no
