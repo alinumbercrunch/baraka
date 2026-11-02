@@ -11,9 +11,9 @@ globalThis.localStorage = {
 const files = ["works.js", "room.js"];
 const api = new Function(files.map(f => readFileSync(f, "utf8")).join("\n") +
   `;return { ARTIST, WORKS, hang, byNo, page, loadStore, saveStore, loadPicks, togglePick,
-     ROOM, ARTISTS, route, plan, place, lens, face, tilt, neighbour }`)();
+     ROOM, ARTISTS, route, plan, place, lens, face, tilt, neighbour, sunAt }`)();
 const { ARTIST, WORKS, hang, byNo, page, loadStore, saveStore, loadPicks, togglePick,
-  ROOM, ARTISTS, route, plan, place, lens, face, tilt, neighbour } = api;
+  ROOM, ARTISTS, route, plan, place, lens, face, tilt, neighbour, sunAt } = api;
 
 test("hang: eye level, lowered only when the top would crowd the ceiling", () => {
   assert.equal(hang({ h: 960 }, 2400), 1500);
@@ -73,6 +73,18 @@ test("route: anything but a known artist and their own work falls back safely", 
 
 test("every artist has a romanised name and a place for their title card", () => {
   for (const a of ARTISTS) assert.ok(ARTIST[a]?.ro && ARTIST[a]?.pl, a);
+});
+
+test("sun: reads the hour in Japan, wherever the visitor's clock is", () => {
+  const jst = (h, m = 0) => new Date(Date.UTC(2026, 9, 1, h - 9, m));
+  assert.equal(sunAt(jst(4, 59)), "evening");
+  assert.equal(sunAt(jst(5)), "morning");
+  assert.equal(sunAt(jst(10, 59)), "morning");
+  assert.equal(sunAt(jst(11)), "noon");
+  assert.equal(sunAt(jst(15, 59)), "noon");
+  assert.equal(sunAt(jst(16)), "evening");
+  assert.equal(sunAt(jst(23, 59)), "evening");
+  assert.equal(sunAt(jst(0)), "evening");
 });
 
 test("neighbour: artists wrap round both ways", () => {

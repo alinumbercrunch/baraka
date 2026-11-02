@@ -57,6 +57,13 @@ function place(room,{wall,x,y}){
   return {x:x-room.w/2, y:up, z:-room.d/2, turn:0};
 }
 
+/* the room's light follows the clock in Japan, wherever the visitor is */
+const SUN=[{id:"morning",l:"朝",from:5},{id:"noon",l:"昼",from:11},{id:"evening",l:"夕",from:16}];
+function sunAt(date){
+  const h=+new Intl.DateTimeFormat("en-GB",{timeZone:"Asia/Tokyo",hour:"numeric",hourCycle:"h23"}).format(date);
+  return (SUN.findLast(p=>h>=p.from)||SUN[2]).id;   // before 5 am is still last evening
+}
+
 const lens=(room,stage)=>{ const u=Math.min(stage.w/room.w,stage.h/room.h); return {u,p:ROOM.lens*room.w*u} };
 
 /* standing in the doorway. in: walked in. x: mm along the row of rooms. rx, ry: tilt in degrees */

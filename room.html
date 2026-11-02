@@ -9,13 +9,25 @@
 <link rel="stylesheet" href="style.css">
 <style>
 html,body{height:100%}
+/* registered so the light can fade; the tint is painted under the works, never over them */
+@property --sun{syntax:"<color>"; inherits:true; initial-value:rgba(255,255,255,0)}
+@property --sky{syntax:"<color>"; inherits:true; initial-value:#fff}
+.hall[data-sun="morning"]{--sun:rgba(160,190,225,.13); --sky:#e6f0fb}
+.hall[data-sun="noon"]{--sun:rgba(255,255,255,0); --sky:#fff}
+.hall[data-sun="evening"]{--sun:rgba(190,122,48,.3); --sky:#ffcf96}
 body{display:flex; flex-direction:column}
 .cap{display:flex; align-items:baseline; gap:14px; flex-wrap:wrap; width:100%; padding-block:10px}
 .cap .by{margin-left:auto; display:flex; gap:16px; font-size:12.5px}
 .cap .by a{color:var(--mute); text-decoration:none; border-bottom:1px solid var(--rule)}
+#sun{display:flex; gap:2px}
+#sun button{background:none; border:0; border-bottom:1px solid transparent; color:var(--mute); padding:0 7px; font-family:var(--min)}
+#sun button[aria-pressed="true"]{color:var(--ink); border-bottom-color:var(--shu)}
 .cap h1{font-family:var(--min); font-weight:600; font-size:clamp(17px,2.2vw,21px)}
 .hall{flex:1 1 0; min-height:0; position:relative; display:flex}
-#stage{flex:1 1 0; min-width:0; position:relative; overflow:clip; background:#e6dfd2}
+.hall.live{transition:--sun 2.5s ease,--sky 2.5s ease}   /* only a chosen change fades: arriving, the light is simply there */
+#stage{flex:1 1 0; min-width:0; position:relative; overflow:clip; background:linear-gradient(var(--sun),var(--sun)),#e6dfd2}
+.hall[data-sun="evening"] .card{--ink:#fff6e6; --blend:normal}
+.hall[data-sun="evening"] #cd{color:var(--ink)}
 
 /* ── the room: every length is millimetres × --u, so one number sets the true scale ── */
 #room{position:absolute; left:50%; top:50%; width:0; height:0; transform-style:preserve-3d}
@@ -23,20 +35,20 @@ body{display:flex; flex-direction:column}
 .wall{position:absolute; left:calc(var(--len) * var(--u) / -2); top:calc(var(--high) * var(--u) / -2);
   width:calc(var(--len) * var(--u)); height:calc(var(--high) * var(--u)); backface-visibility:hidden}
 /* plaster, oak and a skylight: each surface a step apart, walls darkening toward you */
-.wall{--plaster:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012 .03' numOctaves='3'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .4 0 0 0 0 .33 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E")}
-.wall.back{background:var(--plaster),linear-gradient(#f4efe7,#e9e2d6); transform:translateZ(calc(var(--deep) * var(--u) / -2))}
-.wall.left{background:var(--plaster),linear-gradient(90deg,#cfc5b6,#e6dfd2 70%); transform:rotateY(90deg) translateZ(calc(var(--wide) * var(--u) / -2))}
-.wall.right{background:var(--plaster),linear-gradient(90deg,#e6dfd2 30%,#cfc5b6); transform:rotateY(-90deg) translateZ(calc(var(--wide) * var(--u) / -2))}
+.wall{--tint:linear-gradient(var(--sun),var(--sun)); --plaster:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012 .03' numOctaves='3'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .4 0 0 0 0 .33 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E")}
+.wall.back{background:var(--tint),var(--plaster),linear-gradient(#f4efe7,#e9e2d6); transform:translateZ(calc(var(--deep) * var(--u) / -2))}
+.wall.left{background:var(--tint),var(--plaster),linear-gradient(90deg,#cfc5b6,#e6dfd2 70%); transform:rotateY(90deg) translateZ(calc(var(--wide) * var(--u) / -2))}
+.wall.right{background:var(--tint),var(--plaster),linear-gradient(90deg,#e6dfd2 30%,#cfc5b6); transform:rotateY(-90deg) translateZ(calc(var(--wide) * var(--u) / -2))}
 .wall.floor,.wall.top{top:calc(var(--deep) * var(--u) / -2); height:calc(var(--deep) * var(--u))}
 /* oak boards 140 mm wide with a fine seam, run down the room, under a light that fades toward you */
 .wall.floor{--board:calc(140 * var(--u));
-  background:var(--plaster),linear-gradient(rgba(255,250,240,.3),rgba(70,50,30,.16)),
+  background:var(--tint),var(--plaster),linear-gradient(rgba(255,250,240,.3),rgba(70,50,30,.16)),
     repeating-linear-gradient(90deg,rgba(90,65,40,.3) 0 1px,transparent 1px var(--board)),
     repeating-linear-gradient(90deg,#d9c6a8 0 var(--board),#d6c2a3 0 calc(var(--board) * 2),#dac8ab 0 calc(var(--board) * 3),#d3bf9f 0 calc(var(--board) * 4));
   transform:rotateX(90deg) translateZ(calc(var(--high) * var(--u) / -2))}
 /* runs on behind the back wall, or the page shows through at the join */
 .wall.top{height:calc((var(--deep) + 1500) * var(--u)); transform-origin:50% calc(var(--deep) * var(--u) / 2);
-  background:linear-gradient(90deg,#ded6c9,#f0ebe2 38%,#fff 42% 58%,#f0ebe2 62%,#ded6c9);
+  background:var(--tint),linear-gradient(90deg,#ded6c9,#f0ebe2 38%,var(--sky) 42% 58%,#f0ebe2 62%,#ded6c9);
   transform:rotateX(-90deg) translateZ(calc(var(--high) * var(--u) / -2))}
 /* the room falls back as you walk up to a work; the work's own light does not */
 .wall::before{content:""; position:absolute; inset:0; background:#2a2622; opacity:0;
@@ -96,12 +108,12 @@ body{display:flex; flex-direction:column}
 .sum{color:var(--shu); font-size:13px; margin:12px 0 0}
 
 /* ── phones: no room fits a portrait screen, so one long wall to swipe along ── */
-@media (prefers-reduced-motion:reduce){ .wall::before,.card,.card>*{transition:none} }
+@media (prefers-reduced-motion:reduce){ .wall::before,.card,.card>*,.hall.live{transition:none} }
 @media (max-width:760px){
   #stage{overflow-x:auto; scroll-snap-type:x proximity}
   #room{position:relative; left:0; top:0; height:100%}
   .rm{position:relative; width:calc(var(--wide) * var(--u)); height:100%; transform:none}
-  .wall.back{transform:none; left:0; top:0; background:var(--plaster),linear-gradient(#f4efe7 88%,#d8c3a2 88%)}
+  .wall.back{transform:none; left:0; top:0; background:var(--tint),var(--plaster),linear-gradient(#f4efe7 88%,#d8c3a2 88%)}
   .hung{scroll-snap-align:center}
   #panel{inset:auto 0 0 0; width:100%; height:auto; max-height:88svh; border-left:0; border-top:1px solid var(--rule)}
   #pi{display:block; width:auto; max-width:100%; max-height:32svh; margin:0 auto 8px}
@@ -122,7 +134,7 @@ body{display:flex; flex-direction:column}
   <header class="cap">
     <h1 id="ttl">展示室</h1>
     <span class="en">作品を押すと、正面から見られます。大きさの比率は実物どおりです。</span>
-    <span class="by"><a id="toPrev" href="index.html"></a><a id="toNext" href="index.html"></a></span>
+    <span class="by"><span id="sun" role="group" aria-label="部屋の光"></span><a id="toPrev" href="index.html"></a><a id="toNext" href="index.html"></a></span>
   </header>
 </div>
 <div class="hall" id="hall">
@@ -161,7 +173,7 @@ function roomHTML(r,pl,x){
   const wall=(id,len,inner)=>'<div class="wall '+id+'" style="--len:'+len+'">'+inner+'</div>';
   const hungOn=id=>pl.spots.filter(s=>s.wall===id).map(({k,x,y})=>
     '<a class="hung'+(k.sold?' sold':'')+'" id="h'+k.no+'" href="#'+r.artist+'/'+k.no+'" style="--l:'+(x-k.w/2)+';--t:'+(pl.h-y-k.h/2)+';--w:'+k.w+';--h:'+k.h+'">'+
-    '<img src="'+k.f+'" width="'+k.w+'" height="'+k.h+'" alt="'+k.t+'（'+k.a+'）'+(k.sold?' 完売':'')+'" decoding="async"></a>').join("");
+    '<img src="'+k.f+'" width="'+k.w+'" height="'+k.h+'" alt="'+k.t+'（'+k.a+'）'+(k.sold?' 完売':'')+'"></a>').join("");
   return '<div class="rm" style="--x:'+x+';--wide:'+pl.w+';--deep:'+pl.d+';--high:'+pl.h+'">'+
     wall("back",pl.w,hungOn("back"))+(flat()?"":
     wall("left",pl.d,hungOn("left"))+wall("right",pl.d,hungOn("right"))+wall("floor",pl.w,"")+wall("top",pl.w,""))+'</div>';
@@ -253,6 +265,10 @@ function sync(){
   } else aim();
   $("card").classList.remove("off");
 }
+function light(id){
+  $("hall").dataset.sun=id;
+  for(const b of $("sun").children) b.setAttribute("aria-pressed",b.dataset.sun===id);
+}
 function shut(){ location.hash=now.artist }
 function step(by){
   const i=now.works.indexOf(now.work), n=now.works.length;
@@ -271,6 +287,9 @@ $("px").onclick=()=>panel.close();
 $("pprev").onclick=()=>step(-1);
 $("pnext").onclick=()=>step(1);
 $("padd").onclick=()=>{ saveStore({p:togglePick(loadPicks(),now.work)}); mark(now.work) };
+$("sun").innerHTML=SUN.map(p=>'<button type="button" data-sun="'+p.id+'">'+p.l+'</button>').join("");
+$("sun").onclick=e=>{ const b=e.target.closest("button"); if(b){ $("hall").classList.add("live"); light(b.dataset.sun) } };
+light(sunAt(new Date()));
 addEventListener("hashchange",sync);
 phone.addEventListener("change",sync);
 new ResizeObserver(()=>now&&!busy&&aim("none")).observe(stage);

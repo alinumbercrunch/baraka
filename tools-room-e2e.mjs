@@ -189,6 +189,19 @@ const checks = {
     await js(`document.querySelector(".hung").click()`);
     assert.ok(await until(`getComputedStyle(document.getElementById("card")).opacity==="0"`), "clear of the work");
   },
+  "the light changes the room and never the painting": async () => {
+    await load("#mori");
+    assert.equal(await js(`getComputedStyle(document.getElementById("hall")).transitionDuration`), "0s", "no fade on arrival");
+    const pick = id => `document.querySelector('#sun [data-sun="${id}"]').click()`;
+    await js(pick("evening"));
+    assert.equal(await js(`document.getElementById("hall").dataset.sun`), "evening");
+    assert.equal(await js(`document.querySelector('#sun [data-sun="evening"]').getAttribute("aria-pressed")`), "true");
+    assert.equal(await js(`document.querySelector('#sun [data-sun="noon"]').getAttribute("aria-pressed")`), "false");
+    const tinted = await js(`getComputedStyle(document.querySelector(".wall.back")).backgroundImage`);
+    assert.ok(await until(`getComputedStyle(document.querySelector(".wall.back")).backgroundImage!==${JSON.stringify(await js(pick("noon")) ?? tinted)}`), "wall changes");
+    const art = await js(`(()=>{const i=document.querySelector(".hung img"),c=getComputedStyle(i),h=getComputedStyle(i.parentNode);return [c.filter,c.mixBlendMode,c.opacity,h.filter].join()})()`);
+    assert.equal(art, "none,normal,1,none");
+  },
   "reduced motion: no walking, no glide": async () => {
     await cdp("Emulation.setEmulatedMedia", { features: [{ name: "prefers-reduced-motion", value: "reduce" }] });
     await load("#mori");
