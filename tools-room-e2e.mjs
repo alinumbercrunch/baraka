@@ -214,13 +214,11 @@ const checks = {
     assert.ok(await until(`document.readyState==="complete"&&!!document.querySelector(".hero .door")`));
     assert.deepEqual(await js(`[...document.querySelectorAll(".hero .door")].map(a=>a.getAttribute("href"))`), ["room.html"]);
   },
-  "who it's for is a quiet row of plain links, after the why": async () => {
+  "the home page doesn't repeat the nav": async () => {
     await cdp("Page.navigate", { url: home });
     assert.ok(await until(`document.readyState==="complete"`));
-    assert.deepEqual(await js(`[...document.querySelectorAll(".who-for a")].map(a=>a.getAttribute("href"))`),
-      ["trade.html#designer", "trade.html#realestate", "works.html", "join.html"]);
-    assert.equal(await js(`document.querySelectorAll(".who-for span,.circle .share,.circle .cen").length`), 0);
-    assert.ok(await js(`!!(document.querySelector(".circle").compareDocumentPosition(document.querySelector(".who-for"))&Node.DOCUMENT_POSITION_FOLLOWING)`));
+    assert.equal(await js(`document.querySelectorAll(".who-for").length`), 0);
+    assert.equal(await js(`document.querySelectorAll(".circle .share,.circle .cen").length`), 0);
   },
   "the home page says each thing once, and prices still state tax": async () => {
     await cdp("Page.navigate", { url: home });
