@@ -145,6 +145,18 @@ const checks = {
     assert.equal(await js(`document.querySelectorAll(".hung").length`), 2);
     assert.equal(await js(`document.querySelector(".rm").style.getPropertyValue("--x").trim()`), "0");
   },
+  "arriving in the next room is one landing: nothing moves afterwards": async () => {
+    await load("#mori");
+    await wait(1000);
+    await js(`location.hash="#nakamura"`);
+    assert.ok(await until(`document.querySelectorAll(".rm").length===1&&!!document.getElementById("hBK-007")`, 4000));
+    const seen = await js(`new Promise(done=>{
+      const el=document.getElementById("hBK-007"), xs=[], t0=performance.now();
+      (function frame(){ xs.push(el.getBoundingClientRect().x);
+        performance.now()-t0<700 ? requestAnimationFrame(frame) : done(Math.max(...xs)-Math.min(...xs)) })();
+    })`);
+    assert.ok(seen < 2, "painting drifted " + Math.round(seen) + "px after landing");
+  },
   "the pointer tilts the room, but not a painting you are looking at": async () => {
     await load("#mori");
     await wait(1000);

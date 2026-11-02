@@ -224,6 +224,8 @@ async function walk(r,by){
   rm.style.transition="none";
   rm.firstElementChild.remove();
   rm.firstElementChild.style.setProperty("--x",0);
+  rm.style.transform=rest(next,s);   // same view, same frame: the new room moved under the camera, so the camera must not
+  rm.getBoundingClientRect();
   plot=next; built=r.artist+false;
   label(r);
   busy=false;
