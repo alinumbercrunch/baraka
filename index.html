@@ -57,16 +57,13 @@
 
 /* ── 4 · still available ── */
 .past{display:grid; grid-template-columns:repeat(auto-fit,minmax(235px,1fr)); gap:18px; margin-top:24px}
-.past a{display:block; border:1px solid var(--rule); padding:16px 18px; text-decoration:none;
-  transition:border-color calc(var(--beat)*.25)}
+.past a{display:flex; gap:14px; align-items:center; border:1px solid var(--rule); padding:12px 14px;
+  text-decoration:none; transition:border-color calc(var(--beat)*.25)}
 .past a:hover{border-color:var(--ink)}
-.past .mo{font-family:var(--mono); font-size:10px; letter-spacing:.14em; color:var(--mute); text-transform:uppercase}
-.past b{display:block; font-family:var(--min); font-weight:600; font-size:20px; margin:4px 0 2px}
+.past .mo{font-family:var(--mono); font-size:10px; letter-spacing:.14em; color:var(--mute); display:block}
+.past b{display:block; font-family:var(--min); font-weight:600; font-size:18px; margin:2px 0}
 .past span{font-size:12.5px; color:var(--mute)}
-.past .mini{margin-top:13px}
-.past .mini img{display:block; width:100%; height:auto; border:1px solid rgba(0,0,0,.25)}
-.past .sold{position:static; display:inline-block; margin-top:9px}
-
+.past img{flex:none; display:block; width:96px; height:72px; object-fit:contain; background:var(--sheet)}
 
 </style>
 </head>
@@ -147,10 +144,9 @@ document.getElementById("grid").innerHTML = MONTH.map(k=>
   '<span class="p">'+yen(k.price)+'</span></figcaption></figure></a>').join("");
 
 document.getElementById("past").innerHTML = PAST.map(a=>
- '<a href="'+a.p+'"><span class="mo">'+a.mo+'</span><b>'+a.n+'</b>'+
-  '<span>'+a.pl+' ／ '+(a.c?a.c+'点 販売中':'完売')+'</span>'+
-  '<div class="mini"><img src="'+a.im[0]+'" alt="" loading="lazy" decoding="async"></div>'+
-  (a.c?'':'<span class="sold">完売</span>')+'</a>').join("");
+ '<a href="'+a.p+'"><img src="'+a.im[0]+'" alt="" loading="lazy" decoding="async">'+
+  '<div><span class="mo">'+a.mo+'</span><b>'+a.n+'</b>'+
+  '<span>'+a.pl+' ／ '+(a.c?a.c+'点 販売中':'完売')+'</span></div></a>').join("");
 </script>
 </body>
 </html>

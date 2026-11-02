@@ -247,6 +247,16 @@ const checks = {
     assert.ok(await until(`document.readyState==="complete"`));
     assert.equal(await js(`document.querySelectorAll('#designer a[href="works.html#wallbox"]').length`), 1);
   },
+  "past artists stay compact on a phone, and sold out is said once": async () => {
+    await cdp("Emulation.setDeviceMetricsOverride", { width: 390, height: 780, deviceScaleFactor: 1, mobile: false });
+    await cdp("Page.navigate", { url: home });
+    assert.ok(await until(`document.readyState==="complete"&&document.querySelectorAll("#past a").length===3`));
+    const heights = await js(`[...document.querySelectorAll("#past a")].map(a=>a.getBoundingClientRect().height)`);
+    await cdp("Emulation.clearDeviceMetricsOverride");
+    assert.ok(Math.max(...heights) <= 130, "card heights " + heights.map(Math.round));
+    assert.equal(await js(`(document.getElementById("past").textContent.match(/完売/g)||[]).length`), 1);
+    assert.equal(await js(`document.querySelectorAll("#past img").length`), 3, "each artist still shows their work");
+  },
   "browsers without page transitions still walk in": async () => {
     const { identifier } = await cdp("Page.addScriptToEvaluateOnNewDocument", { source: `delete Window.prototype.onpagereveal; delete window.onpagereveal;
       addEventListener("pagereveal", e => e.stopImmediatePropagation(), true)` });
