@@ -209,6 +209,11 @@ const checks = {
     assert.ok(await js(`(()=>{const b=document.querySelector(".wall.back"),s=document.getElementById("stage");return s.clientHeight>0&&b.isConnected})()`));
     await cdp("Emulation.clearDeviceMetricsOverride");
   },
+  "the home page asks one thing first: enter the room": async () => {
+    await cdp("Page.navigate", { url: home });
+    assert.ok(await until(`document.readyState==="complete"&&!!document.querySelector(".hero .door")`));
+    assert.deepEqual(await js(`[...document.querySelectorAll(".hero .door")].map(a=>a.getAttribute("href"))`), ["room.html"]);
+  },
   "browsers without page transitions still walk in": async () => {
     const { identifier } = await cdp("Page.addScriptToEvaluateOnNewDocument", { source: `delete Window.prototype.onpagereveal; delete window.onpagereveal;
       addEventListener("pagereveal", e => e.stopImmediatePropagation(), true)` });
