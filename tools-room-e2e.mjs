@@ -191,7 +191,8 @@ const checks = {
     assert.ok(await until(`document.getElementById("room").style.transition.includes("0.9s")||document.getElementById("room").style.transition.includes("1.8s")`));
   },
   "browsers without page transitions still walk in": async () => {
-    const { identifier } = await cdp("Page.addScriptToEvaluateOnNewDocument", { source: `delete Window.prototype.onpagereveal; delete window.onpagereveal` });
+    const { identifier } = await cdp("Page.addScriptToEvaluateOnNewDocument", { source: `delete Window.prototype.onpagereveal; delete window.onpagereveal;
+      addEventListener("pagereveal", e => e.stopImmediatePropagation(), true)` });
     await load("#mori");
     assert.ok(await until(`!document.getElementById("card").classList.contains("off")`), "not stranded at the door");
     await cdp("Page.removeScriptToEvaluateOnNewDocument", { identifier });
