@@ -53,6 +53,7 @@ body{display:flex; flex-direction:column}
 /* hover turns the light up: a thin outline can't draw cleanly on a wall seen at an angle */
 .hung:hover{box-shadow:0 6px 20px rgba(0,0,0,.42)}
 .hung:hover::before{opacity:1}
+.hung:focus-visible{outline:2px solid var(--dim); outline-offset:3px}
 /* gallery convention: a red dot beside a sold work */
 .hung.sold::after{content:""; position:absolute; right:-14px; bottom:0; width:8px; height:8px;
   border-radius:50%; background:var(--shu)}

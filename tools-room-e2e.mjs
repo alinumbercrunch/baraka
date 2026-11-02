@@ -46,7 +46,7 @@ const load = async hash => {
 };
 const key = async (key, code = key) => {
   for (const type of ["keyDown", "keyUp"])
-    await cdp("Input.dispatchKeyEvent", { type, key, code, windowsVirtualKeyCode: { Escape: 27, ArrowRight: 39 }[key] });
+    await cdp("Input.dispatchKeyEvent", { type, key, code, windowsVirtualKeyCode: { Escape: 27, ArrowRight: 39, Tab: 9 }[key] });
 };
 const open = `document.getElementById("panel").open`;
 
@@ -168,6 +168,13 @@ const checks = {
     assert.ok(await until(glow), "light up");
     assert.equal(await js(`getComputedStyle(document.getElementById("hBK-052")).outlineColor`), "rgba(0, 0, 0, 0)");
     await js(`document.getElementById("hBK-052").focus()`);
+  },
+  "tabbing to a work shows the focus outline": async () => {
+    await load("#mori");
+    await js(`document.getElementById("toNext").focus()`);
+    await key("Tab");
+    assert.ok(await until(`document.activeElement.classList.contains("hung")`), "reached a work");
+    assert.notEqual(await js(`getComputedStyle(document.activeElement).outlineColor`), "rgba(0, 0, 0, 0)");
   },
   "reduced motion: no walking, no glide": async () => {
     await cdp("Emulation.setEmulatedMedia", { features: [{ name: "prefers-reduced-motion", value: "reduce" }] });
