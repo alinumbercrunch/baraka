@@ -159,6 +159,16 @@ const checks = {
     await wait(200);
     assert.equal(await js(`document.getElementById("room").style.transform`), held);
   },
+  "hovering a side work brings up its light, not a line": async () => {
+    await load("#mori");
+    await wait(1200);
+    const box = await js(`(()=>{const r=document.getElementById("hBK-052").getBoundingClientRect();return {x:r.x+r.width/2,y:r.y+r.height/2}})()`);
+    await cdp("Input.dispatchMouseEvent", { type: "mouseMoved", ...box });
+    const glow = `getComputedStyle(document.getElementById("hBK-052"),"::before").opacity==="1"`;
+    assert.ok(await until(glow), "light up");
+    assert.equal(await js(`getComputedStyle(document.getElementById("hBK-052")).outlineColor`), "rgba(0, 0, 0, 0)");
+    await js(`document.getElementById("hBK-052").focus()`);
+  },
   "reduced motion: no walking, no glide": async () => {
     await cdp("Emulation.setEmulatedMedia", { features: [{ name: "prefers-reduced-motion", value: "reduce" }] });
     await load("#mori");

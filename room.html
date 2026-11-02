@@ -43,12 +43,16 @@ body{display:flex; flex-direction:column}
 .look .wall::before{opacity:.28}
 .hung{position:absolute; left:calc(var(--l) * var(--u)); top:calc(var(--t) * var(--u));
   width:calc(var(--w) * var(--u)); height:calc(var(--h) * var(--u));
-  box-shadow:0 2px 7px rgba(0,0,0,.28); z-index:0}
+  box-shadow:0 2px 7px rgba(0,0,0,.28); z-index:0; transition:box-shadow .3s ease;
+  outline:1px solid transparent}   /* smooths the work's edges at an angle */
 /* each work's own light: a soft pool on the wall, thrown from just above */
 .hung::before{content:""; position:absolute; z-index:-1; inset:calc(-900 * var(--u)) calc(-800 * var(--u)) calc(-600 * var(--u));
-  background:radial-gradient(closest-side,rgba(255,250,238,.9) 25%,rgba(255,250,238,0))}
+  background:radial-gradient(closest-side,rgba(255,250,238,.9) 25%,rgba(255,250,238,0));
+  opacity:.75; transition:opacity .3s ease}
 .hung img{display:block; width:100%; height:100%}
-.hung:hover{outline:1px solid var(--ink); outline-offset:3px}
+/* hover turns the light up: a thin outline can't draw cleanly on a wall seen at an angle */
+.hung:hover{box-shadow:0 6px 20px rgba(0,0,0,.42)}
+.hung:hover::before{opacity:1}
 /* gallery convention: a red dot beside a sold work */
 .hung.sold::after{content:""; position:absolute; right:-14px; bottom:0; width:8px; height:8px;
   border-radius:50%; background:var(--shu)}
