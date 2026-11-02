@@ -1,10 +1,14 @@
 // Drives room.html in real headless Chrome: what arithmetic can't prove. No dependencies.
+// With --real it instead records transitions in a visible window on the real graphics card,
+// which shows faults headless can't: the black flash and the gaps between rooms were only seen there.
 import { createServer } from "node:http";
 import { readFile, mkdtemp, rm } from "node:fs/promises";
 import { spawn } from "node:child_process";
 import { tmpdir } from "node:os";
 import { extname, join, normalize } from "node:path";
 import assert from "node:assert/strict";
+
+const REAL = process.argv.includes("--real");
 
 const CHROME = process.env.CHROME || "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
 const TYPES = { ".html": "text/html", ".js": "text/javascript", ".css": "text/css", ".jpg": "image/jpeg" };
@@ -20,7 +24,7 @@ const home = `http://127.0.0.1:${site.address().port}/index.html`;
 const base = home.replace("index", "room");
 
 const profile = await mkdtemp(join(tmpdir(), "baraka-"));
-const chrome = spawn(CHROME, ["--headless=new", "--remote-debugging-port=0", "--user-data-dir=" + profile,
+const chrome = spawn(CHROME, [...(REAL ? [] : ["--headless=new"]), "--remote-debugging-port=0", "--user-data-dir=" + profile,
   "--window-size=1440,900", "--no-first-run", "about:blank"], { stdio: ["ignore", "ignore", "pipe"] });
 const ws0 = await new Promise(r => chrome.stderr.on("data", d => {
   const m = /ws:\/\/\S+/.exec(String(d)); if (m) r(m[0]) }));
@@ -29,10 +33,14 @@ const tab = await (await fetch(http + "/json/new?about:blank", { method: "PUT" }
 
 const ws = new WebSocket(tab.webSocketDebuggerUrl);
 await new Promise(r => ws.addEventListener("open", r));
-let seq = 0; const waiting = new Map(), crashes = [];
+let seq = 0; const waiting = new Map(), crashes = [], frames = [];
 ws.addEventListener("message", e => {
   const m = JSON.parse(e.data);
   if (m.id) waiting.get(m.id)(m.result);
+  if (m.method === "Page.screencastFrame") {
+    frames.push({ data: m.params.data, at: Date.now() });
+    cdp("Page.screencastFrameAck", { sessionId: m.params.sessionId });
+  }
   if (m.method === "Runtime.exceptionThrown") crashes.push(m.params.exceptionDetails.exception?.description);
 });
 const cdp = (method, params = {}) => new Promise(r => {
@@ -102,7 +110,7 @@ const checks = {
     await until(open);
     for (const id of ["padd", "pe", "pn"]) assert.ok(await js(`document.getElementById("${id}").hidden`), id);
     assert.equal(await js(`document.getElementById("ps").hidden`), false);
-    assert.equal(await js(`document.querySelectorAll(".hung.sold").length`), 1);
+    assert.equal(await js(`document.querySelectorAll(".here .hung.sold").length`), 1);
   },
   "reused panel: an unsold work after a sold one can be bought": async () => {
     await load("#ishii/BK-021");
@@ -138,22 +146,37 @@ const checks = {
     assert.equal(await js(open), false);
     assert.equal(await js(`document.querySelectorAll("[onerror]").length`), 0);
   },
-  "walking to the next room leaves exactly that room": async () => {
+  "every room stands ready, and walking only moves the camera": async () => {
     await load("#mori");
     await wait(1000);
+    assert.equal(await js(`document.querySelectorAll(".rm").length`), 4, "the whole row, from the start");
+    assert.ok(await js(`[...document.querySelectorAll(".rm img")].every(i=>i.complete&&i.naturalWidth)`), "images ready");
+    await js(`window.mark=document.querySelector('.rm[data-a="nakamura"]')`);
     await js(`document.getElementById("toNext").click()`);
     assert.equal(await js(`location.hash`), "#nakamura");
-    await wait(600);
-    assert.equal(await js(`document.querySelectorAll(".rm").length`), 2, "both rooms during the walk");
-    assert.ok(await until(`document.querySelectorAll(".rm").length===1`));
-    assert.equal(await js(`document.querySelectorAll(".hung").length`), 2);
-    assert.equal(await js(`document.querySelector(".rm").style.getPropertyValue("--x").trim()`), "0");
+    assert.ok(await until(`document.querySelector(".rm.here").dataset.a==="nakamura"`, 3000));
+    assert.equal(await js(`document.querySelectorAll(".rm.here .hung").length`), 2);
+    assert.ok(await js(`window.mark.isConnected`), "the same room, not a new one");
+  },
+  "you can only tab to the room you are in, and only its work travels": async () => {
+    await load("#nakamura");
+    await wait(1200);
+    assert.deepEqual(await js(`[...document.querySelectorAll(".rm")].map(r=>r.inert)`), [true, false, true, true]);
+    assert.deepEqual(await js(`[...document.querySelectorAll(".rm img")].map(i=>getComputedStyle(i).viewTransitionName).filter(n=>n!=="none")`), ["hero-work"]);
+  },
+  "from the far end of the row, a painting is still faced head-on": async () => {
+    await load("#ishii/BK-021");
+    assert.ok(await until(`document.getElementById("panel").open`));
+    await wait(2100);
+    const r = await js(`(()=>{const b=document.getElementById("hBK-021").getBoundingClientRect(),s=document.getElementById("stage").getBoundingClientRect();return [b.left-s.left, s.right-b.right, b.top-s.top, s.bottom-b.bottom]})()`);
+    assert.ok(r.every(v => v >= 0), "whole, on stage: " + r.map(Math.round));
   },
   "arriving in the next room is one landing: nothing moves afterwards": async () => {
     await load("#mori");
     await wait(1000);
     await js(`location.hash="#nakamura"`);
-    assert.ok(await until(`document.querySelectorAll(".rm").length===1&&!!document.getElementById("hBK-007")`, 4000));
+    assert.ok(await until(`document.querySelector(".rm.here").dataset.a==="nakamura"`, 3000));
+    await wait(450);
     const seen = await js(`new Promise(done=>{
       const el=document.getElementById("hBK-007"), xs=[], t0=performance.now();
       (function frame(){ xs.push(el.getBoundingClientRect().x);
@@ -161,34 +184,27 @@ const checks = {
     })`);
     assert.ok(seen < 2, "painting drifted " + Math.round(seen) + "px after landing");
   },
-  "the next room is built and its paintings ready before the camera moves": async () => {
-    await load("#mori");
-    await wait(1000);
-    const still = await js(`document.getElementById("room").style.transform`);
-    await js(`location.hash="#nakamura"`);
-    assert.ok(await until(`document.getElementById("room").style.transform!==${JSON.stringify(still)}`));
-    assert.equal(await js(`document.querySelectorAll(".rm").length`), 2, "already there as the camera leaves");
-    assert.ok(await js(`[...document.querySelectorAll(".rm:last-child img")].every(i=>i.complete&&i.naturalWidth)`), "images ready");
-  },
-  "a painting that won't decode doesn't strand the visitor between rooms": async () => {
-    await load("#mori");
-    await wait(1000);
-    await js(`HTMLImageElement.prototype.decode=()=>Promise.reject(new Error("bad image"))`);
-    await js(`location.hash="#nakamura"`);
-    assert.ok(await until(`document.querySelectorAll(".rm").length===1&&!!document.getElementById("hBK-007")`, 4000));
-  },
-  "from the home page the painting travels, and the walk in waits for it": async () => {
+  "from the home page the painting carries you in: one move, no stop at the door": async () => {
     await cdp("Page.navigate", { url: "about:blank" });
     await cdp("Page.navigate", { url: home });
     assert.ok(await until(`document.readyState==="complete"`));
     await wait(500);
     await js(`document.querySelector('.hero a[href^="room.html"]').click()`);
     assert.ok(await until(`location.pathname.endsWith("room.html")&&!!document.querySelector(".wall")`));
-    assert.equal(await js(`getComputedStyle(document.querySelector(".lead img")).viewTransitionName`), "hero-work");
-    assert.equal(await js(`document.getElementById("card").classList.contains("off")`), true, "card waits");
-    assert.ok((await js(`document.getElementById("room").style.transform`)).startsWith("translate3d(0px, 0px, 0px)"), "still at the door");
-    assert.ok(await until(`!document.getElementById("card").classList.contains("off")`, 4000), "then the room opens");
-    assert.ok(await until(`document.getElementById("room").style.transition.includes("0.9s")||document.getElementById("room").style.transition.includes("1.8s")`));
+    assert.equal(await js(`getComputedStyle(document.querySelector(".here .lead img")).viewTransitionName`), "hero-work");
+    assert.equal(await js(`document.getElementById("card").classList.contains("off")`), true, "card waits for it to land");
+    assert.ok(await until(`!(document.getElementById("room").style.transform.startsWith("translate3d(0px, 0px, 0px)"))`, 400), "already inside");
+    assert.equal(await js(`document.getElementById("room").style.transition`), "none", "no second move");
+    assert.ok(await until(`!document.getElementById("card").classList.contains("off")`, 3000), "then the title rises");
+  },
+  "a new shape of window reshapes the room": async () => {
+    await load("#mori");
+    await wait(1200);
+    const wide = await js(`document.querySelector(".rm").style.getPropertyValue("--wide")`);
+    await cdp("Emulation.setDeviceMetricsOverride", { width: 1000, height: 800, deviceScaleFactor: 1, mobile: false });
+    assert.ok(await until(`document.querySelector(".rm").style.getPropertyValue("--wide")!==${JSON.stringify(wide)}`), "rebuilt");
+    assert.ok(await js(`(()=>{const b=document.querySelector(".wall.back"),s=document.getElementById("stage");return s.clientHeight>0&&b.isConnected})()`));
+    await cdp("Emulation.clearDeviceMetricsOverride");
   },
   "browsers without page transitions still walk in": async () => {
     const { identifier } = await cdp("Page.addScriptToEvaluateOnNewDocument", { source: `delete Window.prototype.onpagereveal; delete window.onpagereveal;
@@ -254,25 +270,28 @@ const checks = {
     assert.equal(await js(`document.getElementById("hall").dataset.sun`), "evening");
     assert.equal(await js(`document.querySelector('#sun [data-sun="evening"]').getAttribute("aria-pressed")`), "true");
     assert.equal(await js(`document.querySelector('#sun [data-sun="noon"]').getAttribute("aria-pressed")`), "false");
-    const tinted = await js(`getComputedStyle(document.querySelector(".wall.back")).backgroundImage`);
-    assert.ok(await until(`getComputedStyle(document.querySelector(".wall.back")).backgroundImage!==${JSON.stringify(await js(pick("noon")) ?? tinted)}`), "wall changes");
+    const surface = `getComputedStyle(document.querySelector(".here .wall.back"),"::after").backgroundImage`;
+    await wait(2700);
+    const evening = await js(surface);
+    await js(pick("noon"));
+    assert.ok(await until(`${surface}!==${JSON.stringify(evening)}`), "wall changes");
     const art = await js(`(()=>{const i=document.querySelector(".hung img"),c=getComputedStyle(i),h=getComputedStyle(i.parentNode);return [c.filter,c.mixBlendMode,c.opacity,h.filter].join()})()`);
     assert.equal(art, "none,normal,1,none");
   },
   "every work has a label, and only artists with words get lettering": async () => {
     await load("#mori");
-    assert.equal(await js(`document.querySelectorAll(".hung .lab").length`), 3);
-    assert.equal(await js(`document.querySelectorAll(".says").length`), 1);
+    assert.equal(await js(`document.querySelectorAll(".here .hung .lab").length`), 3);
+    assert.equal(await js(`document.querySelectorAll(".here .says").length`), 1);
     assert.ok((await js(`document.querySelector(".says").textContent`)).startsWith("描き終えた絵"));
     await load("#komatsu");   // has wall space but no statement: nothing is invented
-    assert.equal(await js(`document.querySelectorAll(".says").length`), 0);
+    assert.equal(await js(`document.querySelectorAll(".here .says").length`), 0);
   },
   "reduced motion: no walking, no glide": async () => {
     await cdp("Emulation.setEmulatedMedia", { features: [{ name: "prefers-reduced-motion", value: "reduce" }] });
     await load("#mori");
     await js(`location.hash="#komatsu"`);
     await wait(100);
-    assert.equal(await js(`document.querySelectorAll(".rm").length`), 1);
+    assert.equal(await js(`document.querySelector(".rm.here").dataset.a`), "komatsu");
     assert.equal(await js(`document.getElementById("ttl").textContent.startsWith("小松")`), true);
     assert.equal(await js(`document.getElementById("room").style.transition`), "none");
     await cdp("Emulation.setEmulatedMedia", { features: [] });
@@ -281,7 +300,7 @@ const checks = {
     await cdp("Emulation.setDeviceMetricsOverride", { width: 390, height: 780, deviceScaleFactor: 2, mobile: true });
     await load("#mori");
     assert.equal(await js(`document.querySelectorAll(".wall").length`), 1);
-    assert.equal(await js(`document.querySelectorAll(".hung").length`), 3);
+    assert.equal(await js(`document.querySelectorAll(".here .hung").length`), 3);
     assert.ok(await js(`document.getElementById("stage").scrollWidth>document.getElementById("stage").clientWidth`));
     await js(`location.hash="#mori/BK-014"`);
     await until(open);
@@ -290,6 +309,66 @@ const checks = {
     await cdp("Emulation.clearDeviceMetricsOverride");
   },
 };
+
+// Empty space is painted magenta, so any gap between rooms can be counted, frame by frame.
+const measure = (data) => js(`new Promise(done => { const i = new Image(); i.onload = () => {
+  const c = document.createElement("canvas"); c.width = 144; c.height = 90;
+  const x = c.getContext("2d"); x.drawImage(i, 0, 0, 144, 90);
+  const p = x.getImageData(0, 18, 144, 72).data; let gap = 0, dark = 0;
+  for (let k = 0; k < p.length; k += 4) {
+    if (p[k] > 190 && p[k + 1] < 90 && p[k + 2] > 190) gap++;
+    if (.2126 * p[k] + .7152 * p[k + 1] + .0722 * p[k + 2] < 45) dark++;
+  }
+  done([gap, dark].map(n => 100 * n / (p.length / 4))) }; i.src = "data:image/jpeg;base64,${data}" })`);
+const record = async (name, start, ms = 2800) => {
+  frames.length = 0;
+  await cdp("Page.bringToFront");
+  await cdp("Page.startScreencast", { format: "jpeg", quality: 70, everyNthFrame: 1 });
+  await wait(150);
+  const t0 = Date.now();
+  await start();
+  await wait(ms);
+  await cdp("Page.stopScreencast");
+  await wait(150);
+  const got = frames.filter(f => f.at >= t0);
+  await cdp("Page.navigate", { url: "about:blank" });
+  await wait(150);
+  let gap = 0, dark = 0;
+  for (const f of got) { const [g, d] = await measure(f.data); f.g = g; gap = Math.max(gap, g); dark = Math.max(dark, d) }
+  if (process.env.WORST && got.length) { const w = got.reduce((a, b) => b.g > a.g ? b : a); (await import("node:fs")).writeFileSync(process.env.WORST + "/" + name.replace(/\W+/g, "-") + ".jpg", Buffer.from(w.data, "base64")); console.log("   worst at", w.at - t0, "ms; empty% by time:", got.filter(f => f.g > .5).map(f => (f.at - t0) + ":" + f.g.toFixed(0)).join(" ")) }
+  console.log(`  ${name}: ${got.length} frames, empty ${gap.toFixed(1)}%, dark ${dark.toFixed(1)}%`);
+  return { frames: got.length, gap, dark };
+};
+const magenta = `addEventListener("DOMContentLoaded", () => document.head.insertAdjacentHTML("beforeend",
+  "<style>#stage{background:#f0f !important}</style>"))`;
+if (REAL) {
+  await cdp("Page.enable"); await cdp("Runtime.enable"); await cdp("Page.bringToFront");
+  await cdp("Page.addScriptToEvaluateOnNewDocument", { source: magenta });
+  const walk = async (from, to) => {
+    await cdp("Page.navigate", { url: base + from }); await wait(2500);
+    return record(`${from} to ${to}`, () => js(`location.hash=${JSON.stringify(to)}`));
+  };
+  const hover = async () => {
+    await cdp("Page.navigate", { url: home }); await wait(1500);
+    const at = await js(`(()=>{const r=document.querySelector('.hero a[href^="room.html"]').getBoundingClientRect();return {x:r.x+r.width/2,y:r.y+r.height/2}})()`);
+    await cdp("Input.dispatchMouseEvent", { type: "mouseMoved", ...at });
+    await wait(900);
+    return at;
+  };
+  const results = [await walk("#mori", "#nakamura"), await walk("#nakamura", "#mori"), await walk("#ishii", "#mori")];
+  const at = await hover();
+  results.push(await record("home to room", async () => {
+    await cdp("Input.dispatchMouseEvent", { type: "mousePressed", ...at, button: "left", clickCount: 1 });
+    await cdp("Input.dispatchMouseEvent", { type: "mouseReleased", ...at, button: "left", clickCount: 1 });
+  }));
+  await cdp("Page.navigate", { url: base + "#nakamura" }); await wait(2500);
+  results.push(await record("facing a side work", () => js(`location.hash="#nakamura/BK-032"`), 2400));
+  const bad = results.filter(r => r.frames < 10 || r.gap > .5 || r.dark > 15).length;
+  console.log(bad ? `\n  ${bad} recording(s) show gaps or a flash` : "\n  no gaps, no flash");
+  ws.close(); chrome.kill(); site.close();
+  await wait(300); await rm(profile, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 });
+  process.exit(bad ? 1 : 0);
+}
 
 let failed = 0;
 for (const [name, run] of Object.entries(checks)) {
@@ -302,5 +381,5 @@ for (const [name, run] of Object.entries(checks)) {
 }
 console.log(`\n  ${Object.keys(checks).length - failed} passed, ${failed} failed`);
 ws.close(); chrome.kill(); site.close();
-await wait(200); await rm(profile, { recursive: true, force: true });
+await wait(200); await rm(profile, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 });
 process.exit(failed ? 1 : 0);

@@ -37,15 +37,18 @@ function layout(works,walls){
   });
 }
 
-/* a room too small for an artist's work grows; nothing is left off the wall */
-function plan(works,flat){
+/* a room too small for an artist's work grows; nothing is left off the wall. Given the stage's
+   aspect it also takes the stage's shape, so its doorway fills the screen and rooms stand edge to edge */
+function plan(works,flat,aspect){
   for(let n=0;;n++){
-    const w=ROOM.w+n*ROOM.grow, d=ROOM.d+n*ROOM.grow;
+    let w=ROOM.w+n*ROOM.grow, h=ROOM.h;
+    const d=ROOM.d+n*ROOM.grow;
+    if(aspect){ if(w/h<aspect) w=h*aspect; else h=w/aspect }
     const near=ROOM.step*w+ROOM.gap;   // wall behind the camera's shoulder is off screen: nothing hangs there
     const walls=flat?[{id:"back",from:0,to:w}]:
       [{id:"back",from:0,to:w},{id:"left",from:near,to:d,near:"from"},{id:"right",from:0,to:d-near,near:"to"}];
     const spots=layout(works,walls);
-    if(spots) return {w,d,h:ROOM.h,spots,says:wordsAt(spots)};
+    if(spots) return {w,d,h,spots,says:wordsAt(spots)};
   }
 }
 
@@ -72,7 +75,7 @@ function sunAt(date){
 
 const lens=(room,stage)=>{ const u=Math.min(stage.w/room.w,stage.h/room.h); return {u,p:ROOM.lens*room.w*u} };
 
-/* standing in the doorway. in: walked in. x: mm along the row of rooms. rx, ry: tilt in degrees */
+/* standing in a doorway. in: walked in. x: camera's mm along the row of rooms. rx, ry: tilt in degrees */
 function rest(room,stage,{in:inside=true,x=0,rx=0,ry=0}={}){
   const {u}=lens(room,stage);
   return "translate3d("+x*u+"px,0,"+(inside?ROOM.step*room.w*u:0)+"px) rotateX("+rx+"deg) rotateY("+ry+"deg) "+
@@ -83,10 +86,10 @@ const tilt=(px,py,stage)=>({rx:1-2*py/stage.h, ry:6*px/stage.w-3});
 
 /* stage: {w,h} in px. aim: the free part of it. Face the work there, whole.
    Small works keep a stretch of wall round them, so they still look small. */
-function face(room,spot,stage,aim){
+function face(room,spot,stage,aim,along=0){
   const {u,p}=lens(room,stage), c=place(room,spot);
   const f=.9*Math.min(aim.w/(Math.max(spot.k.w,ROOM.near)*u), aim.h/(Math.max(spot.k.h,ROOM.near)*u));
   const ox=(aim.x+aim.w/2-stage.w/2)/f, oy=(aim.y+aim.h/2-stage.h/2)/f;
   return {f,t:"translate3d("+ox+"px,"+oy+"px,"+p*(1-1/f)+"px) rotateY("+c.turn+"deg) "+
-    "translate3d("+-c.x*u+"px,"+-c.y*u+"px,"+-c.z*u+"px)"};
+    "translate3d("+-(c.x+along)*u+"px,"+-c.y*u+"px,"+-c.z*u+"px)"};
 }

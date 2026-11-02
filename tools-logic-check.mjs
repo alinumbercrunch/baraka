@@ -123,6 +123,15 @@ test("plan: every work hangs, whole, on one wall, clear of every other", () => {
   }
 });
 
+test("plan: on any stage the doorway fills it exactly, and works stay true and on the wall", () => {
+  for (const stage of STAGES) for (const works of rooms) {
+    const room = plan(works, false, stage.w / stage.h), { u } = lens(room, stage);
+    assert.ok(Math.abs(room.w * u - stage.w) < 1e-6 && Math.abs(room.h * u - stage.h) < 1e-6);
+    assert.ok(room.w >= ROOM.w && room.h >= ROOM.h, "never smaller than the real room");
+    for (const { k, y } of room.spots) assert.ok(y - k.h / 2 > 0 && y + k.h / 2 < room.h, k.no);
+  }
+});
+
 test("plan: the largest work faces you, and a crowded room grows", () => {
   assert.equal(plan(route("#mori").works).spots.find(s => s.wall === "back").k.no, "BK-014");
   assert.equal(plan(many(1)).w, ROOM.w);
@@ -131,7 +140,7 @@ test("plan: the largest work faces you, and a crowded room grows", () => {
 
 test("rest: from the doorway no work is cut by the edge of the stage, even at full tilt", () => {
   for (const stage of STAGES) for (const works of rooms) {
-    const room = plan(works), { u, p } = lens(room, stage);
+    const room = plan(works, false, stage.w / stage.h), { u, p } = lens(room, stage);
     for (const s of room.spots) for (const dx of [-s.k.w / 2, s.k.w / 2]) {
       const c = place(room, { ...s, x: s.x + dx });
       const z = (c.z - room.d / 2 + ROOM.step * room.w) * u, f = p / (p - z);
@@ -146,7 +155,7 @@ test("face: every work fits the free area whole, and small works still look smal
   for (const stage of STAGES) {
     const aim = { x: 0, y: 0, w: stage.w - 340, h: stage.h };
     for (const works of rooms) {
-      const room = plan(works), { u } = lens(room, stage);
+      const room = plan(works, false, stage.w / stage.h), { u } = lens(room, stage);
       for (const s of room.spots) {
         const { f } = face(room, s, stage, aim);
         assert.ok(s.k.w * u * f <= aim.w && s.k.h * u * f <= aim.h, s.k.no);

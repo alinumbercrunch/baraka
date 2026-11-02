@@ -5,10 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>展示室 — Baraka</title>
 <script>
-/* the page transition into this room, if there was one, finishes before the walk in begins.
-   Up here because it fires at first paint, which can come before the end of the body */
+/* the page transition into this room, if there is one. Up here because it fires at first paint,
+   which can come before the end of the body */
 const revealed=new Promise(done=>"onpagereveal" in window
-  ?addEventListener("pagereveal",e=>done(e.viewTransition?.finished),{once:true}):done());
+  ?addEventListener("pagereveal",e=>done(e.viewTransition),{once:true}):done());
 </script>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Shippori+Mincho:wght@400;600&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
@@ -41,21 +41,27 @@ body{display:flex; flex-direction:column}
 .wall{position:absolute; left:calc(var(--len) * var(--u) / -2); top:calc(var(--high) * var(--u) / -2);
   width:calc(var(--len) * var(--u)); height:calc(var(--high) * var(--u)); backface-visibility:hidden}
 /* plaster, oak and a skylight: each surface a step apart, walls darkening toward you */
-.wall{--tint:linear-gradient(var(--sun),var(--sun)); --plaster:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012 .03' numOctaves='3'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .4 0 0 0 0 .33 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E")}
-.wall.back{background:var(--tint),var(--plaster),linear-gradient(#f4efe7,#e9e2d6); transform:translateZ(calc(var(--deep) * var(--u) / -2))}
-.wall.left{background:var(--tint),var(--plaster),linear-gradient(90deg,#cfc5b6,#e6dfd2 70%); transform:rotateY(90deg) translateZ(calc(var(--wide) * var(--u) / -2))}
-.wall.right{background:var(--tint),var(--plaster),linear-gradient(90deg,#e6dfd2 30%,#cfc5b6); transform:rotateY(-90deg) translateZ(calc(var(--wide) * var(--u) / -2))}
+/* the surfaces are soft, so each is drawn at quarter size and scaled up: a sixteenth of the graphics
+   memory. Full size they ran past Chrome's budget and it dropped whole walls mid-walk. Works stay sharp */
+.wall{isolation:isolate; --tint:linear-gradient(var(--sun),var(--sun)); --plaster:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012 .03' numOctaves='3'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .4 0 0 0 0 .33 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E")}
+.wall::after{content:""; position:absolute; z-index:-1; left:0; top:0; width:25%; height:25%;
+  transform:scale(4); transform-origin:0 0; will-change:transform; background-color:#e6dfd2; background-size:55px 55px,auto,auto}
+.wall.back{transform:translateZ(calc(var(--deep) * var(--u) / -2))}
+.wall.back::after{background-image:var(--tint),var(--plaster),linear-gradient(#f4efe7,#e9e2d6)}
+.wall.left{transform:rotateY(90deg) translateZ(calc(var(--wide) * var(--u) / -2))}
+.wall.left::after{background-image:var(--tint),var(--plaster),linear-gradient(90deg,#cfc5b6,#e6dfd2 70%)}
+.wall.right{transform:rotateY(-90deg) translateZ(calc(var(--wide) * var(--u) / -2))}
+.wall.right::after{background-image:var(--tint),var(--plaster),linear-gradient(90deg,#e6dfd2 30%,#cfc5b6)}
 .wall.floor,.wall.top{top:calc(var(--deep) * var(--u) / -2); height:calc(var(--deep) * var(--u))}
-/* oak boards 140 mm wide with a fine seam, run down the room, under a light that fades toward you */
-.wall.floor{--board:calc(140 * var(--u));
-  background:var(--tint),var(--plaster),linear-gradient(rgba(255,250,240,.3),rgba(70,50,30,.16)),
-    repeating-linear-gradient(90deg,rgba(90,65,40,.3) 0 1px,transparent 1px var(--board)),
-    repeating-linear-gradient(90deg,#d9c6a8 0 var(--board),#d6c2a3 0 calc(var(--board) * 2),#dac8ab 0 calc(var(--board) * 3),#d3bf9f 0 calc(var(--board) * 4));
-  transform:rotateX(90deg) translateZ(calc(var(--high) * var(--u) / -2))}
+/* oak boards 140 mm wide, run down the room, under a light that fades toward you */
+.wall.floor{--board:calc(35 * var(--u)); transform:rotateX(90deg) translateZ(calc(var(--high) * var(--u) / -2))}
+.wall.floor::after{background-size:55px 55px,auto,auto,auto;
+  background-image:var(--tint),var(--plaster),linear-gradient(rgba(255,250,240,.3),rgba(70,50,30,.16)),
+    repeating-linear-gradient(90deg,#b9a585 0 .5px,#d9c6a8 .5px var(--board),#d6c2a3 0 calc(var(--board) * 2),#dac8ab 0 calc(var(--board) * 3),#d3bf9f 0 calc(var(--board) * 4))}
 /* runs on behind the back wall, or the page shows through at the join */
 .wall.top{height:calc((var(--deep) + 1500) * var(--u)); transform-origin:50% calc(var(--deep) * var(--u) / 2);
-  background:var(--tint),linear-gradient(90deg,#ded6c9,#f0ebe2 38%,var(--sky) 42% 58%,#f0ebe2 62%,#ded6c9);
   transform:rotateX(-90deg) translateZ(calc(var(--high) * var(--u) / -2))}
+.wall.top::after{background-size:auto; background-image:var(--tint),linear-gradient(90deg,#ded6c9,#f0ebe2 38%,var(--sky) 42% 58%,#f0ebe2 62%,#ded6c9)}
 /* the room falls back as you walk up to a work; the work's own light does not */
 .wall::before{content:""; position:absolute; inset:0; background:#2a2622; opacity:0; visibility:hidden;
   transition:opacity 1.8s ease,visibility 0s 1.8s}   /* hidden, not just clear: a new wall can flash it at full strength */
@@ -78,9 +84,9 @@ body{display:flex; flex-direction:column}
   border-radius:50%; background:var(--shu)}
 
 /* arriving from a page showing this work, it travels on to its place on the back wall */
-#stage:not(.look) .lead img{view-transition-name:hero-work}
+#stage:not(.look) .here .lead img{view-transition-name:hero-work}
 ::view-transition-group(hero-work){animation-duration:.9s; animation-timing-function:cubic-bezier(.45,0,.15,1)}
-::view-transition-old(root),::view-transition-new(root){animation-duration:.7s}
+::view-transition-old(root),::view-transition-new(root){animation-duration:.9s}
 
 /* a label beside each work, and the artist's words lettered on the wall */
 .lab{position:absolute; left:calc(100% + 110 * var(--u)); bottom:0; width:calc(380 * var(--u));
@@ -132,7 +138,8 @@ body{display:flex; flex-direction:column}
   #stage{overflow-x:auto; scroll-snap-type:x proximity}
   #room{position:relative; left:0; top:0; height:100%}
   .rm{position:relative; width:calc(var(--wide) * var(--u)); height:100%; transform:none}
-  .wall.back{transform:none; left:0; top:0; background:var(--tint),var(--plaster),linear-gradient(#f4efe7 88%,#d8c3a2 88%)}
+  .wall.back{transform:none; left:0; top:0}
+  .wall.back::after{background-image:var(--tint),var(--plaster),linear-gradient(#f4efe7 88%,#d8c3a2 88%)}
   .hung{scroll-snap-align:center}
   .lab{font-size:calc(66 * var(--u)); width:calc(460 * var(--u))}
   #panel{inset:auto 0 0 0; width:100%; height:auto; max-height:88svh; border-left:0; border-top:1px solid var(--rule)}
@@ -184,11 +191,14 @@ body{display:flex; flex-direction:column}
 const $=id=>document.getElementById(id), stage=$("stage"), rm=$("room"), panel=$("panel");
 const phone=matchMedia("(max-width:760px)"), still=matchMedia("(prefers-reduced-motion:reduce)");
 const WALK="transform .4s ease", ENTER="transform .9s ease", LOOK="transform 1.8s cubic-bezier(.45,0,.15,1)", SWAY="transform .2s ease-out";
-let built="", plot=null, now=null, busy=false, seen=null;   // on the walls, the route, mid-walk, last work viewed
+let built="", plots={}, pitch=0, plot=null, now=null, busy=false, seen=null;   // the row, this room, the route, mid-walk, last work viewed
 
 const size=()=>({w:stage.clientWidth,h:stage.clientHeight});
 const flat=()=>phone.matches;
 const motion=()=>!flat()&&!still.matches;
+const shape=()=>{ const s=size(); return flat()||!s.h?undefined:s.w/s.h };
+const key=()=>(flat()?now.artist:"row")+(shape()||0).toFixed(2);
+const along=a=>flat()?0:ARTISTS.indexOf(a)*pitch;
 function roomHTML(r,pl,x){
   const lead=pl.spots[0].k;
   const wall=(id,len,inner)=>'<div class="wall '+id+'" style="--len:'+len+'">'+inner+'</div>';
@@ -197,7 +207,7 @@ function roomHTML(r,pl,x){
     '<img src="'+k.f+'" width="'+k.w+'" height="'+k.h+'" alt="'+k.t+'（'+k.a+'）'+(k.sold?' 完売':'')+'">'+
     '<span class="lab" aria-hidden="true">'+k.t+'<small>'+mm(k.h)+' × '+mm(k.w)+'</small></span></a>').join("");
   const words=ARTIST[r.artist].words, says=words&&pl.says?'<p class="says" style="--l:'+(pl.says.x-ROOM.says/2)+'">'+words+'</p>':"";
-  return '<div class="rm" style="--x:'+x+';--wide:'+pl.w+';--deep:'+pl.d+';--high:'+pl.h+'">'+
+  return '<div class="rm" data-a="'+r.artist+'" style="--x:'+x+';--wide:'+pl.w+';--deep:'+pl.d+';--high:'+pl.h+'">'+
     wall("back",pl.w,hungOn("back")+says)+(flat()?"":
     wall("left",pl.d,hungOn("left"))+wall("right",pl.d,hungOn("right"))+wall("floor",pl.w,"")+wall("top",pl.w,""))+'</div>';
 }
@@ -209,15 +219,26 @@ function label(r){
   $("cr").textContent="“"+info.ro+"”";
   $("ct").textContent="展示室 "+info.pl;
   $("cd").textContent=r.works[0].mon+" ／ "+(left?left+"点 販売中":"完売");
-  for(const [id,by,txt] of [["toPrev",-1,"← "],["toNext",1,""]]){
-    const a=neighbour(r.artist,by), n=WORKS.find(k=>artistKey(k)===a).a;
-    $(id).href="#"+a; $(id).textContent=by<0?txt+n:n+" →";
+  for(const [id,by] of [["toPrev",-1],["toNext",1]]){
+    const a=neighbour(r.artist,by), n=route("#"+a).works[0].a;
+    $(id).href="#"+a; $(id).textContent=by<0?"← "+n:n+" →";
   }
 }
-function build(r){
-  plot=plan(r.works,flat());
-  built=r.artist+flat();
-  rm.innerHTML=roomHTML(r,plot,0);
+/* every room stands in one row from the start and a visit only moves the camera: adding a room
+   mid-visit makes Chrome drop the room in view for a frame.
+   ponytail: one layer per wall per artist, fine for a few dozen; past that, mount the nearest few at load.
+   Rooms share a pitch and a scale, so a room grown for a very large show widens the gaps beside it */
+function build(){
+  const shown=flat()?[now.artist]:ARTISTS;
+  plots=Object.fromEntries(shown.map(a=>[a,plan(route("#"+a).works,flat(),shape())]));
+  pitch=Math.max(...Object.values(plots).map(p=>p.w));
+  rm.innerHTML=shown.map((a,i)=>roomHTML(route("#"+a),plots[a],i*pitch)).join("");
+  built=key();
+}
+/* the room you are in: the others can't be tabbed to, and only this one's work may travel between pages */
+function settle(r){
+  plot=plots[r.artist];
+  for(const el of rm.children){ const here=el.dataset.a===r.artist; el.classList.toggle("here",here); el.inert=!here }
   label(r);
 }
 const go=(t,how)=>new Promise(done=>{
@@ -225,24 +246,14 @@ const go=(t,how)=>new Promise(done=>{
   setTimeout(done,parseFloat(how.split(" ")[1])*1000);
 });
 /* the demo's move: back out of the doorway, along to the next door, and in */
-async function walk(r,by){
+async function walk(r,from){
   busy=true;
   $("card").classList.add("off");
-  const s=size(), next=plan(r.works,false), along=-by*plot.w;
-  /* built and drawn before the camera leaves, or the graphics card shows empty space where it should be */
-  rm.insertAdjacentHTML("beforeend",roomHTML(r,next,-along));
-  await Promise.all([...rm.lastElementChild.querySelectorAll("img")].map(i=>i.decode().catch(()=>{})));
-  await new Promise(requestAnimationFrame);
-  await go(rest(plot,s,{in:false}),WALK);
-  await go(rest(plot,s,{in:false,x:along}),WALK);
-  await go(rest(next,s,{x:along}),WALK);
-  rm.style.transition="none";
-  rm.firstElementChild.remove();
-  rm.firstElementChild.style.setProperty("--x",0);
-  rm.style.transform=rest(next,s);   // same view, same frame: the new room moved under the camera, so the camera must not
-  rm.getBoundingClientRect();
-  plot=next; built=r.artist+false;
-  label(r);
+  const s=size(), x=-along(r.artist);
+  await go(rest(plot,s,{in:false,x:-along(from)}),WALK);
+  await go(rest(plot,s,{in:false,x}),WALK);
+  settle(r);
+  await go(rest(plot,s,{x}),WALK);
   busy=false;
   sync();
 }
@@ -273,30 +284,34 @@ function aim(how){
   stage.style.perspective=p+"px";
   rm.style.transition=still.matches?"none":how||LOOK;
   rm.style.transform=spot
-    ? face(plot,spot,s,{x:0,y:0,w:(panel.open?panel.getBoundingClientRect().left:innerWidth)-stage.getBoundingClientRect().left,h:s.h}).t
-    : rest(plot,s);
+    ? face(plot,spot,s,{x:0,y:0,w:(panel.open?panel.getBoundingClientRect().left:innerWidth)-stage.getBoundingClientRect().left,h:s.h},along(now.artist)).t
+    : rest(plot,s,{x:-along(now.artist)});
 }
 function sync(){
   if(busy) return;
   const was=now; now=route(location.hash);
   const moved=was&&was.artist!==now.artist;
   if(moved&&!now.work&&!panel.open&&motion())
-    return walk(now,neighbour(was.artist,1)===now.artist?1:-1);
-  if(built!==now.artist+flat()) build(now);
+    return walk(now,was.artist);
+  if(built!==key()) build();
+  settle(now);
   if(now.work){ fill(now.work,now); if(!panel.open) panel.showModal() }
   else if(panel.open) panel.close();
   if(!was&&!now.work&&motion()) return arrive();
   aim();
   $("card").classList.remove("off");
 }
-async function arrive(){    // start at the door, and walk in once the page has finished arriving
+/* straight off a transition the painting is carrying you in, so be there already; otherwise walk in from the door */
+async function arrive(){
   busy=true;
   aim("none");
-  rm.style.transform=rest(plot,size(),{in:false});
+  const x=-along(now.artist);
+  rm.style.transform=rest(plot,size(),{in:false,x});
   rm.getBoundingClientRect();
-  await revealed;
+  const trip=await revealed;
+  if(trip){ rm.style.transform=rest(plot,size(),{x}); await trip.finished }
   $("card").classList.remove("off");
-  await go(rest(plot,size()),ENTER);
+  if(!trip) await go(rest(plot,size(),{x}),ENTER);
   busy=false;
   sync();
 }
@@ -327,11 +342,11 @@ $("sun").onclick=e=>{ const b=e.target.closest("button"); if(b){ $("hall").class
 light(sunAt(new Date()));
 addEventListener("hashchange",sync);
 phone.addEventListener("change",sync);
-new ResizeObserver(()=>now&&!busy&&aim("none")).observe(stage);
+new ResizeObserver(()=>{ if(!now||busy) return; if(built!==key()){ build(); settle(now) } aim("none") }).observe(stage);
 addEventListener("mousemove",e=>{
   if(busy||now.work||!motion()) return;
   const s=size();
-  requestAnimationFrame(()=>go(rest(plot,s,tilt(e.clientX,e.clientY,s)),SWAY));
+  requestAnimationFrame(()=>go(rest(plot,s,{...tilt(e.clientX,e.clientY,s),x:-along(now.artist)}),SWAY));
 });
 sync();
 </script>
