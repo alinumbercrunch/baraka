@@ -223,7 +223,7 @@ const checks = {
       assert.equal(await js(`document.querySelector(".hero .by").textContent.includes("お取り置き")`), false, "a hold is about works, so it sits by the prices");
       assert.equal(await js(`document.querySelector(".hero").textContent.includes("¥")`), false, "nothing to read but the promise");
       assert.equal(await js(`document.querySelector(".hero h1").textContent`), "その部屋のための一枚を、まだ知られていない作家から。");
-      assert.ok(await js(`document.querySelector(".hero .tag").textContent.startsWith("実際の大きさのまま")`), "actual size stays on the first screen");
+      assert.ok(await js(`document.querySelector(".hero .tag").textContent.startsWith("実際の大きさのまま見て、選んで、買えます。")`), "actual size, and that the works are for sale");
       assert.equal(await js(`document.querySelector(".hero").textContent.includes("卸価格")`), false, "wholesale belongs on the trade page");
       assert.ok(await js(`document.querySelector(".hero .door").getBoundingClientRect().bottom<=innerHeight`), width + ": button in view without scrolling");
     }
