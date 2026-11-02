@@ -222,6 +222,14 @@ const checks = {
     assert.equal(await js(`document.querySelectorAll(".who-for span,.circle .share,.circle .cen").length`), 0);
     assert.ok(await js(`!!(document.querySelector(".circle").compareDocumentPosition(document.querySelector(".who-for"))&Node.DOCUMENT_POSITION_FOLLOWING)`));
   },
+  "the home page says each thing once, and prices still state tax": async () => {
+    await cdp("Page.navigate", { url: home });
+    assert.ok(await until(`document.readyState==="complete"&&!!document.querySelector("#grid a")`));
+    assert.equal(await js(`[...document.images].filter(i=>i.getAttribute("src")==="img/w5.jpg").length`), 1, "the hero work once");
+    assert.equal(await js(`document.querySelectorAll("#grid a").length`), 2, "the month's other works");
+    for (const gone of [".quote", ".contact", ".note"]) assert.equal(await js(`document.querySelectorAll("${gone}").length`), 0, gone);
+    assert.ok(await js(`document.getElementById("thismonth").textContent.includes("税込")`), "tax note beside the prices");
+  },
   "browsers without page transitions still walk in": async () => {
     const { identifier } = await cdp("Page.addScriptToEvaluateOnNewDocument", { source: `delete Window.prototype.onpagereveal; delete window.onpagereveal;
       addEventListener("pagereveal", e => e.stopImmediatePropagation(), true)` });
