@@ -263,13 +263,15 @@ const checks = {
     assert.ok(await until(`getComputedStyle(document.getElementById("card")).opacity==="0"`), "clear of the work");
   },
   "a long or translated name stays whole on the stage": async () => {
+    await cdp("Emulation.setDeviceMetricsOverride", { width: 1000, height: 520, deviceScaleFactor: 1, mobile: false });
     await load("#nakamura");
-    for (const name of ["Akari Nakamura", "Yuma Ishii-Nakamura", "Wolfeschlegelsteinhausen"]) {
+    for (const name of ["Akari Nakamura", "Yuma Ishii-Nakamura", "Wolfeschlegelsteinhausenbergerdorff"]) {
       await js(`document.getElementById("cn").textContent=${JSON.stringify(name)}`);
       await wait(150);
-      const r = await js(`(()=>{const c=document.getElementById("cn"),b=document.createRange();b.selectNodeContents(c);const t=b.getBoundingClientRect(),s=document.getElementById("card").getBoundingClientRect();return [t.left-s.left,s.right-t.right,t.top-s.top,s.bottom-t.bottom]})()`);
+      const r = await js(`(()=>{const c=document.getElementById("cn"),b=document.createRange();b.selectNodeContents(c);const t=b.getBoundingClientRect(),e=c.getBoundingClientRect(),s=document.getElementById("card").getBoundingClientRect();return [t.left-s.left,s.right-t.right,e.top-s.top,s.bottom-e.bottom]})()`);
       assert.ok(r.every(v => v >= 0), name + ": " + r.map(Math.round));
     }
+    await cdp("Emulation.clearDeviceMetricsOverride");
   },
   "the light changes the room and never the painting": async () => {
     await load("#mori");
