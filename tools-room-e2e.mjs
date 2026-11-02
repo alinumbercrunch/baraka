@@ -209,10 +209,20 @@ const checks = {
     assert.ok(await js(`(()=>{const b=document.querySelector(".wall.back"),s=document.getElementById("stage");return s.clientHeight>0&&b.isConnected})()`));
     await cdp("Emulation.clearDeviceMetricsOverride");
   },
-  "the home page asks one thing first: enter the room": async () => {
-    await cdp("Page.navigate", { url: home });
-    assert.ok(await until(`document.readyState==="complete"&&!!document.querySelector(".hero .door")`));
-    assert.deepEqual(await js(`[...document.querySelectorAll(".hero .door")].map(a=>a.getAttribute("href"))`), ["room.html"]);
+  "the first screen is the promise, one painting and one button": async () => {
+    for (const [width, height] of [[1440, 900], [390, 780]]) {
+      await cdp("Emulation.setDeviceMetricsOverride", { width, height, deviceScaleFactor: 1, mobile: false });
+      await cdp("Page.navigate", { url: home });
+      assert.ok(await until(`document.readyState==="complete"&&!!document.querySelector(".hero .door")`));
+      assert.deepEqual(await js(`[...document.querySelectorAll(".hero .door")].map(a=>a.getAttribute("href"))`), ["room.html"]);
+      assert.equal(await js(`document.querySelectorAll(".hero img").length`), 1);
+      assert.equal(await js(`document.querySelector(".hero").textContent.includes("¥")`), false, "nothing to read but the promise");
+      assert.ok(await js(`document.querySelector(".hero .door").getBoundingClientRect().bottom<=innerHeight`), width + ": button in view without scrolling");
+    }
+    await cdp("Emulation.clearDeviceMetricsOverride");
+    assert.equal(await js(`getComputedStyle(document.querySelector(".hero img")).viewTransitionName`), "hero-work");
+    assert.deepEqual(await js(`[...document.images].filter(i=>getComputedStyle(i).viewTransitionName!=="none").length`), 1, "one travelling work, or the transition is skipped");
+    assert.ok(await js(`!!(document.querySelector(".circle").compareDocumentPosition(document.querySelector(".proof"))&Node.DOCUMENT_POSITION_FOLLOWING)`), "the why, then the proof");
   },
   "the home page doesn't repeat the nav": async () => {
     await cdp("Page.navigate", { url: home });
@@ -223,15 +233,16 @@ const checks = {
   "the home page says each thing once, and prices still state tax": async () => {
     await cdp("Page.navigate", { url: home });
     assert.ok(await until(`document.readyState==="complete"&&!!document.querySelector("#grid a")`));
-    assert.equal(await js(`[...document.images].filter(i=>i.getAttribute("src")==="img/w5.jpg").length`), 1, "the hero work once");
+    assert.equal(await js(`document.querySelectorAll('.hero img[src="img/w5.jpg"],.proof img[src="img/w5.jpg"]').length`), 2, "shown, then compared");
+    assert.equal(await js(`[...document.images].filter(i=>i.getAttribute("src")==="img/w5.jpg").length`), 2, "and nowhere else");
     for (const gone of [".quote", ".contact", ".note"]) assert.equal(await js(`document.querySelectorAll("${gone}").length`), 0, gone);
-    assert.ok(await js(`document.querySelector(".hero").textContent.includes("税込")`), "tax note beside the prices");
+    assert.ok(await js(`document.querySelector(".proof").textContent.includes("税込")`), "tax note beside the prices");
   },
   "the month's works open the page, on one floor, at true relative size": async () => {
     for (const [width, height] of [[1440, 900], [390, 780]]) {
       await cdp("Emulation.setDeviceMetricsOverride", { width, height, deviceScaleFactor: 1, mobile: false });
       await cdp("Page.navigate", { url: home });
-      assert.ok(await until(`document.readyState==="complete"&&document.querySelectorAll(".hero #grid .fr").length===3`), "all three in the hero");
+      assert.ok(await until(`document.readyState==="complete"&&document.querySelectorAll(".proof #grid .fr").length===3`), "all three in the hero");
       const f = await js(`[...document.querySelectorAll("#grid .fr")].map(e=>{const r=e.getBoundingClientRect();return {w:r.width,b:r.bottom,r:r.right,l:r.left}})`);
       assert.ok(Math.max(...f.map(x => x.b)) - Math.min(...f.map(x => x.b)) < 1, width + ": one floor");
       assert.ok(Math.abs(f[0].w / f[2].w - 2148 / 364) < .5, width + ": true ratio " + (f[0].w / f[2].w).toFixed(2));
@@ -240,7 +251,7 @@ const checks = {
     }
     await cdp("Emulation.clearDeviceMetricsOverride");
     assert.equal(await js(`document.querySelectorAll("#thismonth").length`), 0, "no second introduction");
-    assert.equal(await js(`document.querySelectorAll('.hero a[href="artist-mori.html"]').length`), 1, "the artist is named once, and links on");
+    assert.equal(await js(`document.querySelectorAll('.proof a[href="artist-mori.html"]').length`), 1, "the artist is named once, and links on");
   },
   "designers can reach the wall-size tool from their own section": async () => {
     await cdp("Page.navigate", { url: home.replace("index", "trade") });
