@@ -59,6 +59,9 @@ const checks = {
     assert.ok(await until(open));
     assert.equal(await js("location.hash"), "#mori/BK-052");
     assert.equal(await js(`document.getElementById("pt").textContent`), "海辺の家");
+    assert.ok(await js(`document.getElementById("stage").classList.contains("look")`), "room dims");
+    await key("Escape");
+    assert.ok(await until(`!document.getElementById("stage").classList.contains("look")`), "room lifts");
   },
   "Esc closes, clears the link, and puts focus back on the work": async () => {
     await load("#mori/BK-052");
