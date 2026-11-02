@@ -105,8 +105,8 @@ body{display:flex; flex-direction:column}
 .card>:nth-child(2){transition-delay:.08s}
 .card>:nth-child(3){transition-delay:.16s}
 .card>:nth-child(4){transition-delay:.24s}
-#cn{left:4vw; top:50%; translate:0 -50%; font-family:var(--min); font-weight:600; font-size:min(15vw,30svh);
-  line-height:1.02; letter-spacing:.02em; white-space:pre; mix-blend-mode:var(--blend)}
+#cn{left:4vw; width:92vw; top:50%; translate:0 -50%; font-family:var(--min); font-weight:600; font-size:min(15vw,30svh);
+  line-height:1.02; letter-spacing:.02em; white-space:pre-line; overflow-wrap:anywhere; mix-blend-mode:var(--blend)}
 #cr{right:4vw; bottom:calc(6% + 96px); font-family:var(--min); font-size:clamp(20px,3vw,38px); letter-spacing:.06em}
 #ct{right:4vw; bottom:calc(6% + 54px); background:var(--shu); color:#fff; font-size:14px; letter-spacing:.1em; padding:4px 12px}
 #cd{right:4vw; bottom:6%; color:var(--shu); font-family:var(--mono); font-size:15px; letter-spacing:.08em}
@@ -319,6 +319,12 @@ function light(id){
   $("hall").dataset.sun=id;
   for(const b of $("sun").children) b.setAttribute("aria-pressed",b.dataset.sun===id);
 }
+/* a long name shrinks until it fits. Observed, not called, because a browser's translation swaps the text too */
+function fitName(){
+  const c=$("cn"), room=$("card").clientHeight*.9;
+  c.style.fontSize="";
+  if(c.offsetHeight>room) c.style.fontSize=parseFloat(getComputedStyle(c).fontSize)*room/c.offsetHeight+"px";
+}
 function shut(){ location.hash=now.artist }
 function step(by){
   const i=now.works.indexOf(now.work), n=now.works.length;
@@ -340,6 +346,7 @@ $("padd").onclick=()=>{ saveStore({p:togglePick(loadPicks(),now.work)}); mark(no
 $("sun").innerHTML=SUN.map(p=>'<button type="button" data-sun="'+p.id+'">'+p.l+'</button>').join("");
 $("sun").onclick=e=>{ const b=e.target.closest("button"); if(b){ $("hall").classList.add("live"); light(b.dataset.sun) } };
 light(sunAt(new Date()));
+new ResizeObserver(fitName).observe($("cn"));
 addEventListener("hashchange",sync);
 phone.addEventListener("change",sync);
 new ResizeObserver(()=>{ if(!now||busy) return; if(built!==key()){ build(); settle(now) } aim("none") }).observe(stage);

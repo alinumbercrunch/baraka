@@ -262,6 +262,15 @@ const checks = {
     await js(`document.querySelector(".hung").click()`);
     assert.ok(await until(`getComputedStyle(document.getElementById("card")).opacity==="0"`), "clear of the work");
   },
+  "a long or translated name stays whole on the stage": async () => {
+    await load("#nakamura");
+    for (const name of ["Akari Nakamura", "Yuma Ishii-Nakamura", "Wolfeschlegelsteinhausen"]) {
+      await js(`document.getElementById("cn").textContent=${JSON.stringify(name)}`);
+      await wait(150);
+      const r = await js(`(()=>{const c=document.getElementById("cn"),b=document.createRange();b.selectNodeContents(c);const t=b.getBoundingClientRect(),s=document.getElementById("card").getBoundingClientRect();return [t.left-s.left,s.right-t.right,t.top-s.top,s.bottom-t.bottom]})()`);
+      assert.ok(r.every(v => v >= 0), name + ": " + r.map(Math.round));
+    }
+  },
   "the light changes the room and never the painting": async () => {
     await load("#mori");
     assert.equal(await js(`getComputedStyle(document.getElementById("hall")).transitionDuration`), "0s", "no fade on arrival");
