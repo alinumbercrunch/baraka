@@ -83,7 +83,7 @@ legend{font-size:12px; color:var(--mute); font-family:var(--mono); letter-spacin
     <div><span class="n">02</span><h2>ご希望なら、その場でお取り置き</h2>
       <p>2週間お取り置きします。施主様のご検討中に売れてしまうことはありません。</p></div>
     <div><span class="n">03</span><h2>お見積りをお送りします</h2>
-      <p>作品代金・配送・設置を分けて記載します。請求書払い、インボイス対応。</p></div>
+      <p>作品代金のお見積りです。配送・設置は作家から別にご案内します。請求書払い、インボイス対応。</p></div>
   </section>
 
   <form id="form" novalidate>
@@ -102,12 +102,6 @@ legend{font-size:12px; color:var(--mute); font-family:var(--mono); letter-spacin
         <input type="checkbox" id="hold" name="hold">
         <span><b>2週間のお取り置きを希望する</b>
         <span>施主様へのご提案中、他所へ販売しません。</span></span>
-      </label>
-
-      <label class="check">
-        <input type="checkbox" id="install" name="install">
-        <span><b>配送・設置の見積りも希望する</b>
-        <span>養生のうえ取り付けまで。耐震・ピクチャーレールもご相談ください。</span></span>
       </label>
 
       <div class="f">
@@ -230,7 +224,6 @@ document.getElementById("form").addEventListener("submit",e=>{
   } else if(v("numbers")) L.push("【ご相談の作品】","  "+v("numbers"));
   L.push("");
   if(document.getElementById("hold").checked)    L.push("・2週間のお取り置きを希望します");
-  if(document.getElementById("install").checked) L.push("・配送・設置の見積りを希望します");
   if(v("wall")) L.push("・壁の寸法："+v("wall"));
   if(v("msg"))  L.push("", "【ご相談内容】", v("msg"));
   L.push("", "【ご連絡先】",
