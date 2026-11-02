@@ -1,7 +1,7 @@
 /* Baraka — shared. One column, one scale, nothing cropped. */
 :root{
   --paper:#fff;    --ink:#333;    --rule:#ccc;    --mute:#666;
-  --dim:#2E4A8F;   --shu:#B23A2E; --sheet:#F6F6F6; --stage:#101314;
+  --dim:#2E4A8F;   --shu:#B23A2E; --sheet:#F6F6F6;
   --mmpx:0.30;
   --jp:"Zen Kaku Gothic New","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;
   --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
