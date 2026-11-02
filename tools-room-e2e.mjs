@@ -214,6 +214,14 @@ const checks = {
     assert.ok(await until(`document.readyState==="complete"&&!!document.querySelector(".hero .door")`));
     assert.deepEqual(await js(`[...document.querySelectorAll(".hero .door")].map(a=>a.getAttribute("href"))`), ["room.html"]);
   },
+  "who it's for is a quiet row of plain links, after the why": async () => {
+    await cdp("Page.navigate", { url: home });
+    assert.ok(await until(`document.readyState==="complete"`));
+    assert.deepEqual(await js(`[...document.querySelectorAll(".who-for a")].map(a=>a.getAttribute("href"))`),
+      ["trade.html#designer", "trade.html#realestate", "works.html", "join.html"]);
+    assert.equal(await js(`document.querySelectorAll(".who-for span,.circle .share,.circle .cen").length`), 0);
+    assert.ok(await js(`!!(document.querySelector(".circle").compareDocumentPosition(document.querySelector(".who-for"))&Node.DOCUMENT_POSITION_FOLLOWING)`));
+  },
   "browsers without page transitions still walk in": async () => {
     const { identifier } = await cdp("Page.addScriptToEvaluateOnNewDocument", { source: `delete Window.prototype.onpagereveal; delete window.onpagereveal;
       addEventListener("pagereveal", e => e.stopImmediatePropagation(), true)` });
