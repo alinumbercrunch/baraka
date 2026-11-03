@@ -1,7 +1,7 @@
 /* Baraka — shared. One column, one scale, nothing cropped. */
 :root{
-  --paper:#EFEEE7; --ink:#15191B; --rule:#C6C7BF; --mute:#6D7772;
-  --dim:#2E4A8F;   --shu:#B23A2E; --sheet:#F8F9F6; --stage:#101314;
+  --paper:#fff;    --ink:#333;    --rule:#ccc;    --mute:#666;
+  --dim:#2E4A8F;   --shu:#B23A2E; --sheet:#F6F6F6;
   --mmpx:0.30;
   --jp:"Zen Kaku Gothic New","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;
   --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
@@ -9,12 +9,6 @@
   --beat:.9s;
   --min:"Shippori Mincho","Hiragino Mincho ProN","Yu Mincho",serif;
 }
-@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){
-  --paper:#101315; --ink:#E8EBE6; --rule:#2F3634; --mute:#8D9792;
-  --dim:#8DB0F2;  --shu:#E8705F; --sheet:#181C1D; --stage:#20272A; color-scheme:dark } }
-:root[data-theme="dark"]{
-  --paper:#101315; --ink:#E8EBE6; --rule:#2F3634; --mute:#8D9792;
-  --dim:#8DB0F2;  --shu:#E8705F; --sheet:#181C1D; --stage:#20272A; color-scheme:dark }
 @media (max-width:1100px){ :root{ --mmpx:0.22 } }
 @media (max-width:760px){  :root{ --mmpx:0.145 } }
 @media (max-width:480px){  :root{ --mmpx:0.12 } }
@@ -35,7 +29,7 @@ body{overflow-x:clip; background:var(--paper); color:var(--ink); font-family:var
 h1,h2,h3{font-weight:500; margin:0; line-height:1.4}
 a{color:inherit}
 .fig{font-family:var(--mono); font-variant-numeric:tabular-nums}
-.en{font-family:var(--mono); font-size:10px; letter-spacing:.09em; text-transform:uppercase;
+.en{font-family:var(--min); font-size:11px; letter-spacing:.09em;
   color:var(--mute); display:block; line-height:1.6}
 button{font:inherit; cursor:pointer}
 :focus-visible{outline:2px solid var(--dim); outline-offset:2px}
@@ -47,7 +41,7 @@ img{max-width:100%}
   flex-wrap:wrap; padding-block:11px; view-transition-name:bar}
 body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-inset-top,0px);
   z-index:21; background:var(--paper)}
-.mark{font-family:var(--mono); font-weight:500; letter-spacing:.23em; font-size:17px;
+.mark{font-family:var(--min); font-weight:600; letter-spacing:.23em; font-size:17px;
   margin-right:auto; text-decoration:none}
 .mark small{font-family:var(--jp); letter-spacing:.05em; font-size:11px; color:var(--mute); margin-left:9px}
 .bar button,.bar a:not(.mark){background:none; border:0; color:var(--ink); font-size:12.5px;
@@ -116,12 +110,11 @@ tbody tr:hover .mute,tbody tr:hover .fig{color:var(--sheet)}
 .scroller{overflow-x:auto}
 
 /* prototype warning band */
-.protobar{position:relative; z-index:30; background:var(--shu); color:#fff;
-  font-size:12.5px; line-height:1.7; padding:9px max(16px,env(safe-area-inset-left,0px)) 9px max(16px,env(safe-area-inset-right,0px));
+.protobar{position:relative; z-index:30; background:var(--sheet); color:var(--mute);
+  font-size:11px; line-height:1.7; padding:4px max(16px,env(safe-area-inset-left,0px)) 4px max(16px,env(safe-area-inset-right,0px));
   text-align:center}
-.protobar b{font-weight:700}
-.protobar .pe{display:block; opacity:.85; font-size:11px;
-  font-family:"IBM Plex Mono",monospace; letter-spacing:.02em; margin-top:2px}
+.protobar b{font-weight:500}
+.protobar .pe{margin-left:.8em}
 body{padding-top:0}
 
 /* ── full-bleed breakout ── */

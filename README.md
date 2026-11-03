@@ -22,6 +22,12 @@ really does appear about a seventh the height of a 2,717 mm canvas.
 Enter your wall dimensions and each work tells you whether it fits, and at what
 height to hang it.
 
+## How a sale works
+
+Baraka takes the order and the payment, keeps 15%, and pays the artist the month
+after delivery is confirmed. The artist packs, delivers and installs. Baraka holds
+no stock and delivers nothing.
+
 ## Built with
 
 Plain HTML, CSS and vanilla JavaScript. No build step, no framework, no
@@ -36,5 +42,8 @@ dependencies. Fonts from Google Fonts. Everything else is in this folder.
 | `artists.html` | Every artist, by the month they were featured |
 | `artist-*.html` | One page per artist |
 | `bk*.html` | One page per artwork |
+| `room.html` | Walk-through gallery, one room per artist (`room.html#mori`) |
 | `trade.html` | Terms for designers, real-estate firms and artists |
 | `style.css` | All styling |
+| `works.js` | The list of works and the rules that read it |
+| `room.js` | The room's arithmetic, in millimetres |

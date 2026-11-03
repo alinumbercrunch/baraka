@@ -3,108 +3,72 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Baraka ／ バラカ — まだ広く知られていない作家の絵を、実際の大きさのまま</title>
-<meta name="description" content="まだ広く知られていない作家の絵を、実際の大きさのまま見て買えるカタログです。毎月ひとり作家を紹介し、紹介後も作品は販売を続けます。湘南・東京・関東。">
+<title>Baraka ／ バラカ — その部屋のための一枚を、まだ知られていない作家から</title>
+<meta name="description" content="その部屋のための一枚を、まだ知られていない作家から。実際の大きさのまま見て、選んで、買えます。毎月ひとり作家を紹介し、紹介後も作品は販売を続けます。湘南・東京・関東。">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Shippori+Mincho:wght@400;600&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
 <link rel="stylesheet" href="style.css">
 <style>
-/* ── 1 · header, issue marker, audience row ── */
+/* ── 1 · header, issue marker ── */
 .issue{display:flex; justify-content:space-between; align-items:baseline; gap:14px;
   flex-wrap:wrap; padding-block:14px 0}
-.issue .no{font-family:var(--mono); font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--mute)}
+.issue .no{font-family:var(--min); font-size:11.5px; letter-spacing:.1em; color:var(--mute)}
 .issue .no+.no{color:var(--mute)}
 
-/* ── 2c · why Baraka exists. The band is quiet on purpose: it is read, not clicked. ── */
-.circle{border-top:1px solid var(--ink); border-bottom:1px solid var(--rule);
-  margin-top:40px; padding-block:34px 30px; max-width:30em}
-.circle .nm{font-family:var(--mono); font-size:12px; letter-spacing:.18em;
-  color:var(--mute); margin:0}
-.circle .ar{font-family:"Segoe UI","Noto Naskh Arabic","Arial Unicode MS",serif;
-  letter-spacing:0; font-size:16px; vertical-align:-1px}
-.circle .mean{font-family:var(--min); font-size:clamp(15px,1.9vw,17.5px);
-  line-height:1.95; margin:14px 0 0; color:var(--mute)}
-.circle .loop{font-family:var(--min); font-size:clamp(18px,2.5vw,24px);
-  line-height:2.05; margin:20px 0 0;
+/* ── 2c · why Baraka exists. Quiet on purpose: it is read, not clicked ── */
+.circle{text-align:center; margin-top:clamp(40px,8vh,72px)}
+.circle .mean{font-family:var(--min); font-size:clamp(14px,1.7vw,16px); color:var(--mute); margin:0}
+.circle .loop{font-family:var(--min); font-size:clamp(18px,2.5vw,24px); line-height:2.05; margin:12px 0 0;
   line-break:strict; word-break:keep-all; font-feature-settings:"palt" 1}
 .circle .loop b{font-weight:600}
 /* the three lines are beats; below this width they'd wrap mid-beat */
 @media (max-width:420px){ .circle .loop{font-size:15.5px; line-height:2.1} }
-.circle .share{font-size:clamp(13.5px,1.7vw,15px); line-height:1.95; margin:22px 0 0;
-  padding-top:17px; border-top:1px solid var(--rule);
-  line-break:strict; word-break:keep-all}
-.circle .cen{font-size:11.5px; line-height:1.85; color:var(--mute); margin:14px 0 0;
-  font-style:italic; letter-spacing:.01em}
 
-/* ── 2b · four doors: the answer to "is this for me" ── */
-.who-for{display:grid; grid-template-columns:repeat(auto-fit,minmax(248px,1fr));
-  gap:14px; margin-top:34px}
-.who-for a{display:block; border:1px solid var(--rule); padding:19px 21px;
-  text-decoration:none; transition:border-color calc(var(--beat)*.25), background calc(var(--beat)*.25)}
-.who-for a:hover,.who-for a:focus-visible{border-color:var(--ink); background:var(--sheet)}
-.who-for b{display:block; font-weight:500; font-size:15.5px; margin-bottom:7px}
-.who-for span{display:block; font-size:13px; color:var(--mute); line-height:1.85;
-  line-break:strict; word-break:keep-all}
+/* ── 2 · hero: the promise, one painting, one button ── */
+.hero{text-align:center; padding-block:clamp(30px,6vh,60px) 10px}
+.hero .lead{font-family:var(--min); font-weight:600; font-size:clamp(20px,2.8vw,28px); line-height:1.75; margin:0; max-width:none}
+.hero .tag{color:var(--mute); margin:10px 0 0}
+.hero img{view-transition-name:hero-work; display:block; width:auto; height:auto; margin:14px auto 0;
+  max-width:100%; max-height:min(44svh,420px); box-shadow:0 2px 10px rgba(0,0,0,.2)}
+/* on a phone the painting and its button come first: nothing decorative above them */
+@media (max-width:760px){ .issue,.protobar .pe{display:none} .hero{padding-block:14px 10px} }
+.hero .doors{justify-content:center; margin-top:clamp(18px,3vh,26px)}
 
-/* ── 2 · hero: ~70vh so the next section peeks ── */
-.hero{background:var(--stage); color:#F2F1EC; margin-top:16px;
-  width:100vw; margin-left:calc(50% - 50vw);
-  min-height:min(70svh,660px); display:grid; align-content:center;
-  padding-block:clamp(30px,5vh,52px)}
-.hero .in{max-width:1120px; margin:0 auto; width:100%;
-  padding-inline:max(18px,env(safe-area-inset-left,0px)) max(18px,env(safe-area-inset-right,0px));
-  display:flex; gap:clamp(22px,4vw,56px); align-items:center; flex-wrap:wrap}
-.hero img{display:block; width:auto; height:auto; max-height:min(46svh,420px); max-width:min(62vw,560px);
-  border:1px solid rgba(255,255,255,.14); box-shadow:0 14px 44px rgba(0,0,0,.5)}
-.hero .say{flex:1 1 290px; min-width:0}
-.hero .lead{margin:0; font-weight:500; font-size:clamp(17px,2.2vw,22px); line-height:1.75; font-weight:500; max-width:17em}
-.hero .tag{font-family:var(--min); font-size:clamp(15px,1.8vw,18px); color:rgba(242,241,236,.72); margin-top:14px}
-.hero .who{margin-top:22px; padding-top:16px; border-top:1px solid rgba(242,241,236,.2)}
-.hero .lb{font-family:var(--mono); font-size:10px; letter-spacing:.18em; text-transform:uppercase;
-  color:rgba(242,241,236,.6); display:block}
-.hero .nm{font-family:var(--min); font-weight:600; font-size:clamp(22px,3.2vw,30px); margin-top:4px}
-.hero .wk{font-family:var(--mono); font-size:11px; color:rgba(242,241,236,.6); margin-top:7px; line-height:1.8}
-.hero .doors{margin-top:20px}
-.hero .door{border-color:rgba(242,241,236,.55); color:#F2F1EC; padding:10px 18px; font-size:13.5px}
-.hero .door:hover{background:#F2F1EC; color:#101314; border-color:#F2F1EC}
+/* ── 2d · the proof: the month's works, standing on one thin line at true relative size ── */
+.proof{text-align:center; margin-top:clamp(44px,8vh,72px)}
+.by{font-family:var(--min); margin:clamp(18px,3vh,28px) 0 0}
+.by a{text-decoration:none; font-weight:600; font-size:clamp(18px,2.2vw,22px); border-bottom:1px solid var(--rule); margin:0 .3em}
+.by a:hover{border-bottom-color:var(--ink)}
+
+/* one scale for the row: as large as the width allows, up to the site's size */
+.grid{--gm:min(.2px,calc((100vw - 156px) / 3608)); --cap:82px; position:relative; display:flex; flex-wrap:wrap;
+  justify-content:center; align-items:flex-end; gap:clamp(18px,3vw,40px); margin-top:clamp(26px,5vh,44px); text-align:left}
+.grid::after{content:""; position:absolute; inset:auto 0 var(--cap); height:1px; background:var(--rule)}
+.grid a{text-decoration:none; flex:0 0 auto}
+.grid figure{margin:0; width:max(calc(var(--w) * var(--gm)),88px)}
+.grid .fr{position:relative; width:calc(var(--w) * var(--gm)); height:calc(var(--h) * var(--gm));
+  box-shadow:0 2px 6px rgba(0,0,0,.2)}
+.grid img{position:absolute; inset:0; width:100%; height:100%; display:block}
+.grid a:hover .fr{outline:1.5px solid var(--ink); outline-offset:5px}
+.grid figcaption{height:var(--cap); padding-top:9px; font-size:13px; line-height:1.7; white-space:nowrap}
+.grid .d{font-family:var(--mono); font-size:10.5px; color:var(--mute); display:block}
+.grid .p{font-family:var(--mono); font-size:12px; display:block}
+@media (max-width:480px){ .grid .d{font-size:9.5px} }
 
 /* ── sections ── */
 .sec{padding-block:44px 0}
 .sec > h2{font-family:var(--min); font-weight:600; font-size:clamp(19px,2.6vw,25px)}
 .sec > .en{margin-bottom:4px}
-.sec .intro{font-size:14px; color:var(--mute); margin:8px 0 0; line-height:1.9; max-width:34em}
-
-/* ── 3 · this month's works ── */
-.grid{display:flex; flex-wrap:wrap; align-items:flex-end; gap:clamp(18px,3vw,40px); margin-top:24px}
-.grid a{text-decoration:none; flex:0 0 auto}
-.grid figure{margin:0; width:max(calc(var(--w) * var(--gm) * 1px), 136px)}
-.grid .fr{position:relative; width:calc(var(--w) * var(--gm) * 1px);
-  height:calc(var(--h) * var(--gm) * 1px);
-  border:1px solid rgba(0,0,0,.28); box-shadow:2px 3px 0 rgba(0,0,0,.06)}
-.grid img{position:absolute; inset:0; width:100%; height:100%; display:block}
-.grid a:hover .fr{outline:1.5px solid var(--ink); outline-offset:5px}
-.grid figcaption{margin-top:9px; font-size:13px; line-height:1.7}
-.grid .d{font-family:var(--mono); font-size:10.5px; color:var(--mute); display:block}
-.grid .p{font-family:var(--mono); font-size:12px; display:block}
-.sec{--gm:.20}
-@media (max-width:900px){ .sec{--gm:.13} }
-.quote{font-family:var(--min); font-size:clamp(15.5px,1.9vw,18px); line-height:2.05;
-  max-width:25em; margin-top:30px; border-left:2px solid var(--rule); padding-left:18px}
-.quote cite{display:block; font-family:var(--mono); font-style:normal; font-size:11px;
-  letter-spacing:.12em; text-transform:uppercase; color:var(--mute); margin-top:12px}
 
 /* ── 4 · still available ── */
 .past{display:grid; grid-template-columns:repeat(auto-fit,minmax(235px,1fr)); gap:18px; margin-top:24px}
-.past a{display:block; border:1px solid var(--rule); padding:16px 18px; text-decoration:none;
-  transition:border-color calc(var(--beat)*.25)}
+.past a{display:flex; gap:14px; align-items:center; border:1px solid var(--rule); padding:12px 14px;
+  text-decoration:none; transition:border-color calc(var(--beat)*.25)}
 .past a:hover{border-color:var(--ink)}
-.past .mo{font-family:var(--mono); font-size:10px; letter-spacing:.14em; color:var(--mute); text-transform:uppercase}
-.past b{display:block; font-family:var(--min); font-weight:600; font-size:20px; margin:4px 0 2px}
+.past .mo{font-family:var(--mono); font-size:10px; letter-spacing:.14em; color:var(--mute); display:block}
+.past b{display:block; font-family:var(--min); font-weight:600; font-size:18px; margin:2px 0}
 .past span{font-size:12.5px; color:var(--mute)}
-.past .mini{margin-top:13px}
-.past .mini img{display:block; width:100%; height:auto; border:1px solid rgba(0,0,0,.25)}
-.past .sold{position:static; display:inline-block; margin-top:9px}
-
+.past img{flex:none; display:block; width:96px; height:72px; object-fit:contain; background:var(--sheet)}
 
 </style>
 </head>
@@ -115,10 +79,10 @@
   <!-- 1 · header -->
   <nav class="bar">
     <a class="mark" href="index.html">BARAKA<small>バラカ</small></a>
-    <a href="index.html" aria-current="page">ホーム</a>
+    <a href="room.html">展示室</a>
     <a href="works.html">すべての作品</a>
     <a href="artists.html">作家一覧</a>
-    <a href="trade.html">法人の方へ</a>
+    <a href="trade.html">設計・不動産の方へ</a>
     <a href="enquiry.html"><b>お問い合わせ</b></a>
   </nav>
   <div class="issue">
@@ -128,79 +92,33 @@
 </div>
 
 <!-- 2 · hero -->
-<section class="hero">
-  <div class="in">
-    <img src="img/w5.jpg" width="2148" height="1312" alt="朝の輪郭（森　柊）" fetchpriority="high" decoding="async">
-    <div class="say">
-      <h1 class="lead">まだ広く知られていない作家の絵を、<b>実際の大きさのまま</b>見て、買えるカタログです。</h1>
-      <p class="tag">設計する部屋に、モデルルームに、ご自宅に。卸価格でのお取引もできます。</p>
-      <div class="who">
-        <span class="lb">今月の作家 ・ 2週間お取り置きできます</span>
-        <div class="nm">森　柊</div>
-        <div class="wk">朝の輪郭 ／ H1,312 × W2,148 mm ／ ¥320,000</div>
-      </div>
-      <div class="doors">
-        <a class="door" href="#thismonth">今月の作品を見る</a>
-        <a class="door ghost" href="works.html#wallbox">壁の寸法から探す</a>
-      </div>
-    </div>
-  </div>
+<section class="hero wrap">
+  <h1 class="lead">その部屋のための一枚を、<br>まだ知られていない作家から。</h1>
+  <p class="tag">実際の大きさのまま見て、選んで、買えます。設計する部屋に、モデルルームに、ご自宅に。</p>
+  <p class="by">今月の作家<a href="artist-mori.html">森　柊</a></p>
+  <img src="img/w5.jpg" width="2148" height="1312" alt="朝の輪郭（森　柊）" fetchpriority="high" decoding="async">
+  <div class="doors"><a class="door" href="room.html">展示室に入る</a></div>
 </section>
 
 <div class="wrap">
   <!-- 2c · why Baraka exists -->
   <section class="circle">
-    <p class="nm">バラカ ／ <span class="ar">بركة</span></p>
-    <p class="mean">アラビア語で「祝福」。小さなものが、まわって、増えていく。</p>
+    <p class="mean">バラカ ― アラビア語で「祝福」。小さなものが、まわって、増えていく。</p>
     <p class="loop">絵は部屋にのこり、お金は作家にまわる。<br>
       その名前が、次の部屋を見つける。<br>
       <b>まわるほど、増えていきます。</b></p>
-    <p class="share">えらぶ人には利益が、描く人には収入が、飾る人には一枚の絵が。</p>
-    <p class="cen">Baraka — Arabic for “blessing”: a small thing that goes round, and grows.<br>
-      The painting stays in the room. The money goes round to the artist.<br>
-      The name it earns finds the next room. The more it turns, the more there is.</p>
   </section>
 
-  <!-- 2b · four doors -->
-  <section class="who-for">
-    <a href="trade.html#designer">
-      <b>設計・デザインの方へ</b>
-      <span>卸価格でお仕入れいただけます。御社の利益20%（年5点以上で25%）。</span>
-    </a>
-    <a href="trade.html#realestate">
-      <b>不動産会社の方へ</b>
-      <span>モデルルーム・内見のお部屋に、まとめて納品します。</span>
-    </a>
-    <a href="works.html">
-      <b>個人のお客様へ</b>
-      <span>1点からご購入いただけます。設置もご相談ください。</span>
-    </a>
-    <a href="join.html">
-      <b>作家の方へ</b>
-      <span>作品は切り取りません。掲載を募集しています。</span>
-    </a>
-  </section>
-
-  <!-- 3 · this month -->
-  <section class="sec" id="thismonth">
-    <span class="en">This month</span>
-    <h2>今月の作家 — 森　柊</h2>
-    <p class="intro">神奈川県藤沢市。海の近くの工房で、朝と夕方で色の変わる壁を描いています。今月は3点を掲載しています。<br><b>下の3点は、大きさの比率もそのままです。</b>小さい作品は小さく見えますが、それが実物の比率です。</p>
+  <!-- 2d · the proof: true relative size -->
+  <section class="proof">
     <div class="grid" id="grid"></div>
-    <blockquote class="quote">
-      海の近くに住んでいると、同じ壁でも朝と夕方では別の色に見えます。描き終えた絵は、置かれた部屋の光によってもう一度仕上がる。だから、どこに掛かるのかをいつも考えながら描いています。
-      <cite>森　柊 ／ 藤沢</cite>
-    </blockquote>
-    <div class="doors">
-      <a class="door" href="artist-mori.html">森　柊について、もっと読む</a>
-    </div>
+    <p class="tax">作品は2週間お取り置きできます。表示価格はすべて税込です。配送・設置は作家が手配します（費用は別途）。</p>
   </section>
 
   <!-- 4 · still available -->
   <section class="sec">
     <span class="en">Still available</span>
     <h2>いまも買えます</h2>
-    <p class="intro">紹介が終わった作家の作品も、そのまま販売しています。作家ごとにまとめています。</p>
     <div class="past" id="past"></div>
     <div class="doors">
       <a class="door ghost" href="artists.html">作家一覧を見る</a>
@@ -208,53 +126,37 @@
   </section>
 
 
-  <!-- 8 · contact -->
-  <section class="contact" id="contact">
-    <span class="en">Contact</span><b>お問い合わせ</b>
-    <span style="display:block;font-size:13.5px;margin-bottom:9px">2営業日以内にご返信します。お取り置きのご希望もこちらから。</span>
-    <span class="sel">hello@baraka.art</span><br>
-    <span class="sel" style="font-size:15px">045-000-0000</span>
-    <span class="en" style="margin-top:6px">平日 10:00–18:00</span>
-    <span class="tax">表示価格はすべて税込です。適格請求書（インボイス）を発行できます。配送・設置費は別途お見積りします。</span>
-  </section>
-
-  <div class="note"><b>プロトタイプ</b>／Prototype. 作家名・作品名・価格はサンプルです。画像はパブリックドメインの美術館所蔵作品を仮に使用しています（寸法は実物の寸法です）。</div>
-
   <footer>
     <span>BARAKA</span>
     <a href="works.html">すべての作品</a>
     <a href="artists.html">作家一覧</a>
-    <a href="trade.html">法人の方へ</a>
+    <a href="trade.html">設計・不動産の方へ</a>
     <a href="join.html">作家の方へ</a>
     <a href="enquiry.html">お問い合わせ</a>
     <a href="about.html">バラカについて</a>
   </footer>
 </div>
 
+<script type="speculationrules">{"prerender":[{"where":{"href_matches":"/room.html*"},"eagerness":"moderate"}]}</script>
+<script src="works.js"></script>
 <script>
-const MONTH=[
- {t:"朝の輪郭", w:2148,h:1312,f:"img/w5.jpg",p:"bk014.html",price:320000},
- {t:"海辺の家", w:1460,h:960, f:"img/w4.jpg",p:"bk052.html",price:198000},
- {t:"小さな庭", w:364, h:258, f:"img/w1.jpg",p:"bk061.html",price:48000}
-];
+const MONTH=WORKS.filter(k=>k.ap===WORKS[0].ap);
 const PAST=[
  {mo:"2026.09", n:"中村あかり", pl:"鎌倉",   p:"artist-nakamura.html", c:2, im:["img/w6.jpg","img/w3.jpg"]},
  {mo:"2026.08", n:"小松　杏",   pl:"茅ヶ崎", p:"artist-komatsu.html",  c:1, im:["img/w2.jpg"]},
  {mo:"2026.07", n:"石井悠真",   pl:"逗子",   p:"artist-ishii.html",    c:0, im:["img/w7.jpg"]}
 ];
-const yen=n=>"¥"+n.toLocaleString("en-US"), mm=n=>n.toLocaleString("en-US");
 
 document.getElementById("grid").innerHTML = MONTH.map(k=>
- '<a href="'+k.p+'"><figure style="--w:'+k.w+';--h:'+k.h+'">'+
-  '<div class="fr"><img src="'+k.f+'" width="'+k.w+'" height="'+k.h+'" alt="'+k.t+'" loading="lazy" decoding="async"></div>'+
+ '<a href="'+page(k)+'"><figure style="--w:'+k.w+';--h:'+k.h+'">'+
+  '<div class="fr"><img src="'+k.f+'" width="'+k.w+'" height="'+k.h+'" alt="'+k.t+'"></div>'+
   '<figcaption>'+k.t+'<span class="d">H'+mm(k.h)+' × W'+mm(k.w)+' mm</span>'+
   '<span class="p">'+yen(k.price)+'</span></figcaption></figure></a>').join("");
 
 document.getElementById("past").innerHTML = PAST.map(a=>
- '<a href="'+a.p+'"><span class="mo">'+a.mo+'</span><b>'+a.n+'</b>'+
-  '<span>'+a.pl+' ／ '+(a.c?a.c+'点 販売中':'完売')+'</span>'+
-  '<div class="mini"><img src="'+a.im[0]+'" alt="" loading="lazy" decoding="async"></div>'+
-  (a.c?'':'<span class="sold">完売</span>')+'</a>').join("");
+ '<a href="'+a.p+'"><img src="'+a.im[0]+'" alt="" loading="lazy" decoding="async">'+
+  '<div><span class="mo">'+a.mo+'</span><b>'+a.n+'</b>'+
+  '<span>'+a.pl+' ／ '+(a.c?a.c+'点 販売中':'完売')+'</span></div></a>').join("");
 </script>
 </body>
 </html>

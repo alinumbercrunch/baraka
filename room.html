@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>展示室 — Baraka</title>
+<script>
+/* the page transition into this room, if there is one. Up here because it fires at first paint,
+   which can come before the end of the body */
+const revealed=new Promise(done=>"onpagereveal" in window
+  ?addEventListener("pagereveal",e=>done(e.viewTransition),{once:true}):done());
+</script>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Shippori+Mincho:wght@400;600&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="style.css">
+<style>
+html,body{height:100%}
+/* registered so the light can fade; the tint is painted under the works, never over them */
+@property --sun{syntax:"<color>"; inherits:true; initial-value:rgba(255,255,255,0)}
+@property --sky{syntax:"<color>"; inherits:true; initial-value:#fff}
+.hall[data-sun="morning"]{--sun:rgba(160,190,225,.13); --sky:#e6f0fb}
+.hall[data-sun="noon"]{--sun:rgba(255,255,255,0); --sky:#fff}
+.hall[data-sun="evening"]{--sun:rgba(190,122,48,.3); --sky:#ffcf96}
+body{display:flex; flex-direction:column}
+.cap{display:flex; align-items:baseline; gap:14px; flex-wrap:wrap; width:100%; padding-block:10px}
+.cap .by{margin-left:auto; display:flex; gap:16px; font-size:12.5px}
+.cap .by a{color:var(--mute); text-decoration:none; border-bottom:1px solid var(--rule)}
+#sun{display:flex; gap:2px}
+#sun button{background:none; border:0; border-bottom:1px solid transparent; color:var(--mute); padding:0 7px; font-family:var(--min)}
+#sun button[aria-pressed="true"]{color:var(--ink); border-bottom-color:var(--shu)}
+.cap h1{font-family:var(--min); font-weight:600; font-size:clamp(17px,2.2vw,21px)}
+.hall{flex:1 1 0; min-height:0; position:relative; display:flex}
+.hall.live{transition:--sun 2.5s ease,--sky 2.5s ease}   /* only a chosen change fades: arriving, the light is simply there */
+#stage{flex:1 1 0; min-width:0; position:relative; overflow:clip; background:linear-gradient(var(--sun),var(--sun)),#e6dfd2}
+.hall[data-sun="evening"] .card{--ink:#fff6e6; --blend:normal}
+.hall[data-sun="evening"] #cd{color:var(--ink)}
+
+/* ── the room: every length is millimetres × --u, so one number sets the true scale ── */
+#room{position:absolute; left:50%; top:50%; width:0; height:0; transform-style:preserve-3d}
+.rm{position:absolute; transform-style:preserve-3d; transform:translateX(calc(var(--x) * var(--u)))}
+.wall{position:absolute; left:calc(var(--len) * var(--u) / -2); top:calc(var(--high) * var(--u) / -2);
+  width:calc(var(--len) * var(--u)); height:calc(var(--high) * var(--u)); backface-visibility:hidden}
+/* plaster, oak and a skylight: each surface a step apart, walls darkening toward you */
+/* the surfaces are soft, so each is drawn at quarter size and scaled up: a sixteenth of the graphics
+   memory. Full size they ran past Chrome's budget and it dropped whole walls mid-walk. Works stay sharp */
+.wall{isolation:isolate; --tint:linear-gradient(var(--sun),var(--sun)); --plaster:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012 .03' numOctaves='3'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .4 0 0 0 0 .33 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E")}
+.wall::after{content:""; position:absolute; z-index:-1; left:0; top:0; width:25%; height:25%;
+  transform:scale(4); transform-origin:0 0; will-change:transform; background-color:#e6dfd2; background-size:55px 55px,auto,auto}
+.wall.back{transform:translateZ(calc(var(--deep) * var(--u) / -2))}
+.wall.back::after{background-image:var(--tint),var(--plaster),linear-gradient(#f4efe7,#e9e2d6)}
+.wall.left{transform:rotateY(90deg) translateZ(calc(var(--wide) * var(--u) / -2))}
+.wall.left::after{background-image:var(--tint),var(--plaster),linear-gradient(90deg,#cfc5b6,#e6dfd2 70%)}
+.wall.right{transform:rotateY(-90deg) translateZ(calc(var(--wide) * var(--u) / -2))}
+.wall.right::after{background-image:var(--tint),var(--plaster),linear-gradient(90deg,#e6dfd2 30%,#cfc5b6)}
+.wall.floor,.wall.top{top:calc(var(--deep) * var(--u) / -2); height:calc(var(--deep) * var(--u))}
+/* oak boards 140 mm wide, run down the room, under a light that fades toward you */
+.wall.floor{--board:calc(35 * var(--u)); transform:rotateX(90deg) translateZ(calc(var(--high) * var(--u) / -2))}
+.wall.floor::after{background-size:55px 55px,auto,auto,auto;
+  background-image:var(--tint),var(--plaster),linear-gradient(rgba(255,250,240,.3),rgba(70,50,30,.16)),
+    repeating-linear-gradient(90deg,#b9a585 0 .5px,#d9c6a8 .5px var(--board),#d6c2a3 0 calc(var(--board) * 2),#dac8ab 0 calc(var(--board) * 3),#d3bf9f 0 calc(var(--board) * 4))}
+/* runs on behind the back wall, or the page shows through at the join */
+.wall.top{height:calc((var(--deep) + 1500) * var(--u)); transform-origin:50% calc(var(--deep) * var(--u) / 2);
+  transform:rotateX(-90deg) translateZ(calc(var(--high) * var(--u) / -2))}
+.wall.top::after{background-size:auto; background-image:var(--tint),linear-gradient(90deg,#ded6c9,#f0ebe2 38%,var(--sky) 42% 58%,#f0ebe2 62%,#ded6c9)}
+/* the room falls back as you walk up to a work; the work's own light does not */
+.wall::before{content:""; position:absolute; inset:0; background:#2a2622; opacity:0; visibility:hidden;
+  transition:opacity 1.8s ease,visibility 0s 1.8s}   /* hidden, not just clear: a new wall can flash it at full strength */
+.look .wall::before{opacity:.28; visibility:visible; transition:opacity 1.8s ease}
+.hung{position:absolute; left:calc(var(--l) * var(--u)); top:calc(var(--t) * var(--u));
+  width:calc(var(--w) * var(--u)); height:calc(var(--h) * var(--u));
+  box-shadow:0 2px 7px rgba(0,0,0,.28); z-index:0; transition:box-shadow .3s ease;
+  outline:1px solid transparent}   /* smooths the work's edges at an angle */
+/* each work's own light: a soft pool on the wall, thrown from just above */
+.hung::before{content:""; position:absolute; z-index:-1; inset:calc(-900 * var(--u)) calc(-800 * var(--u)) calc(-600 * var(--u));
+  background:radial-gradient(closest-side,rgba(255,250,238,.9) 25%,rgba(255,250,238,0));
+  opacity:.75; transition:opacity .3s ease}
+.hung img{display:block; width:100%; height:100%}
+/* hover turns the light up: a thin outline can't draw cleanly on a wall seen at an angle */
+.hung:hover{box-shadow:0 6px 20px rgba(0,0,0,.42)}
+.hung:hover::before{opacity:1}
+.hung:focus-visible{outline:2px solid var(--dim); outline-offset:3px}
+/* gallery convention: a red dot beside a sold work */
+.hung.sold::after{content:""; position:absolute; right:-14px; bottom:0; width:8px; height:8px;
+  border-radius:50%; background:var(--shu)}
+
+/* arriving from a page showing this work, it travels on to its place on the back wall */
+#stage:not(.look) .here .lead img{view-transition-name:hero-work}
+::view-transition-group(hero-work){animation-duration:.9s; animation-timing-function:cubic-bezier(.45,0,.15,1)}
+::view-transition-old(root),::view-transition-new(root){animation-duration:.9s}
+
+/* a label beside each work, and the artist's words lettered on the wall */
+.lab{position:absolute; left:calc(100% + 110 * var(--u)); bottom:0; width:calc(380 * var(--u));
+  font-family:var(--min); font-size:calc(52 * var(--u)); line-height:1.5; color:#3a342c}
+.lab small{display:block; font-size:.78em; color:var(--mute); white-space:nowrap}
+.says{position:absolute; top:calc(500 * var(--u)); left:calc(var(--l) * var(--u)); width:calc(700 * var(--u));
+  height:calc(1900 * var(--u)); margin:0; writing-mode:vertical-rl; font-family:var(--min); font-size:calc(120 * var(--u));
+  line-height:1.8; letter-spacing:.08em; color:#4a4238; line-break:strict; word-break:normal}
+
+/* ── the title card: the room's name, set like an exhibition poster. It steps aside for the work ── */
+.card{--ink:#2a2622; --blend:multiply; position:absolute; inset:0; pointer-events:none; overflow:hidden;
+  display:flex; flex-direction:column; padding:2vh 4vw 3vh; color:var(--ink); transition:opacity .4s ease}
+#stage.look~.card,#stage:has(.hung:hover)~.card,#stage:has(.hung:focus-visible)~.card{opacity:0}
+/* name above, details below in normal flow, so a long name can push them but never cover them */
+#cn,.facts-row>*{transition:transform .55s cubic-bezier(.2,1,.3,1),opacity .55s ease}
+.card.off #cn,.card.off .facts-row>*{opacity:0; transform:translateY(70px)}
+.facts-row>:nth-child(1){transition-delay:.08s}
+.facts-row>:nth-child(2){transition-delay:.16s}
+.facts-row>:nth-child(3){transition-delay:.24s}
+#cn{margin:auto 0; font-family:var(--min); font-weight:600; font-size:min(15vw,30svh);
+  line-height:1.02; letter-spacing:.02em; white-space:pre-line; overflow-wrap:anywhere; mix-blend-mode:var(--blend)}
+.facts-row{display:flex; flex:none; flex-wrap:wrap; justify-content:flex-end; align-items:center; gap:6px 20px}
+.facts-row p{margin:0}
+#cr{font-family:var(--min); font-size:clamp(18px,2.4vw,30px); letter-spacing:.06em}
+#ct{background:var(--shu); color:#fff; font-size:14px; letter-spacing:.1em; padding:4px 12px}
+#cd{color:var(--shu); font-family:var(--mono); font-size:15px; letter-spacing:.08em}
+
+/* ── the panel: the work stays visible, whole, beside it ── */
+#panel{position:fixed; inset:0 0 0 auto; margin:0; width:340px; max-width:100%; height:100%; max-height:100%;
+  border:0; border-left:1px solid var(--rule); padding:0; background:var(--paper); color:var(--ink)}
+#panel::backdrop{background:none}
+.in{padding:22px 24px; min-height:100%; display:flex; flex-direction:column; gap:4px}
+#pi{display:none}
+#pt{font-family:var(--min); font-weight:600; font-size:24px; margin-top:6px}
+#pp{font-family:var(--mono); font-size:18px; margin:8px 0 0}
+.facts{margin:10px 0 0; border-top:1px solid var(--ink)}
+.facts div{display:flex; gap:12px; border-bottom:1px solid var(--rule); padding:7px 0; font-size:13px}
+.facts dt{flex:0 0 58px; font-size:12px; color:var(--mute)}
+.facts dd{margin:0}
+.go{display:flex; flex-direction:column; gap:8px; margin-top:16px}
+.go .door{text-align:center; background:none; color:var(--ink); font-size:13.5px; padding:10px 14px}
+.go .door:hover{background:var(--ink); color:var(--sheet)}
+.go .door[aria-pressed="true"]{background:var(--ink); color:var(--sheet)}
+.turn{display:flex; justify-content:space-between; gap:8px; margin-top:auto; padding-top:16px}
+.turn button,.x{background:none; border:0; border-bottom:1px solid var(--rule); color:var(--mute); font-size:12.5px; padding:2px 0}
+.x{align-self:flex-end}
+.sum{color:var(--shu); font-size:13px; margin:12px 0 0}
+
+/* ── phones: no room fits a portrait screen, so one long wall to swipe along ── */
+@media (prefers-reduced-motion:reduce){ .wall::before,.card,.card>*,.hall.live{transition:none} }
+@media (max-width:760px){
+  #stage{overflow-x:auto; scroll-snap-type:x proximity}
+  #room{position:relative; left:0; top:0; height:100%}
+  .rm{position:relative; width:calc(var(--wide) * var(--u)); height:100%; transform:none}
+  .wall.back{transform:none; left:0; top:0}
+  .wall.back::after{background-image:var(--tint),var(--plaster),linear-gradient(#f4efe7 88%,#d8c3a2 88%)}
+  .hung{scroll-snap-align:center}
+  .lab{font-size:calc(66 * var(--u)); width:calc(460 * var(--u))}
+  #panel{inset:auto 0 0 0; width:100%; height:auto; max-height:88svh; border-left:0; border-top:1px solid var(--rule)}
+  #pi{display:block; width:auto; max-width:100%; max-height:32svh; margin:0 auto 8px}
+}
+</style>
+</head>
+<body>
+<div class="protobar">これは<b>プロトタイプ</b>です。作家名・作品名・価格はすべて架空のサンプルです。画像はパブリックドメインの美術館所蔵作品を仮に使用しています。<span class="pe">This is a prototype. Artists, titles and prices are fictional samples.</span></div>
+<div class="wrap" style="width:100%">
+  <nav class="bar">
+    <a class="mark" href="index.html">BARAKA<small>バラカ</small></a>
+    <a href="room.html" aria-current="page">展示室</a>
+    <a href="works.html">すべての作品</a>
+    <a href="artists.html">作家一覧</a>
+    <a href="trade.html">設計・不動産の方へ</a>
+    <a href="enquiry.html"><b>お問い合わせ</b></a>
+  </nav>
+  <header class="cap">
+    <h1 id="ttl">展示室</h1>
+    <span class="en">作品を押すと、正面から見られます。大きさの比率は実物どおりです。</span>
+    <span class="by"><span id="sun" role="group" aria-label="部屋の光"></span><a id="toPrev" href="index.html"></a><a id="toNext" href="index.html"></a></span>
+  </header>
+</div>
+<div class="hall" id="hall">
+  <main id="stage"><div id="room"></div></main>
+  <div class="card off" id="card" aria-hidden="true"><p id="cn"></p><div class="facts-row" id="cf"><p id="cr"></p><p id="ct"></p><p id="cd"></p></div></div>
+</div>
+
+<dialog id="panel" aria-labelledby="pt"><div class="in">
+  <button type="button" class="x" id="px">閉じる ×</button>
+  <img id="pi" alt="">
+  <h2 id="pt"></h2>
+  <a id="pa" href="index.html"></a>
+  <p id="pp"></p>
+  <dl class="facts" id="pf"></dl>
+  <p class="sum" id="ps" hidden>完売しました</p>
+  <div class="go">
+    <button type="button" class="door" id="padd" aria-pressed="false">+ リストに入れる</button>
+    <a class="door" id="pe" href="enquiry.html">2週間お取り置き・問い合わせ</a>
+    <a class="door ghost" id="pg" href="works.html">くわしく見る</a>
+  </div>
+  <div class="turn" id="pn"><button type="button" id="pprev">← 前の作品</button><button type="button" id="pnext">次の作品 →</button></div>
+</div></dialog>
+
+<script src="works.js"></script>
+<script src="room.js"></script>
+<script>
+const $=id=>document.getElementById(id), stage=$("stage"), rm=$("room"), panel=$("panel");
+const phone=matchMedia("(max-width:760px)"), still=matchMedia("(prefers-reduced-motion:reduce)");
+const WALK="transform .4s ease", ENTER="transform .9s ease", LOOK="transform 1.8s cubic-bezier(.45,0,.15,1)", SWAY="transform .2s ease-out";
+let built="", plots={}, pitch=0, plot=null, now=null, busy=false, seen=null;   // the row, this room, the route, mid-walk, last work viewed
+
+const size=()=>({w:stage.clientWidth,h:stage.clientHeight});
+const flat=()=>phone.matches;
+const motion=()=>!flat()&&!still.matches;
+const shape=()=>{ const s=size(); return flat()||!s.h?undefined:s.w/s.h };
+const key=()=>(flat()?now.artist:"row")+(shape()||0).toFixed(2);
+const along=a=>flat()?0:ARTISTS.indexOf(a)*pitch;
+function roomHTML(r,pl,x){
+  const lead=pl.spots[0].k;
+  const wall=(id,len,inner)=>'<div class="wall '+id+'" style="--len:'+len+'">'+inner+'</div>';
+  const hungOn=id=>pl.spots.filter(s=>s.wall===id).map(({k,x,y})=>
+    '<a class="hung'+(k.sold?' sold':'')+(k===lead?' lead':'')+'" id="h'+k.no+'" href="#'+r.artist+'/'+k.no+'" style="--l:'+(x-k.w/2)+';--t:'+(pl.h-y-k.h/2)+';--w:'+k.w+';--h:'+k.h+'">'+
+    '<img src="'+k.f+'" width="'+k.w+'" height="'+k.h+'" alt="'+k.t+'（'+k.a+'）'+(k.sold?' 完売':'')+'">'+
+    '<span class="lab" aria-hidden="true">'+k.t+'<small>'+mm(k.h)+' × '+mm(k.w)+'</small></span></a>').join("");
+  const words=ARTIST[r.artist].words, says=words&&pl.says?'<p class="says" style="--l:'+(pl.says.x-ROOM.says/2)+'">'+words+'</p>':"";
+  return '<div class="rm" data-a="'+r.artist+'" style="--x:'+x+';--wide:'+pl.w+';--deep:'+pl.d+';--high:'+pl.h+'">'+
+    wall("back",pl.w,hungOn("back")+says)+(flat()?"":
+    wall("left",pl.d,hungOn("left"))+wall("right",pl.d,hungOn("right"))+wall("floor",pl.w,"")+wall("top",pl.w,""))+'</div>';
+}
+function label(r){
+  $("ttl").textContent=r.works[0].a+"の展示室";
+  document.title=r.works[0].a+"の展示室 — Baraka";
+  const info=ARTIST[r.artist], left=r.works.filter(k=>!k.sold).length;
+  $("cn").textContent=r.works[0].a.replace("　","\n");
+  $("cr").textContent="“"+info.ro+"”";
+  $("ct").textContent="展示室 "+info.pl;
+  $("cd").textContent=r.works[0].mon+" ／ "+(left?left+"点 販売中":"完売");
+  for(const [id,by] of [["toPrev",-1],["toNext",1]]){
+    const a=neighbour(r.artist,by), n=route("#"+a).works[0].a;
+    $(id).href="#"+a; $(id).textContent=by<0?"← "+n:n+" →";
+  }
+}
+/* every room stands in one row from the start and a visit only moves the camera: adding a room
+   mid-visit makes Chrome drop the room in view for a frame.
+   ponytail: one layer per wall per artist, fine for a few dozen; past that, mount the nearest few at load.
+   Rooms share a pitch and a scale, so a room grown for a very large show widens the gaps beside it */
+function build(){
+  const shown=flat()?[now.artist]:ARTISTS;
+  plots=Object.fromEntries(shown.map(a=>[a,plan(route("#"+a).works,flat(),shape())]));
+  pitch=Math.max(...Object.values(plots).map(p=>p.w));
+  rm.innerHTML=shown.map((a,i)=>roomHTML(route("#"+a),plots[a],i*pitch)).join("");
+  built=key();
+}
+/* the room you are in: the others can't be tabbed to, and only this one's work may travel between pages */
+function settle(r){
+  plot=plots[r.artist];
+  for(const el of rm.children){ const here=el.dataset.a===r.artist; el.classList.toggle("here",here); el.inert=!here }
+  label(r);
+}
+const go=(t,how)=>new Promise(done=>{
+  rm.style.transition=how; rm.style.transform=t;
+  setTimeout(done,parseFloat(how.split(" ")[1])*1000);
+});
+/* the demo's move: back out of the doorway, along to the next door, and in */
+async function walk(r,from){
+  busy=true;
+  $("card").classList.add("off");
+  const s=size(), x=-along(r.artist);
+  await go(rest(plot,s,{in:false,x:-along(from)}),WALK);
+  await go(rest(plot,s,{in:false,x}),WALK);
+  settle(r);
+  await go(rest(plot,s,{x}),WALK);
+  busy=false;
+  sync();
+}
+function fill(k,r){
+  seen=k;
+  $("pi").src=k.f; $("pi").alt=k.t;
+  $("pt").textContent=k.t;
+  $("pa").textContent=k.a; $("pa").href=k.ap;
+  $("pp").textContent=yen(k.price);
+  $("pf").innerHTML=[["寸法","H"+mm(k.h)+" × W"+mm(k.w)+" × D"+k.d+" mm"],["技法",k.med],["重量",k.kg.toFixed(1)+" kg"],["取付",k.fix],["作品番号",k.no]]
+    .map(([a,b])=>'<div><dt>'+a+'</dt><dd>'+b+'</dd></div>').join("");
+  $("ps").hidden=!k.sold; $("padd").hidden=$("pe").hidden=!!k.sold;
+  $("pe").href="enquiry.html#"+page(k).replace(".html","");
+  $("pg").href=page(k);
+  $("pn").hidden=r.works.length<2;
+  mark(k);
+}
+function mark(k){
+  const on=!!loadPicks()[k.no];
+  $("padd").setAttribute("aria-pressed",on);
+  $("padd").textContent=on?"リストに追加済み":"+ リストに入れる";
+}
+function aim(how){
+  const s=size(), spot=now.work&&plot.spots.find(p=>p.k===now.work), {u,p}=lens(plot,s);
+  rm.style.setProperty("--u",(flat()?s.h/plot.h:u)+"px");
+  stage.classList.toggle("look",!!spot);
+  if(flat()){ rm.style.transform="none"; return }
+  stage.style.perspective=p+"px";
+  rm.style.transition=still.matches?"none":how||LOOK;
+  rm.style.transform=spot
+    ? face(plot,spot,s,{x:0,y:0,w:(panel.open?panel.getBoundingClientRect().left:innerWidth)-stage.getBoundingClientRect().left,h:s.h},along(now.artist)).t
+    : rest(plot,s,{x:-along(now.artist)});
+}
+function sync(){
+  if(busy) return;
+  const was=now; now=route(location.hash);
+  const moved=was&&was.artist!==now.artist;
+  if(moved&&!now.work&&!panel.open&&motion())
+    return walk(now,was.artist);
+  if(built!==key()) build();
+  settle(now);
+  if(now.work){ fill(now.work,now); if(!panel.open) panel.showModal() }
+  else if(panel.open) panel.close();
+  if(!was&&!now.work&&motion()) return arrive();
+  aim();
+  $("card").classList.remove("off");
+}
+/* straight off a transition the painting is carrying you in, so be there already; otherwise walk in from the door */
+async function arrive(){
+  busy=true;
+  aim("none");
+  const x=-along(now.artist);
+  rm.style.transform=rest(plot,size(),{in:false,x});
+  rm.getBoundingClientRect();
+  const trip=await revealed;
+  if(trip){ rm.style.transform=rest(plot,size(),{x}); await trip.finished }
+  $("card").classList.remove("off");
+  if(!trip) await go(rest(plot,size(),{x}),ENTER);
+  busy=false;
+  sync();
+}
+function light(id){
+  $("hall").dataset.sun=id;
+  for(const b of $("sun").children) b.setAttribute("aria-pressed",b.dataset.sun===id);
+}
+/* a long name shrinks until it fits. Observed, not called, because a browser's translation swaps the text too */
+function fitName(){
+  const c=$("cn"), box=getComputedStyle($("card"));
+  const room=$("card").clientHeight-parseFloat(box.paddingTop)-parseFloat(box.paddingBottom)-$("cf").offsetHeight-8;
+  c.style.fontSize="";
+  if(c.offsetHeight>room) c.style.fontSize=parseFloat(getComputedStyle(c).fontSize)*room/c.offsetHeight+"px";
+}
+function shut(){ location.hash=now.artist }
+function step(by){
+  const i=now.works.indexOf(now.work), n=now.works.length;
+  location.hash=now.artist+"/"+now.works[(i+by+n)%n].no;
+}
+panel.addEventListener("close",()=>{
+  const was=route(location.hash).work||seen;   // the hash leads now.work by a tick
+  if(route(location.hash).work) shut();
+  if(was) $("h"+was.no)?.focus({preventScroll:!flat()});   // gone if Back left the room
+});
+panel.addEventListener("click",e=>{ if(e.target===panel) panel.close() });   // the room beside the panel
+panel.addEventListener("keydown",e=>{
+  if(e.key==="ArrowLeft") step(-1); else if(e.key==="ArrowRight") step(1);
+});
+$("px").onclick=()=>panel.close();
+$("pprev").onclick=()=>step(-1);
+$("pnext").onclick=()=>step(1);
+$("padd").onclick=()=>{ saveStore({p:togglePick(loadPicks(),now.work)}); mark(now.work) };
+$("sun").innerHTML=SUN.map(p=>'<button type="button" data-sun="'+p.id+'">'+p.l+'</button>').join("");
+$("sun").onclick=e=>{ const b=e.target.closest("button"); if(b){ $("hall").classList.add("live"); light(b.dataset.sun) } };
+light(sunAt(new Date()));
+{ const o=new ResizeObserver(fitName); o.observe($("cn")); o.observe($("cf")) }
+addEventListener("hashchange",sync);
+phone.addEventListener("change",sync);
+new ResizeObserver(()=>{ if(!now||busy) return; if(built!==key()){ build(); settle(now) } aim("none") }).observe(stage);
+addEventListener("mousemove",e=>{
+  if(busy||now.work||!motion()) return;
+  const s=size();
+  requestAnimationFrame(()=>go(rest(plot,s,{...tilt(e.clientX,e.clientY,s),x:-along(now.artist)}),SWAY));
+});
+sync();
+</script>
+</body>
+</html>

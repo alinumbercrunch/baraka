@@ -2,6 +2,7 @@
 // ids actually present in that page's HTML. Catches the exact class of bug that
 // killed works.html: a getElementById on an id that isn't there.
 import { readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
 
 const file = process.argv[2];
 const html = readFileSync(file, "utf8");
@@ -11,7 +12,7 @@ const store = new Map();
 
 const mkEl = id => {
   const el = {
-    id, _html: "", value: "", hidden: false, dataset: {}, style: {},
+    id, _html: "", value: "", hidden: false, dataset: {}, style: { setProperty() {} },
     textContent: "", checked: false, children: [],
     get innerHTML() { return this._html },
     set innerHTML(v) {
@@ -20,7 +21,7 @@ const mkEl = id => {
       this.children = [...String(v).matchAll(/<button/g)].map(() => mkEl(id + "-child"));
     },
     setAttribute() {}, getAttribute() { return null }, removeAttribute() {},
-    addEventListener() {}, removeEventListener() {},
+    addEventListener() {}, removeEventListener() {}, getBoundingClientRect() { return { left: 0 } },
     appendChild() {}, scrollIntoView() {}, focus() {}, select() {},
     closest() { return null }, querySelector() { return null },
     querySelectorAll() { return [] },
@@ -66,15 +67,22 @@ Object.defineProperty(globalThis, "navigator", {
   configurable: true, writable: true,
 });
 globalThis.scrollTo = () => {};
+globalThis.addEventListener = () => {};
+globalThis.requestAnimationFrame = () => {};
+globalThis.ResizeObserver = class { observe() {} };
 globalThis.matchMedia = () => ({ matches: false, addEventListener() {} });
 
 const blocks = [...html.matchAll(/<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script>/g)].map(m => m[1]);
 if (!blocks.length) { console.log("no inline script"); process.exit(0) }
 
+// classic scripts share one scope in a browser: give each block what its <script src> loaded
+const shared = [...html.matchAll(/<script src="([^"]+)"/g)]
+  .map(m => readFileSync(join(dirname(file), m[1]), "utf8")).join("\n");
+
 let failed = false;
 blocks.forEach((code, i) => {
   try {
-    new Function(code)();
+    new Function(shared + "\n" + code)();
     console.log(`  script block ${i + 1}: ran to completion`);
   } catch (e) {
     failed = true;

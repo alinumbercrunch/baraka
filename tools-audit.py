@@ -11,6 +11,7 @@ import io, os, re, sys, glob, json
 os.chdir(sys.argv[1] if len(sys.argv) > 1 else ".")
 PAGES = sorted(glob.glob("*.html"))
 SRC = {f: io.open(f, encoding="utf-8").read() for f in PAGES}
+DATA = io.open("works.js", encoding="utf-8").read()
 fails, warns = [], []
 
 
@@ -204,6 +205,13 @@ for f, s in SRC.items():
             fail("dimensions", f"{f}: {img} is {rw}x{rh} but declared {dw}x{dh} "
                                f"- stretched {off:.0f}%")
 
+for wd, hd, img in re.findall(r'w:(\d+),h:(\d+),.*?f:"(img/[^"]+)"', DATA):
+    rw, rh = REAL.get(img, (0, 1))
+    if not rw:
+        fail("images", f"works.js: {img} referenced but not present")
+    elif abs(rw / rh - int(wd) / int(hd)) / (int(wd) / int(hd)) >= .02:
+        fail("dimensions", f"works.js: {img} is {rw}x{rh} but declared {wd}x{hd}")
+
 # 9 ── images
 refs = set()
 for s in SRC.values():
@@ -233,6 +241,29 @@ for f, s in SRC.items():
     for w in ("支援", "応援", "育つ", "露出", "クリエイター", "夢"):
         if w in b:
             fail("tone", f"{f}: contains {w}")
+
+# 12 ── the nav is copied into every page: all copies must match the expected one
+NAV = [("room.html", "展示室"), ("works.html", "すべての作品"), ("artists.html", "作家一覧"),
+       ("trade.html", "設計・不動産の方へ"), ("enquiry.html", "お問い合わせ")]
+for f, s in SRC.items():
+    bar = re.search(r'<nav class="bar">(.*?)</nav>', s, flags=re.S)
+    got = re.findall(r'<a href="([^"]+)"[^>]*>(?:<b>)?([^<]+)', bar.group(1)) if bar else []
+    if got != NAV:
+        fail("nav", f"{f}: nav differs from the other pages: {[t for _, t in got]}")
+
+# 13 ── Baraka takes the order and the money; the artist delivers. No page may promise otherwise
+BROKEN_PROMISES = ("保険対応", "7日以内", "こちらで取り付け", "取付まで承ります", "原状回復", "取り外し・再設置",
+                   "1週間以内", "在庫あり ／ 2週間", "別途お見積り", "養生のうえ", "配送・設置を分けて",
+                   "売れてしまうことはありません", "売れてしまうことのないよう", "他所へ販売しません", "ここは必ずお守りします")
+for f, s in SRC.items():
+    for w in BROKEN_PROMISES:
+        if w in body_of(s):
+            fail("promise", f"{f}: promises {w}")
+
+# 14 ── artists must see what a sale asks of them before they apply
+for w in ("梱包・配送・設置は作家", "他所で販売しない", "納品確認の翌月末", "納品までの破損"):
+    if w not in SRC["join.html"]:
+        fail("promise", f"join.html: doesn't tell artists: {w}")
 
 # ── report
 print("=" * 62)

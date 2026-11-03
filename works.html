@@ -85,10 +85,10 @@
 <div class="wrap" id="top">
   <nav class="bar">
     <a class="mark" href="index.html">BARAKA<small>バラカ</small></a>
-    <a href="index.html">ホーム</a>
+    <a href="room.html">展示室</a>
     <a href="works.html" aria-current="page">すべての作品</a>
     <a href="artists.html">作家一覧</a>
-    <a href="trade.html">法人の方へ</a>
+    <a href="trade.html">設計・不動産の方へ</a>
     <a href="enquiry.html"><b>お問い合わせ</b></a>
   </nav>
 
@@ -154,26 +154,17 @@
     <span>BARAKA</span>
     <a href="index.html">ホーム</a>
     <a href="artists.html">作家一覧</a>
-    <a href="trade.html">法人の方へ</a>
+    <a href="trade.html">設計・不動産の方へ</a>
     <a href="join.html">作家の方へ</a>
     <a href="enquiry.html">お問い合わせ</a>
     <a href="about.html">バラカについて</a>
   </footer>
 </div>
 
+<script src="works.js"></script>
 <script>
-const W=[
- {no:"BK-014",t:"朝の輪郭",a:"森　柊",ap:"artist-mori.html",mon:"2026.10",w:2148,h:1312,d:45,med:"油彩・キャンバス",kg:9.0,fix:"アンカー必要",price:320000,f:"img/w5.jpg"},
- {no:"BK-052",t:"海辺の家",a:"森　柊",ap:"artist-mori.html",mon:"2026.10",w:1460,h:960,d:35,med:"油彩・キャンバス",kg:4.5,fix:"アンカー必要",price:198000,f:"img/w4.jpg"},
- {no:"BK-061",t:"小さな庭",a:"森　柊",ap:"artist-mori.html",mon:"2026.10",w:364,h:258,d:20,med:"水彩・紙",kg:0.4,fix:"フック可",price:48000,f:"img/w1.jpg"},
- {no:"BK-007",t:"波の記憶",a:"中村あかり",ap:"artist-nakamura.html",mon:"2026.09",w:2260,h:1715,d:50,med:"アクリル・麻",kg:12.4,fix:"下地補強が必要",price:420000,f:"img/w6.jpg"},
- {no:"BK-032",t:"白い午後",a:"中村あかり",ap:"artist-nakamura.html",mon:"2026.09",w:1015,h:594,d:30,med:"油彩・パネル",kg:2.0,fix:"アンカー必要",price:128000,f:"img/w3.jpg"},
- {no:"BK-045",t:"堆積",a:"小松　杏",ap:"artist-komatsu.html",mon:"2026.08",w:946,h:511,d:25,med:"ミクストメディア",kg:1.5,fix:"フック可",price:96000,f:"img/w2.jpg"},
- {no:"BK-021",t:"立つ",a:"石井悠真",ap:"artist-ishii.html",mon:"2026.07",w:2717,h:2133,d:60,med:"岩絵具・和紙",kg:18.5,fix:"下地補強が必要",price:680000,f:"img/w7.jpg",sold:true}
-];
 const PRESETS=[{l:"玄関",w:1800,h:2400},{l:"ソファ上",w:3400,h:2400},{l:"寝室",w:2700,h:2400},
   {l:"会議室",w:4500,h:2500},{l:"内見用の空室",w:3600,h:2400}];
-const mm=n=>Math.round(n).toLocaleString("en-US"), yen=n=>"¥"+n.toLocaleString("en-US");
 const pic=(k,eager)=>'<img src="'+k.f+'" width="'+k.w+'" height="'+k.h+'" alt="'+k.t+'（'+k.a+'）"'+
   (eager?' fetchpriority="high" decoding="async"':' loading="lazy" decoding="async"')+'>';
 const wWi=document.getElementById("wW"), wHi=document.getElementById("wH");
@@ -187,8 +178,7 @@ function advise(k){
   const overW=k.w-Wd, tooTall=k.h>(Hd-450);
   if(overW>0||tooTall) return {no:true,txt:"→ この壁には大きすぎます"+
     (overW>0?"\n幅が "+mm(overW)+" mm 超過":"")+(tooTall?"\n高さが足りません":"")};
-  let c=1500;
-  if(c+k.h/2 > Hd-150) c=Math.round((Hd-150-k.h/2)/10)*10;
+  const c=hang(k,Hd);
   const bottom=Math.round(c-k.h/2);
   return {no:false, txt:"壁幅の "+Math.round(k.w/Wd*100)+"％ ／ 左右の余白 各"+mm((Wd-k.w)/2)+" mm\n"+
     (c===1500 ? "中心 床から 1,500 mm ／ 下端 "+mm(bottom)+" mm"
@@ -196,7 +186,7 @@ function advise(k){
     "\n→ 収まります"};
 }
 function renderCol(){
-  document.getElementById("col").innerHTML = W.map((k,i)=>{
+  document.getElementById("col").innerHTML = WORKS.map((k,i)=>{
     const v=advise(k);
     const page = k.no.replace("-","").toLowerCase()+".html";
     return '<article class="item">'+
@@ -215,7 +205,7 @@ function renderCol(){
 }
 document.getElementById("col").addEventListener("click",e=>{
   const b=e.target.closest(".add"); if(!b) return;
-  const n=b.dataset.no; if(picked[n]) delete picked[n]; else picked[n]={room:""};
+  picked=togglePick(picked,byNo(b.dataset.no));
   save(); renderCol(); renderSel(); chips();
 });
 let band=null;
@@ -228,7 +218,7 @@ bandsEl.onclick=e=>{ const b=e.target.closest("button"); if(!b) return;
   [...bandsEl.children].forEach(x=>x.setAttribute("aria-pressed",String(x===b)));
   renderTable(); };
 function renderTable(){
-const rows = W.filter(k=>!band || (k.price>=band.min && k.price<band.max));
+const rows = WORKS.filter(k=>!band || (k.price>=band.min && k.price<band.max));
 document.getElementById("tb").innerHTML=rows.map(k=>
  '<tr><td class="fig">'+k.no+'</td><td><a href="'+k.ap+'">'+k.a+'</a></td><td>'+k.t+(k.sold?' <span class="mute">完売</span>':'')+'</td>'+
  '<td class="fig">'+mm(k.h)+' × '+mm(k.w)+' × '+k.d+'</td><td>'+k.med+'</td>'+
@@ -241,7 +231,7 @@ function renderSel(){
   if(!keys.length){ host.innerHTML='<p class="empty">まだ選ばれていません。作品の「選ぶ」を押すと、ここに部屋ごとにまとめられます。</p>'; return }
   let sum=0;
   const rows=keys.map(n=>{
-    const k=W.find(x=>x.no===n); sum+=k.price;
+    const k=byNo(n); sum+=k.price;
     return '<div class="selrow"><button type="button" class="drop" data-drop="'+n+'" aria-label="外す">×</button>'+
       '<span class="fig" style="font-size:11.5px">'+k.no+'</span>'+
       '<span class="nm">'+k.t+' <span class="mute">'+k.a+'</span></span>'+
@@ -250,7 +240,7 @@ function renderSel(){
       '<span class="fig">'+yen(k.price)+'</span></div>';
   }).join("");
   host.innerHTML=rows+'<div class="total"><span>'+keys.length+' 点 ／ 作品代金のみ</span><span>'+yen(sum)+'</span></div>'+
-    '<p class="tax">表示価格はすべて税込です。配送・設置費は別途お見積りします。適格請求書（インボイス）を発行できます。</p>'+
+    '<p class="tax">表示価格はすべて税込です。配送・設置は作家が手配します（費用は別途）。適格請求書（インボイス）を発行できます。</p>'+
     '<div class="actions"><a class="door" href="enquiry.html" style="padding:8px 18px;font-size:13px">この内容で問い合わせる</a>'+
     '<button type="button" id="copyList">内容をコピー</button>'+
     '<span class="said" id="said"></span>'+
@@ -262,11 +252,11 @@ function renderSel(){
   const cp=document.getElementById("copyList");
   if(cp) cp.addEventListener("click",()=>{
     const lines=["BARAKA ／ 選んだ作品",""].concat(keys.map(n=>{
-      const k=W.find(x=>x.no===n);
+      const k=byNo(n);
       return [picked[n].room||"（部屋名なし）", k.no, k.t, k.a,
         "H"+mm(k.h)+"×W"+mm(k.w)+"×D"+k.d+"mm", k.kg.toFixed(1)+"kg", k.fix, yen(k.price)].join(" ／ ");
     })).concat(["", keys.length+" 点　合計 "+yen(sum)+"（税込・作品代金のみ）",
-      "配送・設置費は別途お見積り。適格請求書を発行できます。"]).join("\n");
+      "配送・設置は作家が手配します（費用は別途）。適格請求書を発行できます。"]).join("\n");
     const done=ok=>{ const s=document.getElementById("said");
       if(s){ s.textContent = ok ? "コピーしました" : "下のテキストを選択してコピーしてください"; } };
     try{
@@ -298,13 +288,11 @@ pe.onclick=e=>{ const b=e.target.closest("button"); if(!b) return;
   renderCol(); chips(); save(); };
 function onSize(){ [...pe.children].forEach(x=>x.setAttribute("aria-pressed","false")); renderCol(); chips(); save() }
 wWi.addEventListener("input",onSize); wHi.addEventListener("input",onSize);
-function save(){ try{ localStorage.setItem("bk3",JSON.stringify({w:wWi.value,h:wHi.value,p:picked})) }catch(e){} }
-try{ const s=JSON.parse(localStorage.getItem("bk3")||"{}");
-  if(s.w) wWi.value=s.w; if(s.h) wHi.value=s.h; if(s.p&&typeof s.p==="object") picked=s.p;
-}catch(e){}
+const save=()=>saveStore({w:wWi.value,h:wHi.value,p:picked});
+{ const s=loadStore(); if(s.w) wWi.value=s.w; if(s.h) wHi.value=s.h; picked=loadPicks() }
 if(location.hash==="#list") show("listview");
 renderCol(); renderSel(); chips();
-document.getElementById("frieze").innerHTML=[...W].sort((a,b)=>b.h-a.h).map(k=>
+document.getElementById("frieze").innerHTML=[...WORKS].sort((a,b)=>b.h-a.h).map(k=>
   '<div style="--w:'+k.w+';--h:'+k.h+'"><b>'+mm(k.h)+' mm</b>'+pic(k)+'</div>').join("");
 </script>
 </body>
