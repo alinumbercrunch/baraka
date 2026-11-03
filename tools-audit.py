@@ -253,7 +253,8 @@ for f, s in SRC.items():
 
 # 13 ── Baraka takes the order and the money; the artist delivers. No page may promise otherwise
 BROKEN_PROMISES = ("保険対応", "7日以内", "こちらで取り付け", "取付まで承ります", "原状回復", "取り外し・再設置",
-                   "1週間以内", "在庫あり ／ 2週間", "別途お見積り", "養生のうえ", "配送・設置を分けて")
+                   "1週間以内", "在庫あり ／ 2週間", "別途お見積り", "養生のうえ", "配送・設置を分けて",
+                   "売れてしまうことはありません", "売れてしまうことのないよう", "他所へ販売しません", "ここは必ずお守りします")
 for f, s in SRC.items():
     for w in BROKEN_PROMISES:
         if w in body_of(s):
