@@ -481,10 +481,11 @@ if (REAL) {
   process.exit(bad ? 1 : 0);
 }
 
-let failed = 0;
+let failed = 0, ran = 0;
 const only = process.argv.find(a => a.startsWith("--only="))?.slice(7);
 for (const [name, run] of Object.entries(checks)) {
   if (only && !name.includes(only)) continue;
+  ran++;
   crashes.length = 0;
   try {
     await run();
@@ -492,7 +493,8 @@ for (const [name, run] of Object.entries(checks)) {
     console.log("  ok   " + name);
   } catch (e) { failed++; console.log("  FAIL " + name + "\n       " + e.message.replace(/\s+/g, " ").slice(0, 200)) }
 }
-console.log(`\n  ${Object.keys(checks).length - failed} passed, ${failed} failed`);
+console.log(`\n  ${ran - failed} passed, ${failed} failed` +
+  (only ? ` (${Object.keys(checks).length - ran} skipped by --only=${only})` : ""));
 ws.close(); chrome.kill(); site.close();
 await wait(200); await rm(profile, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 });
 process.exit(failed ? 1 : 0);

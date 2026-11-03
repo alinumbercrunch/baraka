@@ -261,7 +261,7 @@ for f, s in SRC.items():
             fail("tone", f"{f}: contains {w}")
 
 # 12 ── the nav is copied into every page: all copies must match the expected one
-NAV = [("room.html", "展示室"), ("works.html", "すべての作品"), ("artists.html", "作家一覧"),
+NAV = [("room.html", "Gallery"), ("works.html", "すべての作品"), ("artists.html", "作家一覧"),
        ("trade.html", "設計・不動産の方へ"), ("enquiry.html", "お問い合わせ")]
 for f, s in SRC.items():
     bar = re.search(r'<nav class="bar">(.*?)</nav>', s, flags=re.S)

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>展示室 — Baraka</title>
+<title>Gallery — Baraka</title>
 <script>
 /* the page transition into this room, if there is one. Up here because it fires at first paint,
    which can come before the end of the body */
@@ -155,14 +155,14 @@ body{display:flex; flex-direction:column}
 <div class="wrap" style="width:100%">
   <nav class="bar">
     <a class="mark" href="index.html">BARAKA<small>バラカ</small></a>
-    <a href="room.html" aria-current="page">展示室</a>
+    <a href="room.html" aria-current="page">Gallery</a>
     <a href="works.html">すべての作品</a>
     <a href="artists.html">作家一覧</a>
     <a href="trade.html">設計・不動産の方へ</a>
     <a href="enquiry.html"><b>お問い合わせ</b></a>
   </nav>
   <header class="cap">
-    <h1 id="ttl">展示室</h1>
+    <h1 id="ttl">Gallery</h1>
     <span class="en">作品を押すと、正面から見られます。大きさの比率は実物どおりです。</span>
     <span class="by"><span id="sun" role="group" aria-label="部屋の光"></span><a id="toPrev" href="index.html"></a><a id="toNext" href="index.html"></a></span>
   </header>
@@ -215,12 +215,12 @@ function roomHTML(r,pl,x){
     wall("left",pl.d,hungOn("left"))+wall("right",pl.d,hungOn("right"))+wall("floor",pl.w,"")+wall("top",pl.w,""))+'</div>';
 }
 function label(r){
-  $("ttl").textContent=r.works[0].a+"の展示室";
-  document.title=r.works[0].a+"の展示室 — Baraka";
+  $("ttl").textContent=r.works[0].a+" ― Gallery";
+  document.title=r.works[0].a+" ― Gallery — Baraka";
   const info=ARTIST[r.artist], left=r.works.filter(k=>!k.sold).length;
   $("cn").textContent=r.works[0].a.replace("　","\n");
   $("cr").textContent="“"+info.ro+"”";
-  $("ct").textContent="展示室 "+info.pl;
+  $("ct").textContent="Gallery ― "+info.pl;
   $("cd").textContent=r.works[0].mon+" ／ "+(left?left+"点 販売中":"完売");
   for(const [id,by] of [["toPrev",-1],["toNext",1]]){
     const a=neighbour(r.artist,by), n=route("#"+a).works[0].a;
@@ -327,7 +327,16 @@ function fitName(){
   const c=$("cn"), box=getComputedStyle($("card"));
   const room=$("card").clientHeight-parseFloat(box.paddingTop)-parseFloat(box.paddingBottom)-$("cf").offsetHeight-8;
   c.style.fontSize="";
-  if(c.offsetHeight>room) c.style.fontSize=parseFloat(getComputedStyle(c).fontSize)*room/c.offsetHeight+"px";
+  if(room<=0) return;
+  // wrapped text does not scale with its font size: shrinking re-flows it, so one
+  // proportional guess can still leave the name over the edge. Close in instead,
+  // taking at least a little off each pass so reflow cannot stall it.
+  for(let i=0; i<8 && c.offsetHeight>room; i++){
+    const f=parseFloat(getComputedStyle(c).fontSize);
+    const next=Math.max(11, f * Math.min(.9, room / c.offsetHeight));
+    if(next>=f) break;
+    c.style.fontSize=next+"px";
+  }
 }
 function shut(){ location.hash=now.artist }
 function step(by){

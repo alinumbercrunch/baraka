@@ -16,7 +16,13 @@
 .issue .no+.no{color:var(--mute)}
 
 /* ── 2c · why Baraka exists. Quiet on purpose: it is read, not clicked ── */
-.circle{text-align:center; margin-top:clamp(40px,8vh,72px)}
+/* every block is a band: ruled across the top, named, evenly padded. The rule is
+   what makes one block end and the next begin, so the padding goes inside the band
+   rather than between them. */
+.hero,.circle,.proof,.sec{border-top:1px solid var(--ink); padding-block:clamp(22px,4vh,34px) 0}
+.hero{border-top-color:var(--rule)}
+.hero > .en,.circle > .en,.proof > .en,.sec > .en{margin:0 0 clamp(14px,2.5vh,22px)}
+.circle{text-align:center}
 .circle .mean{font-family:var(--min); font-size:clamp(14px,1.7vw,16px); color:var(--mute); margin:0}
 .circle .loop{font-family:var(--min); font-size:clamp(18px,2.5vw,24px); line-height:2.05; margin:12px 0 0;
   line-break:strict; word-break:keep-all; font-feature-settings:"palt" 1}
@@ -25,17 +31,17 @@
 @media (max-width:420px){ .circle .loop{font-size:15.5px; line-height:2.1} }
 
 /* ── 2 · hero: the promise, one painting, one button ── */
-.hero{text-align:center; padding-block:clamp(30px,6vh,60px) 10px}
+.hero{text-align:center}
 .hero .lead{font-family:var(--min); font-weight:600; font-size:clamp(20px,2.8vw,28px); line-height:1.75; margin:0; max-width:none}
 .hero .tag{color:var(--mute); margin:10px 0 0}
 .hero img{view-transition-name:hero-work; display:block; width:auto; height:auto; margin:14px auto 0;
   max-width:100%; max-height:min(44svh,420px); box-shadow:0 2px 10px rgba(0,0,0,.2)}
 /* on a phone the painting and its button come first: nothing decorative above them */
-@media (max-width:760px){ .issue,.protobar .pe{display:none} .hero{padding-block:14px 10px} }
+@media (max-width:760px){ .issue,.protobar .pe{display:none} .hero{padding-block:14px 0} }
 .hero .doors{justify-content:center; margin-top:clamp(18px,3vh,26px)}
 
 /* ── 2d · the proof: the month's works, standing on one thin line at true relative size ── */
-.proof{text-align:center; margin-top:clamp(44px,8vh,72px)}
+.proof{text-align:center}
 .by{font-family:var(--min); margin:clamp(18px,3vh,28px) 0 0}
 .by a{text-decoration:none; font-weight:600; font-size:clamp(18px,2.2vw,22px); border-bottom:1px solid var(--rule); margin:0 .3em}
 .by a:hover{border-bottom-color:var(--ink)}
@@ -76,11 +82,12 @@
   .grid figcaption{white-space:normal} }
 
 /* ── sections ── */
-.sec{padding-block:44px 0}
+
 .sec > h2{font-family:var(--min); font-weight:600; font-size:clamp(19px,2.6vw,25px)}
 .sec > .en{margin-bottom:4px}
 
 /* ── 4 · still available ── */
+.sec{padding-bottom:clamp(26px,5vh,40px)}
 .past{display:grid; grid-template-columns:repeat(auto-fit,minmax(235px,1fr)); gap:18px; margin-top:24px}
 .past a{display:flex; gap:14px; align-items:center; border:1px solid var(--rule); padding:12px 14px;
   text-decoration:none; transition:border-color calc(var(--beat)*.25)}
@@ -99,7 +106,7 @@
   <!-- 1 · header -->
   <nav class="bar">
     <a class="mark" href="index.html">BARAKA<small>バラカ</small></a>
-    <a href="room.html">展示室</a>
+    <a href="room.html">Gallery</a>
     <a href="works.html">すべての作品</a>
     <a href="artists.html">作家一覧</a>
     <a href="trade.html">設計・不動産の方へ</a>
@@ -113,16 +120,18 @@
 
 <!-- 2 · hero -->
 <section class="hero wrap">
+  <span class="en">今月の作家 ／ This month</span>
   <h1 class="lead">その部屋のための一枚を、<br>まだ知られていない作家から。</h1>
   <p class="tag">実際の大きさのまま見て、選んで、買えます。設計する部屋に、モデルルームに、ご自宅に。</p>
-  <p class="by">今月の作家<a href="artist-mori.html">森　柊</a></p>
+  <p class="by"><a href="artist-mori.html">森　柊</a></p>
   <img src="img/w5.jpg" width="2148" height="1312" alt="朝の輪郭（森　柊）" fetchpriority="high" decoding="async">
-  <div class="doors"><a class="door" href="room.html">展示室に入る</a></div>
+  <div class="doors"><a class="door" href="room.html">Gallery</a></div>
 </section>
 
 <div class="wrap">
   <!-- 2c · why Baraka exists -->
   <section class="circle">
+    <h2 class="en">バラカについて ／ Why Baraka</h2>
     <p class="mean">バラカ ― アラビア語で「祝福」。小さなものが、まわって、増えていく。</p>
     <p class="loop">絵は部屋にのこり、お金は作家にまわる。<br>
       その名前が、次の部屋を見つける。<br>
@@ -131,14 +140,14 @@
 
   <!-- 2d · the proof: true relative size -->
   <section class="proof">
+    <h2 class="en">実際の大きさ ／ True size</h2>
     <div class="grid" id="grid"></div>
     <p class="tax">作品は2週間お取り置きできます。表示価格はすべて税込です。配送・設置は作家が手配します（費用は別途）。</p>
   </section>
 
   <!-- 4 · still available -->
   <section class="sec">
-    <span class="en">Still available</span>
-    <h2>いまも買えます</h2>
+    <h2 class="en">いまも買えます ／ Still available</h2>
     <div class="past" id="past"></div>
     <div class="doors">
       <a class="door ghost" href="artists.html">作家一覧を見る</a>
