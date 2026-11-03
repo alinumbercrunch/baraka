@@ -225,6 +225,8 @@ const checks = {
       assert.equal(await js(`document.querySelector(".hero h1").textContent`), "その部屋のための一枚を、まだ知られていない作家から。");
       assert.ok(await js(`document.querySelector(".hero .tag").textContent.startsWith("実際の大きさのまま見て、選んで、買えます。")`), "actual size, and that the works are for sale");
       assert.equal(await js(`document.querySelector(".hero").textContent.includes("卸価格")`), false, "wholesale belongs on the trade page");
+      assert.ok((await js(`document.title`)).includes("その部屋のための一枚"), "the tab says what the page says");
+      assert.ok((await js(`document.querySelector('meta[name="description"]').content`)).includes("選んで、買えます"), "so does search");
       assert.ok(await js(`document.querySelector(".hero .door").getBoundingClientRect().bottom<=innerHeight`), width + ": button in view without scrolling");
     }
     await cdp("Emulation.clearDeviceMetricsOverride");
