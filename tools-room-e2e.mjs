@@ -251,15 +251,32 @@ const checks = {
     assert.equal(await js(`document.querySelectorAll(".by").length`), 1, "the artist is named once");
   },
   "the month's works open the page, on one floor, at true relative size": async () => {
-    for (const [width, height] of [[1440, 900], [390, 780]]) {
+    // 360 is the commonest Android width, and 890 is where the gap's 3vw outgrows its
+    // 18px minimum: both wrapped the row while only 1440 and 390 were being tested
+    for (const [width, height] of [[1440, 900], [890, 800], [390, 780], [360, 740], [320, 568]]) {
       await cdp("Emulation.setDeviceMetricsOverride", { width, height, deviceScaleFactor: 1, mobile: false });
       await cdp("Page.navigate", { url: home });
       assert.ok(await until(`document.readyState==="complete"&&document.querySelectorAll(".proof #grid .fr").length===3`), "all three in the hero");
       const f = await js(`[...document.querySelectorAll("#grid .fr")].map(e=>{const r=e.getBoundingClientRect();return {w:r.width,b:r.bottom,r:r.right,l:r.left}})`);
-      assert.ok(Math.max(...f.map(x => x.b)) - Math.min(...f.map(x => x.b)) < 1, width + ": one floor");
+      assert.ok(Math.max(...f.map(x => x.b)) - Math.min(...f.map(x => x.b)) < 1,
+        `${width}: one floor — widths ${f.map(x => x.w.toFixed(1))} span ` +
+        `${(Math.max(...f.map(x => x.r)) - Math.min(...f.map(x => x.l))).toFixed(1)} of ${width}, ` +
+        `bottoms ${f.map(x => x.b.toFixed(1))}`);
       assert.ok(Math.abs(f[0].w / f[2].w - 2148 / 364) < .5, width + ": true ratio " + (f[0].w / f[2].w).toFixed(2));
       assert.ok(Math.min(...f.map(x => x.l)) >= 0 && Math.max(...f.map(x => x.r)) <= width, width + ": all on screen");
-      assert.equal(await js(`document.documentElement.scrollWidth<=innerWidth`), true, width + ": no sideways scroll");
+      assert.equal(await js(`document.documentElement.scrollWidth<=innerWidth`), true,
+        width + ": no sideways scroll — " + await js(
+          `(()=>{const d=document.documentElement;
+             const nm=e=>e.tagName+(typeof e.className==="string"&&e.className.trim()?"."+e.className.trim().split(/\\s+/).join("."):"");
+             const past=[...document.querySelectorAll("body *")]
+               .map(e=>({t:nm(e),r:Math.round(e.getBoundingClientRect().right)}))
+               .filter(x=>x.r>innerWidth).sort((a,b)=>b.r-a.r).slice(0,3).map(x=>x.t+" right "+x.r);
+             const inner=[...document.querySelectorAll("body *")]
+               .filter(e=>e.scrollWidth>e.clientWidth+1)
+               .map(e=>({t:nm(e),o:e.scrollWidth-e.clientWidth})).sort((a,b)=>b.o-a.o).slice(0,3)
+               .map(x=>x.t+" spills "+x.o);
+             return \`scrollWidth \${d.scrollWidth} vs innerWidth \${innerWidth} (client \${d.clientWidth}); \`
+               +\`past edge: \${past.join(", ")||"none"}; overflowing content: \${inner.join(", ")||"none"}\`})()`));
     }
     await cdp("Emulation.clearDeviceMetricsOverride");
     assert.equal(await js(`document.querySelectorAll("#thismonth").length`), 0, "no second introduction");
@@ -465,7 +482,9 @@ if (REAL) {
 }
 
 let failed = 0;
+const only = process.argv.find(a => a.startsWith("--only="))?.slice(7);
 for (const [name, run] of Object.entries(checks)) {
+  if (only && !name.includes(only)) continue;
   crashes.length = 0;
   try {
     await run();

@@ -24,6 +24,14 @@ html{ -webkit-text-size-adjust:100% }
 body{overflow-x:clip; background:var(--paper); color:var(--ink); font-family:var(--jp); font-size:15px;
   line-height:1.85; line-break:strict; word-break:keep-all; margin:0;
   -webkit-font-smoothing:antialiased; font-feature-settings:"palt" 1}
+/* keep-all stops a Japanese phrase splitting mid-word, which is right for a heading
+   and wrong for a long sentence: a run with no punctuation cannot break at all, and
+   with overflow-x:clip above it is not scrolled past but cut off. Phone widths get
+   ordinary Japanese breaking, where the lines are short enough that keep-all buys
+   nothing anyway. */
+@media (max-width:480px){ body{word-break:normal} }
+/* prose at any width: the notice is a paragraph, not a headline */
+.protobar{word-break:normal}
 .wrap{padding-left:max(16px,env(safe-area-inset-left,0px));
   padding-right:max(16px,env(safe-area-inset-right,0px)); max-width:1120px; margin:0 auto}
 h1,h2,h3{font-weight:500; margin:0; line-height:1.4}

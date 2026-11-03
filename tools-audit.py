@@ -88,18 +88,35 @@ def css_check(label, css, used):
             warn("css", f"{label}: styled but unused -> {', '.join('.' + d for d in dead)}")
 
 
+# A class can arrive from markup, from a template string, or from classList/className
+# in a page's own script or a .js file it loads. The dead-class check is only a
+# warning, so it reads every quoted token too: over-inclusion costs nothing, while a
+# false "unused" sends you deleting a rule the JS depends on.
+JS_SRC = {n: io.open(n, encoding="utf-8").read() for n in sorted(glob.glob("*.js"))}
+
+
+def classes_named_in(text):
+    names = set()
+    for c in re.finditer(r'class="([^"]+)"', text):
+        names.update(c.group(1).split())
+    # allow the leading space in fragments like `' sold'`, which is how a class gets
+    # appended to one already in the string
+    for q in re.finditer(r"""["'`]\s*([A-Za-z][A-Za-z0-9_ -]*)["'`]""", text):
+        names.update(q.group(1).split())
+    return names
+
+
 for f, s in SRC.items():
     for m in re.finditer(r"<style>(.*?)</style>", s, flags=re.S):
-        used = set()
-        for c in re.finditer(r'class="([^"]+)"', s):
-            used.update(c.group(1).split())
+        used = classes_named_in(s)
+        for js in JS_SRC.values():
+            used |= classes_named_in(js)
         css_check(f, m.group(1), used)
 
 sheet = io.open("style.css", encoding="utf-8").read()
 allused = set()
-for s in SRC.values():
-    for c in re.finditer(r'class="([^"]+)"', s):
-        allused.update(c.group(1).split())
+for s in list(SRC.values()) + list(JS_SRC.values()):
+    allused |= classes_named_in(s)
 css_check("style.css", sheet, allused)
 
 # 6 ── scale tokens must not be re-declared after their breakpoints (the --mmpx bug)
@@ -132,7 +149,8 @@ for f, s in SRC.items():
 pcts = {}
 for f, s in SRC.items():
     b = body_of(s)
-    for m in re.finditer(r"(\d{2})%", b):
+    # not preceded by a digit, so CSS 100% is not read as a 00% commission
+    for m in re.finditer(r"(?<!\d)(\d{2})%", b):
         pcts.setdefault(m.group(1), set()).add(f)
 money = {p: sorted(v) for p, v in pcts.items()}
 expected = {"15", "20", "25", "68", "85", "50"}

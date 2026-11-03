@@ -40,12 +40,28 @@
 .by a{text-decoration:none; font-weight:600; font-size:clamp(18px,2.2vw,22px); border-bottom:1px solid var(--rule); margin:0 .3em}
 .by a:hover{border-bottom-color:var(--ink)}
 
-/* one scale for the row: as large as the width allows, up to the site's size */
-.grid{--gm:min(.2px,calc((100vw - 156px) / 3608)); --cap:82px; position:relative; display:flex; flex-wrap:wrap;
-  justify-content:center; align-items:flex-end; gap:clamp(18px,3vw,40px); margin-top:clamp(26px,5vh,44px); text-align:left}
+/* One scale for the row, as large as the width allows, up to the site's size.
+   The three works share one floor, so the row must never wrap: that single baseline
+   is what makes their true relative sizes readable. The budget spends the caption
+   floor under the smallest work, both gaps, and 6px of slack for sub-pixel rounding,
+   leaving 3608 (2148 + 1460 mm) to divide. Three things it has to get right:
+     - the real gap, not its 18px minimum, or the row breaks near 890px where 3vw
+       has overtaken it;
+     - a floor the middle work stays above, or that work claims a second column's
+       width and 3608 stops being the right divisor — hence --floor shrinking below;
+     - the actual content width. 100vw counts the classic scrollbar that layout then
+       takes away, so the measure comes from the container, which never does. */
+.proof{container-type:inline-size}
+.grid{--gap:clamp(18px,3vw,40px); --floor:88px;
+  --room:calc(100vw - 32px);
+  --gm:min(.2px,calc((var(--room) - 6px - var(--floor) - 2 * var(--gap)) / 3608)); --cap:82px;
+  position:relative; display:flex; flex-wrap:wrap;
+  justify-content:center; align-items:flex-end; gap:var(--gap); margin-top:clamp(26px,5vh,44px); text-align:left}
+@supports (container-type:inline-size){ .grid{--room:100cqw} }
+@supports not (container-type:inline-size){ .grid{--room:calc(100vw - 32px - 17px)} }
 .grid::after{content:""; position:absolute; inset:auto 0 var(--cap); height:1px; background:var(--rule)}
 .grid a{text-decoration:none; flex:0 0 auto}
-.grid figure{margin:0; width:max(calc(var(--w) * var(--gm)),88px)}
+.grid figure{margin:0; width:max(calc(var(--w) * var(--gm)),var(--floor))}
 .grid .fr{position:relative; width:calc(var(--w) * var(--gm)); height:calc(var(--h) * var(--gm));
   box-shadow:0 2px 6px rgba(0,0,0,.2)}
 .grid img{position:absolute; inset:0; width:100%; height:100%; display:block}
@@ -54,6 +70,10 @@
 .grid .d{font-family:var(--mono); font-size:10.5px; color:var(--mute); display:block}
 .grid .p{font-family:var(--mono); font-size:12px; display:block}
 @media (max-width:480px){ .grid .d{font-size:9.5px} }
+/* below this the 1460mm work would dip under an 88px floor and take a second
+   column's width, so the caption narrows and wraps instead of the row doing it */
+@media (max-width:420px){ .grid{--floor:62px; --cap:104px}
+  .grid figcaption{white-space:normal} }
 
 /* ── sections ── */
 .sec{padding-block:44px 0}

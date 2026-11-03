@@ -72,7 +72,15 @@ globalThis.requestAnimationFrame = () => {};
 globalThis.ResizeObserver = class { observe() {} };
 globalThis.matchMedia = () => ({ matches: false, addEventListener() {} });
 
-const blocks = [...html.matchAll(/<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script>/g)].map(m => m[1]);
+// A type the browser does not execute as script holds data, not code: importmap,
+// speculationrules and application/ld+json are JSON and must not be run as JS.
+const JS_TYPE = /^(?:text\/javascript|application\/javascript|module)$/i;
+const blocks = [...html.matchAll(/<script(?![^>]*\bsrc=)([^>]*)>([\s\S]*?)<\/script>/g)]
+  .filter(m => {
+    const t = /\btype\s*=\s*"([^"]*)"/i.exec(m[1]);
+    return !t || JS_TYPE.test(t[1].trim());
+  })
+  .map(m => m[2]);
 if (!blocks.length) { console.log("no inline script"); process.exit(0) }
 
 // classic scripts share one scope in a browser: give each block what its <script src> loaded
