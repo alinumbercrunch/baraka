@@ -19,7 +19,7 @@
 /* every block is a band: ruled across the top, named, evenly padded. The rule is
    what makes one block end and the next begin, so the padding goes inside the band
    rather than between them. */
-.hero,.circle,.proof,.sec{border-top:1px solid var(--ink); padding-block:clamp(22px,4vh,34px) 0}
+.hero,.circle,.proof,.sec{border-top:1px solid var(--ink); padding-block:clamp(22px,4vh,34px)}
 .hero{border-top-color:var(--rule)}
 .hero > .en,.circle > .en,.proof > .en,.sec > .en{margin:0 0 clamp(14px,2.5vh,22px)}
 .circle{text-align:center}
@@ -37,7 +37,7 @@
 .hero img{view-transition-name:hero-work; display:block; width:auto; height:auto; margin:14px auto 0;
   max-width:100%; max-height:min(44svh,420px); box-shadow:0 2px 10px rgba(0,0,0,.2)}
 /* on a phone the painting and its button come first: nothing decorative above them */
-@media (max-width:760px){ .issue,.protobar .pe{display:none} .hero{padding-block:14px 0} }
+@media (max-width:760px){ .issue,.protobar .pe{display:none} .hero{padding-block:14px 20px} }
 .hero .doors{justify-content:center; margin-top:clamp(18px,3vh,26px)}
 
 /* ── 2d · the proof: the month's works, standing on one thin line at true relative size ── */
@@ -87,7 +87,6 @@
 .sec > .en{margin-bottom:4px}
 
 /* ── 4 · still available ── */
-.sec{padding-bottom:clamp(26px,5vh,40px)}
 .past{display:grid; grid-template-columns:repeat(auto-fit,minmax(235px,1fr)); gap:18px; margin-top:24px}
 .past a{display:flex; gap:14px; align-items:center; border:1px solid var(--rule); padding:12px 14px;
   text-decoration:none; transition:border-color calc(var(--beat)*.25)}

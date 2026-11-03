@@ -10,7 +10,7 @@ import assert from "node:assert/strict";
 
 const REAL = process.argv.includes("--real");
 // a stuck browser must fail the run, not hang it
-const watchdog = setTimeout(() => { console.log("  TIMED OUT: browser stopped responding"); chrome.kill(); process.exit(2) }, REAL ? 120000 : 240000);
+const watchdog = setTimeout(async () => { console.log("  TIMED OUT: browser stopped responding"); try { chrome.kill("SIGKILL") } catch {} process.exit(2) }, REAL ? 120000 : 240000);
 watchdog.unref();
 
 const CHROME = process.env.CHROME || "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
@@ -64,9 +64,25 @@ const open = `document.getElementById("panel").open`;
 
 await cdp("Page.enable"); await cdp("Runtime.enable");
 
+// CSS transitions are animations too, so this waits out the card's 0.55s rise and any
+// re-fit it triggers. Measuring a rect mid-transition reads the transform, not the layout.
+const settled = (ms = 4000) => until(`document.getAnimations().every(a=>a.playState!=="running")`, ms);
 const nameClear = () => js(`(()=>{const r=document.createRange();r.selectNodeContents(document.getElementById("cn"));
   const lines=[...r.getClientRects()], facts=["cr","ct","cd"].map(id=>document.getElementById(id).getBoundingClientRect());
   return !lines.some(l=>facts.some(f=>l.left+1<f.right&&f.left+1<l.right&&l.top+.2*l.height<f.bottom&&f.top<l.bottom-.2*l.height))})()`);
+// chrome.kill() kills the launcher, not the chrome-headless-shell it spawns: those
+// survive, pile up across runs and starve the timing-sensitive checks of CPU, which
+// looks exactly like flaky tests. Ask the browser to close itself, and only fall back
+// to signalling the process we started.
+const shutdown = async () => {
+  try { await Promise.race([cdp("Browser.close"), wait(2000)]) } catch {}
+  try { ws.close() } catch {}
+  try { chrome.kill() } catch {}
+  await wait(300);
+  if (chrome.exitCode === null) { try { chrome.kill("SIGKILL") } catch {} }
+  site.close();
+};
+
 const checks = {
   "clicking a work opens its panel and gives it a link": async () => {
     await load("#mori");
@@ -198,7 +214,15 @@ const checks = {
     await js(`document.querySelector('.hero a[href^="room.html"]').click()`);
     assert.ok(await until(`location.pathname.endsWith("room.html")&&!!document.querySelector(".wall")`));
     assert.equal(await js(`getComputedStyle(document.querySelector(".here .lead img")).viewTransitionName`), "hero-work");
-    assert.equal(await js(`document.getElementById("card").classList.contains("off")`), true, "card waits for it to land");
+    // Asking whether the card is still down is a race: between two polls the rise can
+    // already have happened, and on a slow machine it usually has. The claim is an
+    // invariant, not a snapshot — at any instant the card is either still down, or the
+    // painting has already landed. That is true whenever it is sampled, or it is false.
+    const atArrival = await js(`(()=>{const c=document.getElementById("card"), r=document.getElementById("room");
+      return {down:c.classList.contains("off"),
+              landed:!(r.style.transform||"translate3d(0px, 0px, 0px)").startsWith("translate3d(0px, 0px, 0px)")}})()`);
+    assert.ok(atArrival.down || atArrival.landed,
+      "the title rose before the painting landed: " + JSON.stringify(atArrival));
     assert.ok(await until(`!(document.getElementById("room").style.transform.startsWith("translate3d(0px, 0px, 0px)"))`, 400), "already inside");
     assert.equal(await js(`document.getElementById("room").style.transition`), "none", "no second move");
     assert.ok(await until(`!document.getElementById("card").classList.contains("off")`, 3000), "then the title rises");
@@ -282,6 +306,28 @@ const checks = {
     assert.equal(await js(`document.querySelectorAll("#thismonth").length`), 0, "no second introduction");
     assert.equal(await js(`document.querySelectorAll('.hero a[href="artist-mori.html"]').length`), 1, "the artist is named once, and links on");
   },
+  "every band is ruled off and its content clears the next rule": async () => {
+    for (const [width, height] of [[1440, 900], [390, 780]]) {
+      await cdp("Emulation.setDeviceMetricsOverride", { width, height, deviceScaleFactor: 1, mobile: false });
+      await cdp("Page.navigate", { url: home });
+      assert.ok(await until(`document.readyState==="complete"&&!!document.querySelector("#grid a")`));
+      const bands = await js(`[...document.querySelectorAll(".hero,.circle,.proof,.sec")].map(b=>{
+        const r=b.getBoundingClientRect(), cs=getComputedStyle(b);
+        const kids=[...b.children].map(k=>k.getBoundingClientRect().bottom);
+        return {cls:b.className.split(" ")[0], rule:parseFloat(cs.borderTopWidth),
+                head:!!b.querySelector(":scope>h1,:scope>h2,:scope>.en"),
+                top:Math.round(parseFloat(cs.paddingTop)),
+                clear:Math.round(r.bottom-Math.max(...kids))}})`);
+      assert.equal(bands.length, 4, width + ": four bands");
+      for (const b of bands) {
+        assert.ok(b.rule >= 1, `${width}: ${b.cls} has no rule above it`);
+        assert.ok(b.head, `${width}: ${b.cls} has no heading naming it`);
+        assert.ok(b.top >= 12, `${width}: ${b.cls} content sits on its own rule (${b.top}px)`);
+        assert.ok(b.clear >= 12, `${width}: ${b.cls} content runs into the next rule (${b.clear}px)`);
+      }
+    }
+    await cdp("Emulation.clearDeviceMetricsOverride");
+  },
   "designers can reach the wall-size tool from their own section": async () => {
     await cdp("Page.navigate", { url: home.replace("index", "trade") });
     assert.ok(await until(`document.readyState==="complete"`));
@@ -300,9 +346,10 @@ const checks = {
   "browsers without page transitions still walk in": async () => {
     const { identifier } = await cdp("Page.addScriptToEvaluateOnNewDocument", { source: `delete Window.prototype.onpagereveal; delete window.onpagereveal;
       addEventListener("pagereveal", e => e.stopImmediatePropagation(), true)` });
-    await load("#mori");
-    assert.ok(await until(`!document.getElementById("card").classList.contains("off")`), "not stranded at the door");
-    await cdp("Page.removeScriptToEvaluateOnNewDocument", { identifier });
+    try {
+      await load("#mori");
+      assert.ok(await until(`!document.getElementById("card").classList.contains("off")`), "not stranded at the door");
+    } finally { await cdp("Page.removeScriptToEvaluateOnNewDocument", { identifier }) }
   },
   "a click during the walk in still opens the work": async () => {
     await load("#mori");
@@ -356,20 +403,29 @@ const checks = {
   "a long or translated name stays whole on the stage": async () => {
     await cdp("Emulation.setDeviceMetricsOverride", { width: 1000, height: 520, deviceScaleFactor: 1, mobile: false });
     await load("#nakamura");
+    await settled();
     for (const name of ["Akari Nakamura", "Yuma Ishii-Nakamura", "Wolfeschlegelsteinhausenbergerdorff"]) {
       await js(`document.getElementById("cn").textContent=${JSON.stringify(name)}`);
-      await wait(150);
+      await wait(60);
+      await settled();
       const r = await js(`(()=>{const c=document.getElementById("cn"),b=document.createRange();b.selectNodeContents(c);const t=b.getBoundingClientRect(),e=c.getBoundingClientRect(),s=document.getElementById("card").getBoundingClientRect();return [t.left-s.left,s.right-t.right,e.top-s.top,s.bottom-e.bottom]})()`);
-      assert.ok(r.every(v => v >= 0), name + ": " + r.map(Math.round));
+      assert.ok(r.every(v => v >= 0), name + ": " + r.map(Math.round) + " — " + await js(
+        `(()=>{const c=document.getElementById("cn"),cd=document.getElementById("card"),
+                f=document.getElementById("cf"),s=getComputedStyle(cd);
+           return \`font \${getComputedStyle(c).fontSize}, name h \${c.offsetHeight}, \`
+             +\`card h \${cd.clientHeight}, cf h \${f.offsetHeight}, \`
+             +\`room \${Math.round(cd.clientHeight-parseFloat(s.paddingTop)-parseFloat(s.paddingBottom)-f.offsetHeight-8)}, \`
+             +\`lines \${Math.round(c.offsetHeight/parseFloat(getComputedStyle(c).lineHeight||1))}\`})()`));
       assert.ok(await nameClear(), name + " clear of the details");
     }
     await cdp("Emulation.clearDeviceMetricsOverride");
     for (const hash of ["#mori", "#nakamura"]) {
       await load(hash);
-      await wait(200);
+      await settled();
       assert.ok(await nameClear(), hash + " as written");
       await js(`document.getElementById("cn").textContent="Akari Nakamura"`);
-      await wait(200);
+      await wait(60);
+      await settled();
       assert.ok(await nameClear(), hash + " translated");
     }
   },
@@ -476,7 +532,7 @@ if (REAL) {
   results.push(await record("facing a side work", () => js(`location.hash="#nakamura/BK-032"`), 2400));
   const bad = results.filter(r => r.frames < 10 || r.gap > .5 || r.dark > 15).length;
   console.log(bad ? `\n  ${bad} recording(s) show gaps or a flash` : "\n  no gaps, no flash");
-  ws.close(); chrome.kill(); site.close();
+  await shutdown();
   await wait(300); await rm(profile, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 });
   process.exit(bad ? 1 : 0);
 }
@@ -487,6 +543,10 @@ for (const [name, run] of Object.entries(checks)) {
   if (only && !name.includes(only)) continue;
   ran++;
   crashes.length = 0;
+  // Several checks deliberately leave a saved wall, saved picks, or corrupt data
+  // behind. Inheriting it makes a later check depend on which ran before it, which
+  // is how "carries you in" came to pass alone and fail in the suite.
+  await cdp("Storage.clearDataForOrigin", { origin: new URL(home).origin, storageTypes: "local_storage" });
   try {
     await run();
     assert.deepEqual(crashes, [], "uncaught error");
@@ -495,6 +555,6 @@ for (const [name, run] of Object.entries(checks)) {
 }
 console.log(`\n  ${ran - failed} passed, ${failed} failed` +
   (only ? ` (${Object.keys(checks).length - ran} skipped by --only=${only})` : ""));
-ws.close(); chrome.kill(); site.close();
+await shutdown();
 await wait(200); await rm(profile, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 });
 process.exit(failed ? 1 : 0);

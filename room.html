@@ -331,10 +331,12 @@ function fitName(){
   // wrapped text does not scale with its font size: shrinking re-flows it, so one
   // proportional guess can still leave the name over the edge. Close in instead,
   // taking at least a little off each pass so reflow cannot stall it.
-  for(let i=0; i<8 && c.offsetHeight>room; i++){
+  for(let i=0; i<12 && c.offsetHeight>room; i++){
     const f=parseFloat(getComputedStyle(c).fontSize);
-    const next=Math.max(11, f * Math.min(.9, room / c.offsetHeight));
-    if(next>=f) break;
+    // never less than half in one step, so a bad guess cannot collapse the name,
+    // and never more than nine tenths, so reflow cannot stall the loop
+    const next=f * Math.min(.9, Math.max(.5, room / c.offsetHeight));
+    if(next<6) break;
     c.style.fontSize=next+"px";
   }
 }
