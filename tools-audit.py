@@ -269,6 +269,28 @@ for f, s in SRC.items():
     if got != NAV:
         fail("nav", f"{f}: nav differs from the other pages: {[t for _, t in got]}")
 
+# 12b ── the follow links are copied into every footer: one account, spelled one way,
+#        and never an unlabelled icon
+ACCOUNTS = ("https://www.instagram.com/bara_ka1031/", "https://www.threads.com/@bara_ka1031")
+for f, s in SRC.items():
+    if "</footer>" not in s:
+        continue
+    for url in ACCOUNTS:
+        if url not in s:
+            fail("follow", f"{f}: footer is missing {url}")
+    # an icon carries no text, so only those links need a label; the ones in about.html
+    # say Instagram and Threads in words
+    for a in re.findall(r'<a [^>]*href="https://(?:www\.)?(?:instagram|threads)\.com[^>]*>.*?</a>', s, flags=re.S):
+        head = a[:a.index(">") + 1]
+        if "<svg" in a and "aria-label=" not in head:
+            fail("follow", f"{f}: an icon link with no label: {head[:60]}")
+        if 'rel="noopener' not in head:
+            fail("follow", f"{f}: external link without rel=noopener: {head[:60]}")
+# a real handle, not the "https://www.instagram.com/..." hint in the application form
+for other in set(re.findall(r"instagram\.com/([A-Za-z0-9_]{2,})", "".join(SRC.values()))):
+    if other != "bara_ka1031":
+        warn("follow", f"a different Instagram handle appears: {other}")
+
 # 13 ── Baraka takes the order and the money; the artist delivers. No page may promise otherwise
 BROKEN_PROMISES = ("保険対応", "7日以内", "こちらで取り付け", "取付まで承ります", "原状回復", "取り外し・再設置",
                    "1週間以内", "在庫あり ／ 2週間", "別途お見積り", "養生のうえ", "配送・設置を分けて",

@@ -105,6 +105,12 @@ footer{margin-top:22px; padding-bottom:36px; color:var(--mute); font-size:12px;
   border-top:1px solid var(--rule); padding-top:16px;
   display:flex; gap:18px; flex-wrap:wrap; align-items:baseline}
 footer a{font-size:12.5px}
+/* follow: pushed to the end of the footer row, and on a narrow screen it simply
+   wraps to its own line rather than being squeezed */
+footer .social{margin-left:auto; display:inline-flex; align-items:center; gap:10px}
+footer .social .en{display:inline; font-size:11px}
+footer .social a{display:inline-flex; color:var(--mute); transition:color calc(var(--beat)*.25)}
+footer .social a:hover,footer .social a:focus-visible{color:var(--ink)}
 input[type=number]{font-family:var(--mono); font-size:14px; width:88px; padding:6px 8px;
   background:var(--sheet); color:var(--ink); border:1px solid var(--rule)}
 input[type=text]{font-family:var(--jp); font-size:13px; width:110px; padding:4px 7px;
