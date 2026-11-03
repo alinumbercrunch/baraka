@@ -303,10 +303,17 @@ for f, s in SRC.items():
         if w in body_of(s):
             fail("promise", f"{f}: promises {w}")
 
-# 13b ── the designer page must say what Baraka does and does not do, and who pays
-for w in ("梱包・配送・取り付けは行いません", "お買い上げの方のご負担", "3営業日以内に作家の配送見積り"):
+# 13b ── every audience on the trade page gets the same boundary: what Baraka does,
+#        what it does not, and who pays the carrier
+for w in ("お買い上げの方のご負担", "3営業日以内に作家の配送見積り",
+          # artists may refuse model-room and viewing use, so the page cannot offer every work
+          "モデルルームや内見のお部屋にお使いいただけない作品があります",
+          "レンタルではありません"):
     if w not in SRC["trade.html"]:
         fail("promise", f"trade.html: doesn't say: {w}")
+if SRC["trade.html"].count("梱包・配送・取り付けは行いません") < 2:
+    fail("promise", "trade.html: designers and real-estate firms must each be told"
+                    " that Baraka does not pack, ship or hang")
 
 # 14 ── artists must see what a sale asks of them before they apply
 for w in ("梱包と配送は作家", "壁への取り付けは含みません", "他所で販売しない", "納品確認の翌月末"):
