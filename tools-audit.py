@@ -294,14 +294,22 @@ for other in set(re.findall(r"instagram\.com/([A-Za-z0-9_]{2,})", "".join(SRC.va
 # 13 ── Baraka takes the order and the money; the artist delivers. No page may promise otherwise
 BROKEN_PROMISES = ("保険対応", "7日以内", "こちらで取り付け", "取付まで承ります", "原状回復", "取り外し・再設置",
                    "1週間以内", "在庫あり ／ 2週間", "別途お見積り", "養生のうえ", "配送・設置を分けて",
-                   "売れてしまうことはありません", "売れてしまうことのないよう", "他所へ販売しません", "ここは必ずお守りします")
+                   "売れてしまうことはありません", "売れてしまうことのないよう", "他所へ販売しません", "ここは必ずお守りします",
+                   # Baraka sells the work and never touches it: no page may bundle
+                   # delivery with installation, or offer installation at all
+                   "配送・設置", "設置まで", "取り付けまで", "設置も承り", "設置いたします")
 for f, s in SRC.items():
     for w in BROKEN_PROMISES:
         if w in body_of(s):
             fail("promise", f"{f}: promises {w}")
 
+# 13b ── the designer page must say what Baraka does and does not do, and who pays
+for w in ("梱包・配送・取り付けは行いません", "お買い上げの方のご負担", "3営業日以内に作家の配送見積り"):
+    if w not in SRC["trade.html"]:
+        fail("promise", f"trade.html: doesn't say: {w}")
+
 # 14 ── artists must see what a sale asks of them before they apply
-for w in ("梱包・配送・設置は作家", "他所で販売しない", "納品確認の翌月末", "納品までの破損"):
+for w in ("梱包と配送は作家", "壁への取り付けは含みません", "他所で販売しない", "納品確認の翌月末"):
     if w not in SRC["join.html"]:
         fail("promise", f"join.html: doesn't tell artists: {w}")
 

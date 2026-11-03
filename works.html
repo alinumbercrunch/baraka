@@ -241,7 +241,7 @@ function renderSel(){
       '<span class="fig">'+yen(k.price)+'</span></div>';
   }).join("");
   host.innerHTML=rows+'<div class="total"><span>'+keys.length+' 点 ／ 作品代金のみ</span><span>'+yen(sum)+'</span></div>'+
-    '<p class="tax">表示価格はすべて税込です。配送・設置は作家が手配します（費用は別途）。適格請求書（インボイス）を発行できます。</p>'+
+    '<p class="tax">表示価格はすべて税込です。配送は作家が手配します（費用はお買い上げの方のご負担）。取り付けは承っておりません。適格請求書（インボイス）を発行できます。</p>'+
     '<div class="actions"><a class="door" href="enquiry.html" style="padding:8px 18px;font-size:13px">この内容で問い合わせる</a>'+
     '<button type="button" id="copyList">内容をコピー</button>'+
     '<span class="said" id="said"></span>'+
@@ -257,7 +257,7 @@ function renderSel(){
       return [picked[n].room||"（部屋名なし）", k.no, k.t, k.a,
         "H"+mm(k.h)+"×W"+mm(k.w)+"×D"+k.d+"mm", k.kg.toFixed(1)+"kg", k.fix, yen(k.price)].join(" ／ ");
     })).concat(["", keys.length+" 点　合計 "+yen(sum)+"（税込・作品代金のみ）",
-      "配送・設置は作家が手配します（費用は別途）。適格請求書を発行できます。"]).join("\n");
+      "配送は作家が手配します（費用はお買い上げの方のご負担）。取り付けは承っておりません。適格請求書を発行できます。"]).join("\n");
     const done=ok=>{ const s=document.getElementById("said");
       if(s){ s.textContent = ok ? "コピーしました" : "下のテキストを選択してコピーしてください"; } };
     try{
