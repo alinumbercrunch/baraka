@@ -308,7 +308,8 @@ for f, s in SRC.items():
 for w in ("お買い上げの方のご負担", "3営業日以内に作家の配送見積り",
           # artists may refuse model-room and viewing use, so the page cannot offer every work
           "モデルルームや内見のお部屋にお使いいただけない作品があります",
-          "レンタルではありません"):
+          "レンタルではありません",
+          "受け取りから3日以内", "納品が確認できるまでバラカがお預かり"):
     if w not in SRC["trade.html"]:
         fail("promise", f"trade.html: doesn't say: {w}")
 if SRC["trade.html"].count("梱包・配送・取り付けは行いません") < 2:
@@ -316,7 +317,10 @@ if SRC["trade.html"].count("梱包・配送・取り付けは行いません") <
                     " that Baraka does not pack, ship or hang")
 
 # 14 ── artists must see what a sale asks of them before they apply
-for w in ("梱包と配送は作家", "壁への取り付けは含みません", "他所で販売しない", "納品確認の翌月末"):
+# a refund is only costless while the money is still held, and only safe while the
+# window is short: both halves must be on the page, and the artist must know
+for w in ("梱包と配送は作家", "壁への取り付けは含みません", "他所で販売しない", "納品確認の翌月末",
+          "その作品のお支払いはありません"):
     if w not in SRC["join.html"]:
         fail("promise", f"join.html: doesn't tell artists: {w}")
 
