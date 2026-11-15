@@ -366,6 +366,26 @@ const checks = {
       return out})()`);
     assert.ok(hits.length >= 3, `朱 has gone missing: ${hits.length} uses`);
     assert.equal(hits.filter(b => b === "proof").length, 0, "朱 is in the true-size band");
+
+    // the rule only means something while past months stay grey: if everything is
+    // marked current, nothing is. Each page is checked for both halves at once.
+    const shu = async sel => js(`(()=>{
+      const probe=document.createElement("span");
+      probe.style.color=getComputedStyle(document.documentElement).getPropertyValue("--shu").trim();
+      document.body.appendChild(probe); const want=getComputedStyle(probe).color; probe.remove();
+      return [...document.querySelectorAll(${JSON.stringify(sel)})].map(e=>getComputedStyle(e).color===want)})()`);
+
+    await cdp("Page.navigate", { url: home.replace("index", "artists") });
+    assert.ok(await until(`document.readyState==="complete"&&document.querySelectorAll(".arow .who>.en").length===4`));
+    assert.deepEqual(await shu(".arow .who>.en"), [true, false, false, false],
+      "artists: only this month's row is marked current");
+
+    for (const [page, want] of [["artist-mori", true], ["artist-nakamura", false]]) {
+      await cdp("Page.navigate", { url: home.replace("index", page) });
+      assert.ok(await until(`document.readyState==="complete"&&!!document.querySelector(".en")`));
+      assert.deepEqual((await shu(".en")).slice(0, 1), [want],
+        `${page}: its dateline should ${want ? "" : "not "}be marked current`);
+    }
   },
   "designers can reach the wall-size tool from their own section": async () => {
     await cdp("Page.navigate", { url: home.replace("index", "trade") });

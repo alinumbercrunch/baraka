@@ -74,6 +74,11 @@ body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-in
 .sec > header b{font-weight:500; font-size:16px}
 .lead{max-width:30em}
 .mute{color:var(--mute)}
+/* 朱 marks what is current and nothing else: this month, this page, still for sale.
+   Its partner is .mute — what is past or finished stays grey, so a page says which
+   month is live without a word for it. Keep it out of any block showing a work at
+   true size, where a saturated colour competes with the painting beside it. */
+.now{color:var(--shu)}
 
 /* ── artwork ───────────────────────────── */
 .art{flex:0 0 auto; position:relative;
