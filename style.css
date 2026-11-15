@@ -63,7 +63,7 @@ body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-in
 /* the element selector is needed: .bar a:not(.mark) scores 0,2,1 and an attribute
    selector alone scores 0,2,0, so the plain link won and the page you were on was
    never marked. It did not show while every link carried the same line. */
-.bar a[aria-current],.bar button[aria-current]{border-bottom-color:var(--ink)}
+.bar a[aria-current],.bar button[aria-current]{border-bottom-color:var(--shu)}
 
 /* ── type ──────────────────────────────── */
 .worktitle{font-family:var(--min); font-weight:400; font-size:clamp(19px,2.4vw,24px); line-height:1.5}

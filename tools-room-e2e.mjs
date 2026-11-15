@@ -306,27 +306,66 @@ const checks = {
     assert.equal(await js(`document.querySelectorAll("#thismonth").length`), 0, "no second introduction");
     assert.equal(await js(`document.querySelectorAll('.hero a[href="artist-mori.html"]').length`), 1, "the artist is named once, and links on");
   },
-  "every band is ruled off and its content clears the next rule": async () => {
+  // No rule separates the bands any more. What keeps them apart is measurable all the
+  // same: a gap only reads as a break when it is clearly wider than the gaps inside the
+  // bands it divides, and the two bands that are hardest to tell apart — both a row of
+  // three pictures — are also told apart by ground colour.
+  "each band is named, and stands further from its neighbour than its own contents do": async () => {
     for (const [width, height] of [[1440, 900], [390, 780]]) {
       await cdp("Emulation.setDeviceMetricsOverride", { width, height, deviceScaleFactor: 1, mobile: false });
       await cdp("Page.navigate", { url: home });
       assert.ok(await until(`document.readyState==="complete"&&!!document.querySelector("#grid a")`));
-      const bands = await js(`[...document.querySelectorAll(".hero,.circle,.proof,.sec")].map(b=>{
-        const r=b.getBoundingClientRect(), cs=getComputedStyle(b);
-        const kids=[...b.children].map(k=>k.getBoundingClientRect().bottom);
-        return {cls:b.className.split(" ")[0], rule:parseFloat(cs.borderTopWidth),
-                head:!!b.querySelector(":scope>h1,:scope>h2,:scope>.en"),
-                top:Math.round(parseFloat(cs.paddingTop)),
-                clear:Math.round(r.bottom-Math.max(...kids))}})`);
+      const bands = await js(`(()=>{
+        const secs=[...document.querySelectorAll(".hero,.circle,.proof,.sec")];
+        const kids=s=>[...s.children].filter(c=>c.getBoundingClientRect().height>0);
+        const box=e=>{const r=e.getBoundingClientRect();return{t:r.top+scrollY,b:r.bottom+scrollY}};
+        return secs.map((s,i)=>{
+          const k=kids(s); let inner=0;
+          for(let j=1;j<k.length;j++) inner=Math.max(inner,box(k[j]).t-box(k[j-1]).b);
+          const next=secs[i+1];
+          return {cls:s.className.split(" ")[0],
+                  head:!!s.querySelector(":scope>h1,:scope>h2,:scope>.en"),
+                  ground:getComputedStyle(s).backgroundColor,
+                  inner:Math.round(inner),
+                  gap:next?Math.round(box(kids(next)[0]).t-box(k[k.length-1]).b):null}})})()`);
       assert.equal(bands.length, 4, width + ": four bands");
       for (const b of bands) {
-        assert.ok(b.rule >= 1, `${width}: ${b.cls} has no rule above it`);
         assert.ok(b.head, `${width}: ${b.cls} has no heading naming it`);
-        assert.ok(b.top >= 12, `${width}: ${b.cls} content sits on its own rule (${b.top}px)`);
-        assert.ok(b.clear >= 12, `${width}: ${b.cls} content runs into the next rule (${b.clear}px)`);
+        if (b.gap === null) continue;
+        // below about 1.5 the eye stops reading the gap as a break and starts
+        // reading it as spacing, and the bands run together
+        const ratio = b.inner ? b.gap / b.inner : Infinity;
+        assert.ok(ratio >= 1.5,
+          `${width}: ${b.cls} sits ${b.gap}px from the next band but ${b.inner}px from its own parts (${ratio.toFixed(2)})`);
       }
+      const ground = Object.fromEntries(bands.map(b => [b.cls, b.ground]));
+      const SHEET = "rgb(246, 246, 246)";
+      assert.equal(ground.circle, SHEET, `${width}: バラカについて has lost its ground`);
+      assert.equal(ground.sec, SHEET, `${width}: いまも買えます has lost its ground`);
+      assert.notEqual(ground.proof, SHEET, `${width}: the true-size band must stay white`);
     }
     await cdp("Emulation.clearDeviceMetricsOverride");
+  },
+  // 朱 means "current": this month, this page, still for sale. It is kept out of the
+  // band that shows works at true size, where a saturated colour would pull the eye
+  // off the paintings that band exists to show honestly.
+  "朱 marks what is current, and never shares a band with a work at true size": async () => {
+    await cdp("Page.navigate", { url: home });
+    assert.ok(await until(`document.readyState==="complete"&&!!document.querySelector("#grid a")`));
+    const hits = await js(`(()=>{
+      const SHU=getComputedStyle(document.documentElement).getPropertyValue("--shu").trim();
+      const probe=document.createElement("span"); probe.style.color=SHU;
+      document.body.appendChild(probe);
+      const want=getComputedStyle(probe).color; probe.remove();
+      const band=e=>{const s=e.closest(".hero,.circle,.proof,.sec"); return s?s.className.split(" ")[0]:"-"};
+      const out=[];
+      for(const e of document.querySelectorAll("*")){
+        const own=[...e.childNodes].some(n=>n.nodeType===3&&n.textContent.trim());
+        if(own&&getComputedStyle(e).color===want) out.push(band(e));
+      }
+      return out})()`);
+    assert.ok(hits.length >= 3, `朱 has gone missing: ${hits.length} uses`);
+    assert.equal(hits.filter(b => b === "proof").length, 0, "朱 is in the true-size band");
   },
   "designers can reach the wall-size tool from their own section": async () => {
     await cdp("Page.navigate", { url: home.replace("index", "trade") });
