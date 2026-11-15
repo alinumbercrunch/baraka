@@ -104,6 +104,15 @@
 .sec{text-align:center}
 .sec .past{text-align:left}
 .sec .doors{justify-content:center}
+/* the archive band takes the same grey as バラカについて. The rule across the page
+   is: a white band is work you can buy now at true size, a grey band is context or
+   archive. That gives every boundary a change in value and not only a change in
+   spacing, which matters most here, where both bands are a row of three pictures.
+   The cards stay white islands on the grey, so the thumbnails are still shown on
+   white — true colour wherever a work is actually shown. */
+.sec{background:var(--sheet); box-shadow:0 0 0 100vmax var(--sheet); clip-path:inset(0 -100vmax)}
+.sec .past a{background:var(--paper)}
+.sec .past img{background:var(--paper)}
 
 /* ── 4 · still available ── */
 .past{display:grid; grid-template-columns:repeat(auto-fit,minmax(235px,1fr)); gap:18px; margin-top:24px}

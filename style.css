@@ -2,6 +2,9 @@
 :root{
   --paper:#fff;    --ink:#333;    --rule:#ccc;    --mute:#666;
   --dim:#2E4A8F;   --shu:#B23A2E; --sheet:#F6F6F6;
+  /* --rule is for a line meant to be read, such as under a column of figures.
+     --hair is for an edge that only needs to exist, like the foot of the top bar. */
+  --hair:#E8E8E8;
   --mmpx:0.30;
   --jp:"Zen Kaku Gothic New","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;
   --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
@@ -45,7 +48,7 @@ img{max-width:100%}
 
 /* ── top bar ───────────────────────────── */
 .bar{position:sticky; top:env(safe-area-inset-top,0px); z-index:20; background:var(--paper);
-  border-bottom:1px solid var(--rule); display:flex; align-items:center; gap:15px;
+  border-bottom:1px solid var(--hair); display:flex; align-items:center; gap:15px;
   flex-wrap:wrap; padding-block:11px; view-transition-name:bar}
 body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-inset-top,0px);
   z-index:21; background:var(--paper)}
@@ -53,10 +56,14 @@ body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-in
   margin-right:auto; text-decoration:none}
 .mark small{font-family:var(--jp); letter-spacing:.05em; font-size:11px; color:var(--mute); margin-left:9px}
 .bar button,.bar a:not(.mark){background:none; border:0; color:var(--ink); font-size:12.5px;
-  text-decoration:none; border-bottom:1px solid var(--rule); padding:2px 0}
+  text-decoration:none; border-bottom:1px solid transparent; padding:2px 0;
+  transition:border-bottom-color calc(var(--beat)*.25)}
 .bar button:hover,.bar a:not(.mark):hover{border-bottom-color:var(--ink)}
 .bar b{font-weight:500; font-family:var(--mono); font-size:12px}
-.bar [aria-current]{border-bottom-color:var(--ink)}
+/* the element selector is needed: .bar a:not(.mark) scores 0,2,1 and an attribute
+   selector alone scores 0,2,0, so the plain link won and the page you were on was
+   never marked. It did not show while every link carried the same line. */
+.bar a[aria-current],.bar button[aria-current]{border-bottom-color:var(--ink)}
 
 /* ── type ──────────────────────────────── */
 .worktitle{font-family:var(--min); font-weight:400; font-size:clamp(19px,2.4vw,24px); line-height:1.5}
