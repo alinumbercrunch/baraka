@@ -3,6 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>/* The opt-in has to be known before this document first paints, so it cannot
+   wait on style.css: a slow stylesheet means Chrome aborts the transition with
+   "ViewTransition opt-in disabled" and the painting stops carrying you in. */
+@view-transition{ navigation:auto }</style>
 <title>作品を見る — Baraka</title>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Shippori+Mincho:wght@400;600&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
@@ -10,6 +14,13 @@
 <style>
 .wallbox{background:var(--sheet); padding:16px clamp(14px,2.5vw,22px); border-radius:1px;
   margin-top:24px}
+.wallbox > summary{cursor:pointer; list-style:none; display:block}
+.wallbox > summary::-webkit-details-marker{display:none}
+.wallbox > summary h2{display:inline-block}
+/* the arrow turns as it opens, and it is the only thing that moves */
+.wallbox > summary h2::after{content:"　＋"; font-family:var(--mono); font-size:14px; color:var(--mute)}
+.wallbox[open] > summary h2::after{content:"　−"}
+.wallbox > summary:hover h2,.wallbox > summary:focus-visible h2{color:var(--shu)}
 .presets{display:flex; flex-wrap:wrap; gap:7px; margin-top:10px}
 .presets button{font-size:12.5px; padding:6px 12px; background:transparent;
   color:var(--ink); border:1px solid var(--rule)}
@@ -87,7 +98,8 @@
     <a href="room.html">Gallery</a>
     <a href="works.html" aria-current="page">すべての作品</a>
     <a href="artists.html">作家一覧</a>
-    <a href="trade.html">設計・不動産の方へ</a>
+    <a href="trade.html">法人・設計の方へ</a>
+    <a href="about.html">バラカについて</a>
     <a href="enquiry.html"><b>お問い合わせ</b></a>
   </nav>
 
@@ -98,8 +110,8 @@
       作品を押すと、詳しいページがひらきます。</p>
   </header>
 
-  <section class="wallbox" id="wallbox">
-    <h2>かける壁の寸法を入れてください（任意）</h2>
+  <details class="wallbox" id="wallbox">
+    <summary><span class="en">Find what fits your wall</span><h2>壁の寸法から探す</h2></summary>
     <p style="font-size:12.5px;color:var(--mute);margin:6px 0 0;line-height:1.8">入れると、どの作品が収まるか、どの高さに掛ければよいかが各作品の下に出ます。だいたいで結構です。分からなければボタンをどれか押してください。</p>
     <div class="presets" id="presets"></div>
     <div class="sizerow">
@@ -107,7 +119,7 @@
       × 高 <input type="number" id="wH" aria-label="壁の高さ mm" min="1800" max="4000" step="10" placeholder="2400">
       <span style="font-family:var(--jp);font-size:12px;color:var(--mute)">mm</span>
     </div>
-  </section>
+  </details>
 
   <div class="tools">
     <span class="tl">見かた</span>
@@ -291,6 +303,7 @@ function onSize(){ [...pe.children].forEach(x=>x.setAttribute("aria-pressed","fa
 wWi.addEventListener("input",onSize); wHi.addEventListener("input",onSize);
 const save=()=>saveStore({w:wWi.value,h:wHi.value,p:picked});
 { const s=loadStore(); if(s.w) wWi.value=s.w; if(s.h) wHi.value=s.h; picked=loadPicks() }
+if(location.hash==="#wallbox") document.getElementById("wallbox").open=true;
 if(location.hash==="#list") show("listview");
 renderCol(); renderSel(); chips();
 document.getElementById("frieze").innerHTML=[...WORKS].sort((a,b)=>b.h-a.h).map(k=>

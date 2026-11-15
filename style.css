@@ -201,3 +201,58 @@ body{padding-top:0}
   .bar button,.bar a:not(.mark){font-size:12px}
   .mark{font-size:15px; letter-spacing:.18em}
 }
+
+/* ── a work page ──────────────────────────────────────────
+   These thirty-two lines were copied into all seven bk*.html files, byte for
+   byte, so a change to a work page meant editing seven of them. They live here
+   once, scoped to .work on the body: .big, .by and .door already mean other
+   things on other pages, and .work wins on this one without touching those. */
+.work .back{margin-bottom:14px; display:inline-block; margin-top:22px; font-size:12.5px; color:var(--mute); text-decoration:none;
+  border-bottom:1px solid var(--rule); padding-bottom:1px}
+.work .back:hover{color:var(--ink); border-bottom-color:var(--ink)}
+.work .big{margin-top:20px}
+.work .big img{display:block; width:auto; height:auto; max-width:100%; max-height:66vh;
+  border:1px solid rgba(0,0,0,.28); box-shadow:3px 5px 0 rgba(0,0,0,.07);
+  view-transition-name:hero-work; background:var(--sheet)}
+.work .ttl{margin-top:2px}
+.work .by{font-size:15px; margin-top:8px}
+.work .pr{font-family:var(--mono); font-size:22px; margin-top:16px}
+.work .pr small{font-family:var(--jp); font-size:12.5px; color:var(--mute); margin-left:8px}
+.work .spec{margin-top:26px; max-width:34em; border-top:1px solid var(--ink)}
+.work .spec div{display:flex; gap:16px; border-bottom:1px solid var(--hair); padding:10px 0; font-size:15px}
+.work .spec .k{flex:0 0 108px; font-size:12.5px; color:var(--mute); padding-top:2px}
+.work .howbig{border:1px solid var(--rule); background:var(--sheet); padding:20px 20px 14px; margin-top:30px}
+.work .howbig p{margin:6px 0 0; font-size:15px; color:var(--mute); line-height:1.8}
+.work .diagram{display:flex; align-items:flex-end; gap:34px; margin-top:22px; overflow-x:auto; padding-bottom:4px}
+.work .diagram .obj{flex:0 0 auto; position:relative; border:1px solid var(--ink)}
+.work .diagram .door{opacity:.45; background:repeating-linear-gradient(135deg,transparent 0 9px,var(--rule) 9px 10px)}
+.work .diagram .thiswork{background:var(--dim); opacity:.9}
+.work .diagram b{position:absolute; bottom:calc(100% + 5px); left:0; font-family:var(--mono);
+  font-size:9.5px; color:var(--mute); font-weight:400; white-space:nowrap}
+.work .hold{border:1px solid var(--rule); padding:16px 18px; margin-top:28px; max-width:31em}
+.work .hold b{display:block; font-weight:500; font-size:15px; margin:4px 0 7px}
+.work .hold p{margin:0 0 8px; font-size:12.5px; line-height:1.9; color:var(--mute)}
+.work .hold .num{font-family:var(--mono); font-size:12.5px; color:var(--ink)}
+.work .nextprev{display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap;
+  border-top:1px solid var(--hair); margin-top:46px; padding-top:16px; font-size:12.5px}
+.work .nextprev a{text-decoration:none; color:var(--mute)}
+.work .nextprev a:hover{color:var(--ink)}
+
+/* ── a past artist's page ─────────────────────────────────
+   Identical in artist-ishii, artist-komatsu and artist-nakamura. artist-mori is
+   not here: as the featured artist its page carries a different .head, .strip
+   and .words, so it keeps its own and is the one to reconcile if they converge. */
+.artist .head{padding-block:44px 0}
+.artist .head h1{margin-top:10px}
+.artist .head .ro{font-family:var(--mono); font-size:12px; letter-spacing:.2em; text-transform:uppercase;
+  color:var(--mute); margin-top:14px}
+.artist .head .place{font-size:12.5px; color:var(--mute); margin-top:4px}
+.artist .strip{display:flex; align-items:flex-end; gap:clamp(18px,3.5vw,46px); overflow-x:auto;
+  scroll-snap-type:x proximity; border-bottom:1px solid var(--rule); padding:30px 2px 0; margin-top:24px}
+.artist .strip figure{flex:0 0 auto; scroll-snap-align:center; margin:0; width:calc(var(--w) * var(--mmpx) * 1px)}
+.artist .strip .art{width:100%; height:calc(var(--h) * var(--mmpx) * 1px)}
+.artist .strip a{display:block; text-decoration:none}
+.artist .strip a:hover .art{outline:2px solid var(--ink); outline-offset:5px}
+.artist .strip figcaption{font-family:var(--mono); font-size:9.5px; color:var(--mute); margin-top:7px; white-space:nowrap}
+.artist .strip .jt{font-family:var(--jp); font-size:12.5px; color:var(--ink); display:block}
+.artist .words{font-family:var(--min); font-size:clamp(15.5px,1.9vw,18px); line-height:2.1; max-width:26em; margin-top:20px}

@@ -3,6 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>/* The opt-in has to be known before this document first paints, so it cannot
+   wait on style.css: a slow stylesheet means Chrome aborts the transition with
+   "ViewTransition opt-in disabled" and the painting stops carrying you in. */
+@view-transition{ navigation:auto }</style>
 <title>法人・設計の方へ — Baraka</title>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Shippori+Mincho:wght@400;600&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
@@ -40,7 +44,8 @@
     <a href="room.html">Gallery</a>
     <a href="works.html">すべての作品</a>
     <a href="artists.html">作家一覧</a>
-    <a href="trade.html" aria-current="page">設計・不動産の方へ</a>
+    <a href="trade.html" aria-current="page">法人・設計の方へ</a>
+    <a href="about.html">バラカについて</a>
     <a href="enquiry.html"><b>お問い合わせ</b></a>
   </nav>
 
@@ -141,11 +146,10 @@
 
   <section class="contact" id="contact">
     <span class="en">Enquire</span><b>お問い合わせ</b>
-    <span class="sel">hello@baraka.art</span><br>
-    <span class="sel" style="font-size:12.5px">045-000-0000</span>
+    <span class="sel">hello@baraka.art</span>
     <span class="en" style="margin-top:7px">神奈川県 ／ 湘南・東京・関東</span>
     <span class="tax">表示価格はすべて税込です。適格請求書（インボイス）を発行できます。<br>
-    会社概要・所在地・登録番号は正式開業時に掲載します。</span>
+    会社概要と登録番号は正式開業時に掲載します。</span>
   </section>
 
   <div class="note"><b>プロトタイプ</b>／Prototype. 価格・条件はすべてサンプルです。<br>

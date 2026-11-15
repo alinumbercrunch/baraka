@@ -207,26 +207,26 @@ const checks = {
     assert.ok(seen < 2, "painting drifted " + Math.round(seen) + "px after landing");
   },
   "from the home page the painting carries you in: one move, no stop at the door": async () => {
-    // Whether the browser actually ran the cross-document transition decides which of
-    // two correct arrivals happens, so ask it rather than guess. This listener is added
-    // to the new document before its own scripts run, and taken off again afterwards, so
-    // the page under test is not modified. Chrome skips the transition when it is busy,
-    // which is what made this check fail about one run in four: the page then walks in
-    // from the door, which is right, and the test called it wrong.
+    // This used to retry three times and accept a walk-in, because the transition only
+    // ran about half the time. It ran half the time because the opt-in lived in
+    // style.css and had to beat first paint. It is inline now, so one arrival is
+    // enough and the check can be strict: a browser that can carry you in must.
     const { identifier } = await cdp("Page.addScriptToEvaluateOnNewDocument", {
       source: `addEventListener("pagereveal", e => { window.__carried = !!e.viewTransition }, { once: true })` });
-    let carried = false;
+    let carried = false, supported = false;
     try {
-      for (let go = 0; go < 3 && !carried; go++) {
-        await cdp("Page.navigate", { url: "about:blank" });
-        await cdp("Page.navigate", { url: home });
-        assert.ok(await until(`document.readyState==="complete"`));
-        await wait(500);
-        await js(`document.querySelector('.hero a[href^="room.html"]').click()`);
-        assert.ok(await until(`location.pathname.endsWith("room.html")&&!!document.querySelector(".wall")`));
-        carried = await js(`window.__carried===true`);
-      }
+      await cdp("Page.navigate", { url: "about:blank" });
+      await cdp("Page.navigate", { url: home });
+      assert.ok(await until(`document.readyState==="complete"`));
+      await wait(500);
+      await js(`document.querySelector('.hero a[href^="room.html"]').click()`);
+      assert.ok(await until(`location.pathname.endsWith("room.html")&&!!document.querySelector(".wall")`));
+      supported = await js(`"onpagereveal" in window`);
+      carried = await js(`window.__carried===true`);
     } finally { await cdp("Page.removeScriptToEvaluateOnNewDocument", { identifier }) }
+    if (supported) assert.ok(carried,
+      "this browser does cross-document transitions but did not run one: the opt-in is " +
+      "probably not reaching the document before it first paints");
     assert.equal(await js(`getComputedStyle(document.querySelector(".here .lead img")).viewTransitionName`), "hero-work");
     // Asking whether the card is still down is a race: between two polls the rise can
     // already have happened, and on a slow machine it usually has. The claim is an
@@ -241,11 +241,13 @@ const checks = {
     // Carried in, the room is placed where it belongs with no transition at all. Walked
     // in, it makes exactly one move, the ENTER walk. Either is one move; two would not be.
     const move = await js(`document.getElementById("room").style.transition`);
+    // Carried in, the room is placed where it belongs with no transition at all. Without
+    // the API it walks in from the door, one move. Chrome drops "ease" when reporting it
+    // back, being the default timing function.
     if (carried) assert.equal(move, "none", "carried in, so the room must not move again");
-    // Chrome drops "ease" when reporting it back, being the default timing function
     else assert.match(move, /^transform (\.9|0\.9)s( ease)?$/,
-      "the browser skipped the page transition three times, which is allowed — but then " +
-      "the room must walk in from the door in one move, and it did this instead: " + move);
+      "no page transition here, so the room must walk in from the door in one move, " +
+      "and it did this instead: " + move);
     assert.ok(await until(`!document.getElementById("card").classList.contains("off")`, 3000), "then the title rises");
   },
   "a new shape of window reshapes the room": async () => {

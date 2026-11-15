@@ -262,7 +262,7 @@ for f, s in SRC.items():
 
 # 12 ── the nav is copied into every page: all copies must match the expected one
 NAV = [("room.html", "Gallery"), ("works.html", "すべての作品"), ("artists.html", "作家一覧"),
-       ("trade.html", "設計・不動産の方へ"), ("enquiry.html", "お問い合わせ")]
+       ("trade.html", "法人・設計の方へ"), ("about.html", "バラカについて"), ("enquiry.html", "お問い合わせ")]
 for f, s in SRC.items():
     bar = re.search(r'<nav class="bar">(.*?)</nav>', s, flags=re.S)
     got = re.findall(r'<a href="([^"]+)"[^>]*>(?:<b>)?([^<]+)', bar.group(1)) if bar else []

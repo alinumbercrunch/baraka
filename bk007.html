@@ -3,44 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>/* The opt-in has to be known before this document first paints, so it cannot
+   wait on style.css: a slow stylesheet means Chrome aborts the transition with
+   "ViewTransition opt-in disabled" and the painting stops carrying you in. */
+@view-transition{ navigation:auto }</style>
 <title>波の記憶 — 中村あかり — Baraka</title>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Shippori+Mincho:wght@400;600&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
 <link rel="stylesheet" href="style.css">
-<style>
-.back{margin-bottom:14px; display:inline-block; margin-top:22px; font-size:12.5px; color:var(--mute); text-decoration:none;
-  border-bottom:1px solid var(--rule); padding-bottom:1px}
-.back:hover{color:var(--ink); border-bottom-color:var(--ink)}
-.big{margin-top:20px}
-.big img{display:block; width:auto; height:auto; max-width:100%; max-height:66vh;
-  border:1px solid rgba(0,0,0,.28); box-shadow:3px 5px 0 rgba(0,0,0,.07);
-  view-transition-name:hero-work; background:var(--sheet)}
-.ttl{margin-top:2px}
-.by{font-size:15px; margin-top:8px}
-.pr{font-family:var(--mono); font-size:22px; margin-top:16px}
-.pr small{font-family:var(--jp); font-size:12.5px; color:var(--mute); margin-left:8px}
-.spec{margin-top:26px; max-width:34em; border-top:1px solid var(--ink)}
-.spec div{display:flex; gap:16px; border-bottom:1px solid var(--hair); padding:10px 0; font-size:15px}
-.spec .k{flex:0 0 108px; font-size:12.5px; color:var(--mute); padding-top:2px}
-.howbig{border:1px solid var(--rule); background:var(--sheet); padding:20px 20px 14px; margin-top:30px}
-.howbig p{margin:6px 0 0; font-size:15px; color:var(--mute); line-height:1.8}
-.diagram{display:flex; align-items:flex-end; gap:34px; margin-top:22px; overflow-x:auto; padding-bottom:4px}
-.diagram .obj{flex:0 0 auto; position:relative; border:1px solid var(--ink)}
-.diagram .door{opacity:.45; background:repeating-linear-gradient(135deg,transparent 0 9px,var(--rule) 9px 10px)}
-.diagram .thiswork{background:var(--dim); opacity:.9}
-.diagram b{position:absolute; bottom:calc(100% + 5px); left:0; font-family:var(--mono);
-  font-size:9.5px; color:var(--mute); font-weight:400; white-space:nowrap}
-.hold{border:1px solid var(--rule); padding:16px 18px; margin-top:28px; max-width:31em}
-.hold b{display:block; font-weight:500; font-size:15px; margin:4px 0 7px}
-.hold p{margin:0 0 8px; font-size:12.5px; line-height:1.9; color:var(--mute)}
-.hold .num{font-family:var(--mono); font-size:12.5px; color:var(--ink)}
-.nextprev{display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap;
-  border-top:1px solid var(--hair); margin-top:46px; padding-top:16px; font-size:12.5px}
-.nextprev a{text-decoration:none; color:var(--mute)}
-.nextprev a:hover{color:var(--ink)}
-</style>
 </head>
-<body>
+<body class="work">
 <div class="protobar">これは<b>プロトタイプ</b>です。作家名・作品名・価格はすべて架空のサンプルです。画像はパブリックドメインの美術館所蔵作品を仮に使用しています。<span class="pe">This is a prototype. Artists, titles and prices are fictional samples.</span></div>
 
 <div class="wrap">
@@ -49,7 +21,8 @@
     <a href="room.html">Gallery</a>
     <a href="works.html" aria-current="page">すべての作品</a>
     <a href="artists.html">作家一覧</a>
-    <a href="trade.html">設計・不動産の方へ</a>
+    <a href="trade.html">法人・設計の方へ</a>
+    <a href="about.html">バラカについて</a>
     <a href="enquiry.html"><b>お問い合わせ</b></a>
   </nav>
   <a class="back" href="works.html">← すべての作品にもどる</a>
@@ -79,7 +52,7 @@
   <div class="hold">
     <span class="en">Enquire about this work</span><b>この作品について</b>
     <p><b>2週間お取り置きできます。</b>その間は他所で販売しないよう、作家にお願いします。作品番号をお知らせください。</p>
-    <p class="num">BK-007 ／ <span class="sel">hello@baraka.art</span> ／ <span class="sel">045-000-0000</span></p>
+    <p class="num">BK-007 ／ <span class="sel">hello@baraka.art</span></p>
     <p>配送は作家が手配します（費用はお買い上げの方のご負担）。取り付けは承っておりません。適格請求書（インボイス）を発行できます。</p><div class="doors" style="margin-top:14px"><a class="door" href="enquiry.html#bk007">この作品について問い合わせる</a></div>
   </div>
   <nav class="nextprev"><a href="bk061.html">← 小さな庭</a><a href="bk032.html">白い午後 →</a></nav>

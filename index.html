@@ -3,6 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>/* The opt-in has to be known before this document first paints, so it cannot
+   wait on style.css: a slow stylesheet means Chrome aborts the transition with
+   "ViewTransition opt-in disabled" and the painting stops carrying you in. */
+@view-transition{ navigation:auto }</style>
 <title>Baraka ／ バラカ — その部屋のための一枚を、まだ知られていない作家から</title>
 <meta name="description" content="その部屋のための一枚を、まだ知られていない作家から。実際の大きさのまま見て、選んで、買えます。毎月ひとり作家を紹介し、紹介後も作品は販売を続けます。湘南・東京・関東。">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -166,7 +170,8 @@
     <a href="room.html">Gallery</a>
     <a href="works.html">すべての作品</a>
     <a href="artists.html">作家一覧</a>
-    <a href="trade.html">設計・不動産の方へ</a>
+    <a href="trade.html">法人・設計の方へ</a>
+    <a href="about.html">バラカについて</a>
     <a href="enquiry.html"><b>お問い合わせ</b></a>
   </nav>
   <div class="issue">
