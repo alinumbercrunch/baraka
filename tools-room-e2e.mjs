@@ -387,6 +387,48 @@ const checks = {
         `${page}: its dateline should ${want ? "" : "not "}be marked current`);
     }
   },
+  // Colour is the easiest thing on this site to lose track of, because it arrives one
+  // page at a time. Two rules cover it: the only hues are 朱 and the step-number blue,
+  // everything else being some grey; and 朱 never appears inside the frame of a work.
+  // 完売 broke both at once — it was set in 朱, on a badge sitting on the painting.
+  "the only colours on any page are 朱 and the step number, and never on a work": async () => {
+    for (const page of ["works", "artists", "artist-ishii", "artist-mori", "enquiry", "trade", "bk021"]) {
+      await cdp("Page.navigate", { url: home.replace("index", page) });
+      assert.ok(await until(`document.readyState==="complete"`), page + " loaded");
+      await wait(150);
+      const bad = await js(`(()=>{
+        const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+        const resolve=v=>{const s=document.createElement("span");s.style.color=v;
+          document.body.appendChild(s);const c=getComputedStyle(s).color;s.remove();return c};
+        const SHU=resolve(css("--shu")), DIM=resolve(css("--dim"));
+        // a grey is any colour with no hue at all, at whatever alpha: shadows and
+        // hairlines are greys and are none of this check's business
+        const grey=c=>{const m=/rgba?\\((\\d+), (\\d+), (\\d+)/.exec(c); return m && m[1]===m[2] && m[2]===m[3]};
+        const out=[];
+        for(const e of document.querySelectorAll("body *")){
+          if(e.closest(".hall,.room,#stage")) continue;
+          const s=getComputedStyle(e);
+          if(s.visibility==="hidden"||s.display==="none") continue;
+          const tag=e.tagName.toLowerCase()+(typeof e.className==="string"&&e.className?"."+e.className.trim().split(/\\s+/)[0]:"");
+          const txt=e.textContent.trim().replace(/\\s+/g," ").slice(0,18);
+          const own=[...e.childNodes].some(n=>n.nodeType===3&&n.textContent.trim());
+          const seen=[];
+          if(own) seen.push(["text",s.color]);
+          for(const side of ["Top","Bottom","Left","Right"])
+            if(parseFloat(s["border"+side+"Width"])>0) seen.push(["border",s["border"+side+"Color"]]);
+          seen.push(["background",s.backgroundColor]);
+          for(const [what,c] of seen){
+            if(grey(c)) continue;
+            if(c!==SHU && c!==DIM) out.push(what+" "+c+" on "+tag+" ["+txt+"]");
+            // the one place 朱 must never reach: anything framing a work
+            else if(c===SHU && e.closest(".art,.fr,.grid figure,.mini"))
+              out.push("朱 on a work: "+what+" "+tag+" ["+txt+"]");
+          }
+        }
+        return [...new Set(out)]})()`);
+      assert.deepEqual(bad, [], `${page}: ${(bad || []).join(" | ")}`);
+    }
+  },
   "designers can reach the wall-size tool from their own section": async () => {
     await cdp("Page.navigate", { url: home.replace("index", "trade") });
     assert.ok(await until(`document.readyState==="complete"`));
