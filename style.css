@@ -80,11 +80,22 @@ h2{font-family:var(--min); font-weight:600; font-size:clamp(19px,2.4vw,24px); li
 /* the one exception, and it is named: an artist's name is the page, not a heading */
 .nameplate{font-family:var(--min); font-weight:600; letter-spacing:.05em;
   font-size:clamp(40px,10vw,92px); line-height:1.1}
-.plain{font-size:17px; line-height:2; max-width:24em}
+/* ── how text is sized ───────────────────────────────────
+   Ordinary paragraphs ran from 13px to 19px depending on which page you were
+   on, across nine sizes in all. Three now, and a page may use them but not
+   invent others:
+     .big     one line said larger, to open a page or a section
+     .plain   everything explained — 15px, the size the body is already set in
+     small    notes, keys and captions, at 12.5px: read only if you need them
+   An artist's statement and the home page's verse stay apart from this. They
+   are a voice rather than an instruction, and they are set in mincho to say so. */
+.plain{font-size:15px; line-height:1.95; max-width:32em}
 .plain b{font-weight:500}
 .sec{padding-block:34px 10px}
-.sec > header{display:flex; align-items:baseline; gap:12px; margin-bottom:8px}
-.sec > header b{font-weight:500; font-size:16px}
+.sec > header{display:flex; flex-wrap:wrap; align-items:baseline; gap:3px 12px; margin-bottom:8px}
+/* the eyebrow takes a row of its own so it sits above the title, as it does on
+   every other page, rather than beside it */
+.sec > header > .en{flex:1 0 100%}
 .lead{max-width:30em}
 .mute{color:var(--mute)}
 /* 朱 marks what is current and nothing else: this month, this page, still for sale.
@@ -92,6 +103,10 @@ h2{font-family:var(--min); font-weight:600; font-size:clamp(19px,2.4vw,24px); li
    month is live without a word for it. Keep it out of any block showing a work at
    true size, where a saturated colour competes with the painting beside it. */
 .now{color:var(--shu)}
+/* finished. Stated plainly in ink and never coloured, so that 朱 keeps meaning
+   "you can still buy this". 完売 was ink at 9px on a badge and grey at 13px
+   inline, which read as two different facts. */
+.done{color:var(--ink)}
 
 /* ── how one thing is told from the next ──────────────────
    Three kinds of line, and the first of them is none at all:
@@ -131,16 +146,16 @@ h2{font-family:var(--min); font-weight:600; font-size:clamp(19px,2.4vw,24px); li
 /* ── buttons ───────────────────────────── */
 .doors{display:flex; gap:12px; flex-wrap:wrap; margin-top:26px}
 .door{display:inline-block; border:1px solid var(--ink); padding:12px 22px; text-decoration:none;
-  font-size:14.5px; color:var(--ink); transition:background .18s, color .18s}
+  font-size:15px; color:var(--ink); transition:background .18s, color .18s}
 .door:hover{background:var(--ink); color:var(--sheet)}
 .door.ghost{border-color:var(--rule)}
 .door.ghost:hover{border-color:var(--ink)}
 
 /* ── misc ──────────────────────────────── */
-.contact{border:1px solid var(--ink); padding:16px 18px; margin-top:26px; max-width:30em}
+.contact{border:1px solid var(--rule); padding:16px 18px; margin-top:26px; max-width:30em}
 .contact b{display:block; font-weight:500; font-size:15px; margin:3px 0 8px}
-.sel{-webkit-user-select:all; user-select:all; font-family:var(--mono); font-size:14px}
-.note{border:1px dashed var(--rule); padding:12px 15px; margin-top:30px; font-size:12px; color:var(--mute)}
+.sel{-webkit-user-select:all; user-select:all; font-family:var(--mono); font-size:15px}
+.note{border:1px dashed var(--rule); padding:12px 15px; margin-top:30px; font-size:12.5px; color:var(--mute)}
 footer{margin-top:22px; padding-bottom:36px; color:var(--mute); font-size:12px;
   border-top:1px solid var(--hair); padding-top:16px;
   display:flex; gap:18px; flex-wrap:wrap; align-items:baseline}
@@ -151,11 +166,11 @@ footer .social{margin-left:auto; display:inline-flex; align-items:center; gap:10
 footer .social .en{display:inline; font-size:11px}
 footer .social a{display:inline-flex; color:var(--mute); transition:color calc(var(--beat)*.25)}
 footer .social a:hover,footer .social a:focus-visible{color:var(--ink)}
-input[type=number]{font-family:var(--mono); font-size:14px; width:88px; padding:6px 8px;
+input[type=number]{font-family:var(--mono); font-size:15px; width:88px; padding:6px 8px;
   background:var(--sheet); color:var(--ink); border:1px solid var(--rule)}
 input[type=text]{font-family:var(--jp); font-size:13px; width:110px; padding:4px 7px;
   background:var(--sheet); color:var(--ink); border:1px solid var(--rule)}
-table{width:100%; border-collapse:collapse; font-size:13.5px}
+table{width:100%; border-collapse:collapse; font-size:12.5px}
 th{text-align:left; font-weight:400; border-bottom:1px solid var(--ink);
   padding:7px 10px 5px; white-space:nowrap; vertical-align:bottom}
 td{border-bottom:1px solid var(--hair); padding:9px 10px; white-space:nowrap}
@@ -174,4 +189,4 @@ body{padding-top:0}
 /* ── full-bleed breakout ── */
 
 
-.tax{display:block; font-size:12px; color:var(--mute); line-height:1.75; margin-top:9px}
+.tax{display:block; font-size:12.5px; color:var(--mute); line-height:1.75; margin-top:9px}

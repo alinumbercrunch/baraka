@@ -35,8 +35,8 @@
    It carried class="en" before, which made it an 11px eyebrow and forced a local
    size override on top: that is how this page ended up the only one whose section
    headings were 19px while every other page's were 24px. */
-.circle > h2,.proof > h2,.sec > h2{display:inline-block; letter-spacing:.02em;
-  margin:0 0 clamp(18px,3vh,30px)}
+.circle > .en,.proof > .en,.sec > .en{margin:0 0 5px}
+.circle > h2,.proof > h2,.sec > h2{letter-spacing:.02em; margin:0 0 clamp(18px,3vh,30px)}
 
 /* the one band that holds no artwork takes a paper-grey ground. Only that one: grey
    behind a painting changes how the painting reads, and true colour is the promise.
@@ -44,7 +44,7 @@
    widening the page, which 100vw would do wherever there is a classic scrollbar. */
 .circle{background:var(--sheet); box-shadow:0 0 0 100vmax var(--sheet); clip-path:inset(0 -100vmax)}
 .circle{text-align:center}
-.circle .mean{font-family:var(--min); font-size:clamp(14px,1.7vw,16px); color:var(--mute); margin:0}
+.circle .mean{font-family:var(--min); font-size:15px; color:var(--mute); margin:0}
 .circle .loop{font-family:var(--min); font-size:clamp(18px,2.5vw,24px); line-height:2.05; margin:12px 0 0;
   line-break:strict; word-break:keep-all; font-feature-settings:"palt" 1}
 .circle .loop b{font-weight:600}
@@ -93,7 +93,7 @@
   box-shadow:0 2px 6px rgba(0,0,0,.2)}
 .grid img{position:absolute; inset:0; width:100%; height:100%; display:block}
 .grid a:hover .fr{outline:1.5px solid var(--ink); outline-offset:5px}
-.grid figcaption{height:var(--cap); padding-top:9px; font-size:13px; line-height:1.7; white-space:nowrap}
+.grid figcaption{height:var(--cap); padding-top:9px; font-size:12.5px; line-height:1.7; white-space:nowrap}
 .grid .d{font-family:var(--mono); font-size:10.5px; color:var(--mute); display:block}
 .grid .p{font-family:var(--mono); font-size:12px; display:block}
 @media (max-width:480px){ .grid .d{font-size:9.5px} }
@@ -128,6 +128,7 @@
 .past b{display:block; font-family:var(--min); font-weight:600; font-size:18px; margin:2px 0}
 .past span{font-size:12.5px; color:var(--mute)}
 .past .now{font-style:normal; color:var(--shu)}
+.past .done{font-style:normal; color:var(--ink)}
 .past img{flex:none; display:block; width:96px; height:72px; object-fit:contain; background:var(--sheet)}
 
 </style>
@@ -164,7 +165,8 @@
 <div class="wrap">
   <!-- 2c · why Baraka exists -->
   <section class="circle">
-    <h2>バラカについて ／ Why Baraka</h2>
+    <span class="en">Why Baraka</span>
+    <h2>バラカについて</h2>
     <p class="mean">バラカ ― アラビア語で「祝福」。小さなものが、まわって、増えていく。</p>
     <p class="loop">絵は部屋にのこり、お金は作家にまわる。<br>
       その名前が、次の部屋を見つける。<br>
@@ -173,14 +175,16 @@
 
   <!-- 2d · the proof: true relative size -->
   <section class="proof">
-    <h2>実際の大きさ ／ True size</h2>
+    <span class="en">True size</span>
+    <h2>実際の大きさ</h2>
     <div class="grid" id="grid"></div>
     <p class="tax">作品は2週間お取り置きできます。表示価格はすべて税込です。配送は作家が手配します（費用はお買い上げの方のご負担）。取り付けは承っておりません。</p>
   </section>
 
   <!-- 4 · still available -->
   <section class="sec">
-    <h2>いまも買えます ／ Still available</h2>
+    <span class="en">Still available</span>
+    <h2>いまも買えます</h2>
     <div class="past" id="past"></div>
     <div class="doors">
       <a class="door ghost" href="artists.html">作家一覧を見る</a>
@@ -219,7 +223,7 @@ document.getElementById("grid").innerHTML = MONTH.map(k=>
 document.getElementById("past").innerHTML = PAST.map(a=>
  '<a href="'+a.p+'"><img src="'+a.im[0]+'" alt="" loading="lazy" decoding="async">'+
   '<div><span class="mo">'+a.mo+'</span><b>'+a.n+'</b>'+
-  '<span>'+a.pl+' ／ '+(a.c?'<i class="now">'+a.c+'点 販売中</i>':'完売')+'</span></div></a>').join("");
+  '<span>'+a.pl+' ／ '+(a.c?'<i class="now">'+a.c+'点 販売中</i>':'<i class="done">完売</i>')+'</span></div></a>').join("");
 </script>
 </body>
 </html>
