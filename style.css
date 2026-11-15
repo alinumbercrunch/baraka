@@ -66,7 +66,20 @@ body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-in
 .bar a[aria-current],.bar button[aria-current]{border-bottom-color:var(--shu)}
 
 /* ── type ──────────────────────────────── */
-.worktitle{font-family:var(--min); font-weight:400; font-size:clamp(19px,2.4vw,24px); line-height:1.5}
+/* ── one scale, on every page ────────────────────────────
+   Eighteen pages were carrying seven h1 sizes, four section-title sizes in two
+   different typefaces, and nine band rhythms: a section heading was 15px gothic
+   on works.html and 32px mincho on trade.html. That is not one design with
+   variations, it is several sharing a stylesheet. Four levels below, and a page
+   may use them but not redefine them. */
+h1{font-family:var(--min); font-weight:600; font-size:clamp(26px,4vw,38px); line-height:1.35}
+h2{font-family:var(--min); font-weight:600; font-size:clamp(19px,2.4vw,24px); line-height:1.5}
+/* a heading inside a panel names a step or a tool, not a section of the page */
+.steps h2,.steps h3,.howbig h2,.wallbox h2{font-family:var(--jp); font-weight:500;
+  font-size:15.5px; letter-spacing:0; line-height:1.6}
+/* the one exception, and it is named: an artist's name is the page, not a heading */
+.nameplate{font-family:var(--min); font-weight:600; letter-spacing:.05em;
+  font-size:clamp(40px,10vw,92px); line-height:1.1}
 .plain{font-size:17px; line-height:2; max-width:24em}
 .plain b{font-weight:500}
 .sec{padding-block:34px 10px}

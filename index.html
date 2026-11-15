@@ -31,9 +31,11 @@
 
 /* every band is named the same way, and the name is what starts it: centred mincho,
    one size, with space around it instead of a rule. */
-.circle > .en,.proof > .en,.sec > .en{
-  display:inline-block; font-family:var(--min); font-weight:600; color:var(--ink);
-  font-size:clamp(15px,1.9vw,19px); letter-spacing:.02em; line-height:1.5;
+/* a band title is an h2 and nothing else, at the one size the whole site uses.
+   It carried class="en" before, which made it an 11px eyebrow and forced a local
+   size override on top: that is how this page ended up the only one whose section
+   headings were 19px while every other page's were 24px. */
+.circle > h2,.proof > h2,.sec > h2{display:inline-block; letter-spacing:.02em;
   margin:0 0 clamp(18px,3vh,30px)}
 
 /* the one band that holds no artwork takes a paper-grey ground. Only that one: grey
@@ -51,10 +53,10 @@
 
 /* ── 2 · hero: the promise, one painting, one button ── */
 .hero{text-align:center}
-.hero .lead{font-family:var(--min); font-weight:600; font-size:clamp(20px,2.8vw,28px); line-height:1.75; margin:0; max-width:none}
+.hero .lead{margin:0; max-width:none}
 .hero .tag{color:var(--mute); margin:10px 0 0}
 .hero img{view-transition-name:hero-work; display:block; width:auto; height:auto; margin:14px auto 0;
-  max-width:100%; max-height:min(44svh,420px); box-shadow:0 2px 10px rgba(0,0,0,.2)}
+  max-width:100%; max-height:min(36svh,420px); box-shadow:0 2px 10px rgba(0,0,0,.2)}
 /* on a phone the painting and its button come first: nothing decorative above them */
 @media (max-width:760px){ .issue,.protobar .pe{display:none} .hero{padding-block:14px 20px} }
 .hero .doors{justify-content:center; margin-top:clamp(18px,3vh,26px)}
@@ -162,7 +164,7 @@
 <div class="wrap">
   <!-- 2c · why Baraka exists -->
   <section class="circle">
-    <h2 class="en">バラカについて ／ Why Baraka</h2>
+    <h2>バラカについて ／ Why Baraka</h2>
     <p class="mean">バラカ ― アラビア語で「祝福」。小さなものが、まわって、増えていく。</p>
     <p class="loop">絵は部屋にのこり、お金は作家にまわる。<br>
       その名前が、次の部屋を見つける。<br>
@@ -171,14 +173,14 @@
 
   <!-- 2d · the proof: true relative size -->
   <section class="proof">
-    <h2 class="en">実際の大きさ ／ True size</h2>
+    <h2>実際の大きさ ／ True size</h2>
     <div class="grid" id="grid"></div>
     <p class="tax">作品は2週間お取り置きできます。表示価格はすべて税込です。配送は作家が手配します（費用はお買い上げの方のご負担）。取り付けは承っておりません。</p>
   </section>
 
   <!-- 4 · still available -->
   <section class="sec">
-    <h2 class="en">いまも買えます ／ Still available</h2>
+    <h2>いまも買えます ／ Still available</h2>
     <div class="past" id="past"></div>
     <div class="doors">
       <a class="door ghost" href="artists.html">作家一覧を見る</a>
