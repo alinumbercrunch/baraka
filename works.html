@@ -8,8 +8,8 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Shippori+Mincho:wght@400;600&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
 <link rel="stylesheet" href="style.css">
 <style>
-.wallbox{border-top:1px solid var(--ink); border-bottom:1px solid var(--rule);
-  padding-block:16px; margin-top:24px}
+.wallbox{background:var(--sheet); padding:16px clamp(14px,2.5vw,22px); border-radius:1px;
+  margin-top:24px}
 .wallbox h2{font-size:15px}
 .presets{display:flex; flex-wrap:wrap; gap:7px; margin-top:10px}
 .presets button{font-size:12.5px; padding:6px 12px; background:transparent;
@@ -19,7 +19,7 @@
   font-family:var(--mono); font-size:13px}
 .col{margin-top:10px}
 .item{display:flex; flex-wrap:wrap; gap:clamp(20px,4vw,52px); align-items:flex-end;
-  padding-block:44px; border-bottom:1px solid var(--rule);
+  padding-block:44px; border-bottom:1px solid var(--hair);
   content-visibility:auto; contain-intrinsic-size:auto 560px}
 .col:has(.item:hover) .item:not(:hover) .art{opacity:.45}
 .facts{flex:1 1 200px; min-width:0; padding-bottom:4px}
@@ -34,7 +34,7 @@
   font-size:12.5px; padding:5px 12px}
 .add[aria-pressed="true"]{background:var(--ink); color:var(--sheet); border-color:var(--ink)}
 .cmp{display:flex; align-items:flex-end; gap:clamp(14px,3vw,40px); overflow-x:auto;
-  border-bottom:1px solid var(--ink); padding:28px 2px 0; margin-top:14px}
+  border-bottom:1px solid var(--rule); padding:28px 2px 0; margin-top:14px}
 .cmp div{flex:0 0 auto; position:relative;
   width:calc(var(--w) * var(--mmpx) * 1px); height:calc(var(--h) * var(--mmpx) * 1px);
   border:1px solid rgba(0,0,0,.28)}
@@ -42,7 +42,7 @@
 .cmp div b{position:absolute; bottom:calc(100% + 5px); left:0; font-family:var(--mono);
   font-size:9.5px; color:var(--mute); white-space:nowrap; font-weight:400}
 .selrow{display:flex; align-items:center; gap:12px; flex-wrap:wrap;
-  border-bottom:1px solid var(--rule); padding-block:10px; font-size:13.5px}
+  border-bottom:1px solid var(--hair); padding-block:10px; font-size:13.5px}
 .selrow .nm{flex:1 1 150px; min-width:0}
 .total{display:flex; justify-content:space-between; border-top:1px solid var(--ink);
   padding-top:11px; margin-top:6px; font-family:var(--mono); font-size:15px}
