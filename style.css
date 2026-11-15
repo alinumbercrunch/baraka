@@ -76,7 +76,7 @@ body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-in
 h1{font-family:var(--min); font-weight:600; font-size:clamp(26px,4vw,38px); line-height:1.35}
 h2{font-family:var(--min); font-weight:600; font-size:clamp(19px,2.4vw,24px); line-height:1.5}
 /* a heading inside a panel names a step or a tool, not a section of the page */
-.steps h2,.steps h3,.howbig h2,.wallbox h2{font-family:var(--jp); font-weight:500;
+.steps h2,.steps h3,.wallbox h2{font-family:var(--jp); font-weight:500;
   font-size:15.5px; letter-spacing:0; line-height:1.6}
 /* the one exception, and it is named: an artist's name is the page, not a heading */
 .nameplate{font-family:var(--min); font-weight:600; letter-spacing:.05em;
