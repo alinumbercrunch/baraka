@@ -16,12 +16,28 @@
 .issue .no+.no{color:var(--mute)}
 
 /* ── 2c · why Baraka exists. Quiet on purpose: it is read, not clicked ── */
-/* every block is a band: ruled across the top, named, evenly padded. The rule is
-   what makes one block end and the next begin, so the padding goes inside the band
-   rather than between them. */
-.hero,.circle,.proof,.sec{border-top:1px solid var(--ink); padding-block:clamp(22px,4vh,34px)}
-.hero{border-top-color:var(--rule)}
-.hero > .en,.circle > .en,.proof > .en,.sec > .en{margin:0 0 clamp(14px,2.5vh,22px)}
+/* No rule between the bands. A line across the full width is a great deal of ink for
+   a job that space and a title already do, and with the rules gone the padding could
+   more than double. Measured as the gap between two bands over the largest gap inside
+   them — the ratio at which a gap stops reading as spacing and starts reading as a
+   break — every boundary came out wider without the rules than with them, measured
+   at 320-1920px: hero 2.56 -> 3.59, circle 3.14 -> 4.67, proof 1.84 -> 1.94. */
+.hero{padding-block:clamp(22px,4vh,34px)}
+.circle,.proof,.sec{padding-block:clamp(44px,7vh,80px)}
+.hero > .en{margin:0 0 clamp(14px,2.5vh,22px)}
+
+/* every band is named the same way, and the name is what starts it: centred mincho,
+   one size, with space around it instead of a rule. */
+.circle > .en,.proof > .en,.sec > .en{
+  display:inline-block; font-family:var(--min); font-weight:600; color:var(--ink);
+  font-size:clamp(15px,1.9vw,19px); letter-spacing:.02em; line-height:1.5;
+  margin:0 0 clamp(18px,3vh,30px)}
+
+/* the one band that holds no artwork takes a paper-grey ground. Only that one: grey
+   behind a painting changes how the painting reads, and true colour is the promise.
+   box-shadow with clip-path reaches the window edge from inside .wrap without
+   widening the page, which 100vw would do wherever there is a classic scrollbar. */
+.circle{background:var(--sheet); box-shadow:0 0 0 100vmax var(--sheet); clip-path:inset(0 -100vmax)}
 .circle{text-align:center}
 .circle .mean{font-family:var(--min); font-size:clamp(14px,1.7vw,16px); color:var(--mute); margin:0}
 .circle .loop{font-family:var(--min); font-size:clamp(18px,2.5vw,24px); line-height:2.05; margin:12px 0 0;
@@ -82,9 +98,12 @@
   .grid figcaption{white-space:normal} }
 
 /* ── sections ── */
-
-.sec > h2{font-family:var(--min); font-weight:600; font-size:clamp(19px,2.6vw,25px)}
-.sec > .en{margin-bottom:4px}
+/* .sec is the only band that was left-aligned. Centred, the page runs on one axis
+   and the band titles all read as the same object. The cards keep their own
+   alignment: centring the text inside them would ragged every line of it. */
+.sec{text-align:center}
+.sec .past{text-align:left}
+.sec .doors{justify-content:center}
 
 /* ── 4 · still available ── */
 .past{display:grid; grid-template-columns:repeat(auto-fit,minmax(235px,1fr)); gap:18px; margin-top:24px}
