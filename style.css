@@ -35,6 +35,7 @@ body{overflow-x:clip; background:var(--paper); color:var(--ink); font-family:var
 @media (max-width:480px){ body{word-break:normal} }
 /* prose at any width: the notice is a paragraph, not a headline */
 .protobar{word-break:normal}
+
 .wrap{padding-left:max(16px,env(safe-area-inset-left,0px));
   padding-right:max(16px,env(safe-area-inset-right,0px)); max-width:1120px; margin:0 auto}
 h1,h2,h3{font-weight:500; margin:0; line-height:1.4}
@@ -190,3 +191,13 @@ body{padding-top:0}
 
 
 .tax{display:block; font-size:12.5px; color:var(--mute); line-height:1.75; margin-top:9px}
+/* On a 375px phone the prototype notice took 64px and the six-item nav wrapped to
+   99px: a quarter of the screen spent before any content, which is what pushed the
+   Gallery button off the first screen there. Nothing is removed — the notice says
+   the same thing, in smaller type, and the nav gives up spacing it does not need. */
+@media (max-width:480px){
+  .protobar{font-size:11px; line-height:1.6; padding-block:5px}
+  .bar{gap:9px 13px; padding-block:9px}
+  .bar button,.bar a:not(.mark){font-size:12px}
+  .mark{font-size:15px; letter-spacing:.18em}
+}
