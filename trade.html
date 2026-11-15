@@ -9,6 +9,9 @@
 <link rel="stylesheet" href="style.css">
 <style>
 .block{padding-block:clamp(38px,6vh,68px); scroll-margin-top:90px}
+#realestate{background:var(--sheet); box-shadow:0 0 0 100vmax var(--sheet); clip-path:inset(0 -100vmax)}
+.pick{margin-top:20px; gap:10px}
+.pick .door{font-size:13px; padding:9px 15px}
 .block h2{letter-spacing:.03em}
 .block .sub{font-size:12.5px; color:var(--mute); margin-top:4px}
 .big{font-size:clamp(18px,2.4vw,23px); line-height:1.7; font-weight:500; max-width:22em; margin-top:22px}
@@ -46,6 +49,11 @@
     <span class="en">For designers, companies and artists</span>
     <h1 style="margin-top:6px">法人・設計の方へ</h1>
     <p style="margin:10px 0 0;font-size:15px;color:var(--mute);line-height:1.9;max-width:32em">卸価格でのお取引、複数のお部屋へのまとめた納品、そして作家の方の掲載条件について。</p>
+    <div class="doors pick">
+      <a class="door ghost" href="#designer">設計・デザインの方へ</a>
+      <a class="door ghost" href="#realestate">不動産会社の方へ</a>
+      <a class="door ghost" href="#artist">作家の方へ</a>
+    </div>
   </header>
 
   <!-- ───────── designers ───────── -->
