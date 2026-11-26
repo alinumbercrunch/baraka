@@ -112,17 +112,14 @@ h2{font-family:var(--min); font-weight:600; font-size:clamp(19px,2.4vw,24px); li
 /* ── how one thing is told from the next ──────────────────
    Three kinds of line, and the first of them is none at all:
 
-     a new section   no rule. Space, and a name. .band carries both, and a band
-                     that holds no work for sale may take the paper ground.
+     a new section   no rule. Space, and a name, and a band that holds no work
+                     for sale may take the paper ground.
      rows in a list  --hair, the quietest line there is. Twenty of these in a
                      row should read as a table, not as twenty decisions.
      a column head   --ink, kept for this one job: the line under a heading that
                      sits above figures, where it tells you to read downwards.
 
    Everything the site draws should be one of those three. */
-.band{padding-block:clamp(38px,6vh,68px)}
-.band > .en{margin:0 0 clamp(14px,2.2vh,20px)}
-.band.ground{background:var(--sheet); box-shadow:0 0 0 100vmax var(--sheet); clip-path:inset(0 -100vmax)}
 
 /* ── artwork ───────────────────────────── */
 .art{flex:0 0 auto; position:relative;

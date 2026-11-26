@@ -260,9 +260,23 @@ for f, s in SRC.items():
         if w in b:
             fail("tone", f"{f}: contains {w}")
 
+# 11b ── the footer leaves out a link to the page you are already on, and never
+#        repeats one. Adding a ホーム everywhere once gave six pages two of them
+#        and gave the home page a link to itself, and nothing noticed.
+for f, s in SRC.items():
+    foot = re.search(r"<footer>(.*?)</footer>", s, flags=re.S)
+    if not foot:
+        continue
+    hrefs = re.findall(r'<a href="([a-z0-9-]+\.html)"', foot.group(1))
+    for h in sorted(set(x for x in hrefs if hrefs.count(x) > 1)):
+        fail("footer", f"{f}: footer links to {h} {hrefs.count(h)} times")
+    if f in hrefs:
+        fail("footer", f"{f}: footer links to the page you are already on")
+
 # 12 ── the nav is copied into every page: all copies must match the expected one
 NAV = [("room.html", "Gallery"), ("works.html", "すべての作品"), ("artists.html", "作家一覧"),
-       ("trade.html", "法人・設計の方へ"), ("about.html", "バラカについて"), ("enquiry.html", "お問い合わせ")]
+       ("trade.html", "法人・設計の方へ"), ("donate.html", "寄付"),
+       ("about.html", "バラカについて"), ("enquiry.html", "お問い合わせ")]
 for f, s in SRC.items():
     bar = re.search(r'<nav class="bar">(.*?)</nav>', s, flags=re.S)
     got = re.findall(r'<a href="([^"]+)"[^>]*>(?:<b>)?([^<]+)', bar.group(1)) if bar else []

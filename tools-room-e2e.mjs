@@ -415,7 +415,7 @@ const checks = {
   // everything else being some grey; and 朱 never appears inside the frame of a work.
   // 完売 broke both at once — it was set in 朱, on a badge sitting on the painting.
   "the only colours on any page are 朱 and the step number, and never on a work": async () => {
-    for (const page of ["works", "artists", "artist-ishii", "artist-mori", "enquiry", "trade", "bk021"]) {
+    for (const page of ["works", "artists", "artist-ishii", "artist-mori", "enquiry", "trade", "bk021", "donate"]) {
       await cdp("Page.navigate", { url: home.replace("index", page) });
       assert.ok(await until(`document.readyState==="complete"`), page + " loaded");
       await wait(150);
